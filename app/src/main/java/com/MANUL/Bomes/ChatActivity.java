@@ -1,0 +1,887 @@
+package com.MANUL.Bomes;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.MediaRecorder;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.MANUL.Bomes.ExplosionField.ExplosionField;
+import com.bumptech.glide.Glide;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
+import com.fasterxml.jackson.databind.type.LogicalType;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import retrofit2.Call;
+import retrofit2.Callback;
+
+public class ChatActivity extends AppCompatActivity {
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    WebSocket webSocket;
+    private final int GALLERY_REQUEST = 100;
+    private static final int MICROPHONE_PERMISSION_CODE = 200;
+
+    ExplosionField explosionField;
+    MediaRecorder mediaRecorder;
+
+    CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio;
+    ImageView inChatAvatar, recordingAudioImage;
+    TextView username, onlineText, typingMsg, recordTimeText;
+    RecyclerView messagesRecycler, stickersRecycler;
+    MessagesAdapter adapter;
+    StickersAdapter stickersAdapter;
+    EditText messageText;
+    ConstraintLayout chatLayout;
+    long lastOnline = 0;
+    long loadedMessages = 0;
+
+    boolean loadingMessagesNow = false;
+    boolean typing = false;
+    boolean recording = false;
+    int recordTime = 0;
+    String dirAudio, audioFileName;
+
+    Handler handler = new Handler();
+
+    ArrayList<Message> messages = new ArrayList<>();
+    ArrayList<Sticker> stickers = new ArrayList<>();
+    ArrayList<UniversalJSONObject> users = new ArrayList<>();
+    Message replyingMessage;
+    Message editingMessage;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat);
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.blue));
+
+        explosionField = ExplosionField.attach2Window(this);
+
+        dirAudio = this.getExternalFilesDir(null).getAbsolutePath() + "/Audios/";
+        File boMesDirectoryAudio = new File(dirAudio);
+        boMesDirectoryAudio.mkdirs();
+        audioFileName = "record.mp3";
+
+        if(isMicrophonePresent()){
+            getMicrophonePermission();
+        }
+
+        init();
+        connectToServer();
+    }
+
+    private void connectToServer(){
+        OkHttpClient client = new OkHttpClient.Builder().build();
+        Request request = new Request.Builder().url("wss://bomes.ru:8000").build();
+
+        webSocket = client.newWebSocket(request, new WebSocketListener() {
+            @Override
+            public void onFailure(@NonNull WebSocket ws, @NonNull Throwable t, @Nullable Response response) {
+                super.onFailure(ws, t, response);
+                Log.e("Fail", t.getMessage());
+            }
+            @Override
+            public void onMessage(@NonNull WebSocket ws, @NonNull String text)  {
+                super.onMessage(ws, text);
+                runOnUiThread(new Runnable() {
+                    @SuppressLint("NotifyDataSetChanged")
+                    @Override
+                    public void run() {
+                        try {
+                            UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
+                            if (obj.event.equals("ReturnUser")){
+                                Log.e("Id", obj.user.identifier);
+                                if (obj.user.identifier.equals(UserData.identifier)){
+                                    UserData.username = obj.user.username;
+                                    UserData.password = obj.user.password;
+                                    UserData.email = obj.user.email;
+                                    UserData.description = obj.user.description;
+                                    UserData.avatar = obj.user.avatar;
+                                }
+                                if (obj.user.identifier.equals(UserData.chatId)){
+                                    if (!obj.user.avatar.isEmpty())
+                                        Glide.with(ChatActivity.this).load("https://bomes.ru/" + obj.user.avatar).into(inChatAvatar);
+                                    else
+                                        Glide.with(ChatActivity.this).load("https://bomes.ru/media/icon.png").into(inChatAvatar);
+                                    username.setText(obj.user.username);
+                                    lastOnline = obj.user.lastOnline;
+                                    UniversalJSONObject isUserOnline = new UniversalJSONObject();
+                                    isUserOnline.event = "IsUserOnline";
+                                    isUserOnline.identifier = obj.user.identifier;
+                                    webSocket.send(objectMapper.writeValueAsString(isUserOnline));
+                                }
+                            }
+                            else if (obj.event.equals("ReturnOnline")){
+                                if (!obj.isOnline){
+                                    setLastOnlineText();
+                                    onlineText.setTextColor(getResources().getColor(R.color.white,  null));
+                                }
+                                else{
+                                    onlineText.setText("Онлайн");
+                                    onlineText.setTextColor(getResources().getColor(R.color.green,  null));
+                                }
+                            }
+                            else if (obj.event.equals("ReturnChatMessages")){
+                                for (UniversalJSONObject msg : obj.messages) {
+                                    messages.add(0, new Message(msg.username, msg.dataType, msg.value, msg.reply, msg.isRead, msg.time, msg.id, msg.sender));
+                                    adapter.notifyItemInserted(0);
+                                    if (!msg.sender.equals(UserData.identifier)){
+                                        UniversalJSONObject readMsg = new UniversalJSONObject();
+                                        readMsg.chat = UserData.table_name;
+                                        readMsg.id = msg.id;
+                                        readMsg.event = "ReadMessage";
+                                        webSocket.send(objectMapper.writeValueAsString(readMsg));
+                                    }
+                                }
+                                if (loadedMessages == 0){
+                                    messagesRecycler.scrollToPosition(messages.size()-1);
+                                }
+                                loadedMessages += obj.messages.length;
+                                loadingMessagesNow = false;
+                            }
+                            else if (obj.event.equals("message")){
+                                messages.add(new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender));
+                                if (!obj.sender.equals(UserData.identifier) && obj.isRead == 0){
+                                    UniversalJSONObject readMsg = new UniversalJSONObject();
+                                    readMsg.chat = UserData.table_name;
+                                    readMsg.id = obj.id;
+                                    readMsg.event = "ReadMessage";
+                                    webSocket.send(objectMapper.writeValueAsString(readMsg));
+                                }
+                                messagesRecycler.scrollToPosition(messages.size()-1);
+                                adapter.notifyItemInserted(messages.size()-1);
+                            }
+                            else if (obj.event.equals("MessageIsRead")){
+                                long id = obj.id;
+                                for (int i = messages.size()-1; i > 0; i--){
+                                    if (messages.get(i).id == id){
+                                        messages.get(i).isRead = 1;
+                                        adapter.notifyItemChanged(i);
+                                        break;
+                                    }
+                                }
+                            }
+                            else if (obj.event.equals("Typing")){
+                                if (!obj.identifier.equals(UserData.identifier) && !typing) {
+                                    typing = true;
+                                    typingMsg.setVisibility(View.VISIBLE);
+                                    onlineText.setVisibility(View.GONE);
+                                    if (UserData.isLocalChat == 1){
+                                        if (obj.typingType.equals("text"))
+                                            typingMsg.setText("Печатает...");
+                                        else if (obj.typingType.equals("audio"))
+                                            typingMsg.setText("Записывает голосовое сообщение...");
+                                    }
+                                    else{
+                                        int index = getUserIndex(obj.identifier);
+                                        if (index != -1){
+                                            if (obj.typingType.equals("text"))
+                                                typingMsg.setText(users.get(index).username + " печатает...");
+                                            else if (obj.typingType.equals("audio"))
+                                                typingMsg.setText(users.get(index).username + " записывает голосовое...");
+                                        }
+                                    }
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            typing = false;
+                                            typingMsg.setVisibility(View.GONE);
+                                            onlineText.setVisibility(View.VISIBLE);
+                                        }
+                                    }, 2000);
+                                }
+                            }
+                            else if (obj.event.equals("ReturnStickers")){
+                                for (String l : obj.stickers) {
+                                    stickers.add(new Sticker(l));
+                                }
+                                stickersAdapter.notifyDataSetChanged();
+                            }
+                            else if (obj.event.equals("ReturnChatUsers")){
+                                users.clear();
+                                for (UniversalJSONObject u:obj.members) {
+                                    users.add(u);
+                                }
+                            }
+                            else if (obj.event.equals("EditMessageForUsers")){
+                                int index = getMessageIndex(obj.messageId);
+                                if (index != -1) {
+                                    messages.get(index).value = obj.value;
+                                    adapter.notifyItemChanged(index);
+                                }
+                                else{
+                                    Toast.makeText(ChatActivity.this, "Сообщение не прогружено", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            else if (obj.event.equals("DeleteMessageForUsers")){
+                                long id = obj.messageId;
+                                int index = getMessageIndex(id);
+                                if (index != -1){
+                                    Message msg = adapter.messages.get(index);
+                                    View explode = msg.holder;
+                                    if (explode != null && msg.viewHolder.message.equals(msg))
+                                        explosionField.explode(explode);
+
+                                    messages.remove(index);
+                                    adapter.notifyItemRemoved(index);
+                                }
+                                else{
+                                    Toast.makeText(ChatActivity.this, "Непрогруженное сообщение удалено", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
+            @Override
+            public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
+                super.onOpen(ws, response);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                UniversalJSONObject obj = new UniversalJSONObject();
+                                obj.event = "setIdentifier";
+                                obj.identifier = UserData.identifier;
+                                webSocket.send(objectMapper.writeValueAsString(obj));
+
+                                UniversalJSONObject loadMe = new UniversalJSONObject();
+                                loadMe.event = "GetUser";
+                                loadMe.identifier = UserData.identifier;
+                                webSocket.send(objectMapper.writeValueAsString(loadMe));
+
+                                UniversalJSONObject setChat = new UniversalJSONObject();
+                                setChat.event = "setChat";
+                                setChat.chatName = UserData.table_name;
+                                webSocket.send(objectMapper.writeValueAsString(setChat));
+
+                                UniversalJSONObject getStickers = new UniversalJSONObject();
+                                getStickers.event = "GetStickers";
+                                webSocket.send(objectMapper.writeValueAsString(getStickers));
+
+                                if (UserData.isLocalChat == 0) {
+                                    UniversalJSONObject getChatUsers = new UniversalJSONObject();
+                                    getChatUsers.event = "GetChatUsers";
+                                    getChatUsers.table_name = UserData.table_name;
+                                    getChatUsers.identifier = UserData.identifier;
+                                    webSocket.send(objectMapper.writeValueAsString(getChatUsers));
+                                }
+
+
+                                if (UserData.chatId != null && UserData.isLocalChat == 1) {
+                                    UniversalJSONObject loadOther = new UniversalJSONObject();
+                                    loadOther.event = "GetUser";
+                                    loadOther.identifier = UserData.identifier;
+                                    loadOther.friendId = UserData.chatId;
+                                    webSocket.send(objectMapper.writeValueAsString(loadOther));
+                                } else if (UserData.isLocalChat == 0) {
+                                    if (!UserData.chatAvatar.isEmpty())
+                                        Glide.with(ChatActivity.this).load("https://bomes.ru/" + UserData.chatAvatar).into(inChatAvatar);
+                                    else
+                                        Glide.with(ChatActivity.this).load("https://bomes.ru/media/icon.png").into(inChatAvatar);
+                                    username.setText(UserData.chatName);
+                                    lastOnline = 0;
+                                    onlineText.setText("");
+                                }
+                                loadMessages();
+                            }
+                            catch (JsonProcessingException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+            }
+        });
+    }
+    private void init(){
+        backBtn = findViewById(R.id.backBtn);
+        inChatAvatar = findViewById(R.id.inChatAvatar);
+        username = findViewById(R.id.username);
+        onlineText = findViewById(R.id.onlineText);
+        typingMsg = findViewById(R.id.typingMsg);
+        stickersHolder = findViewById(R.id.stickersHolder);
+        openStickersBtn = findViewById(R.id.openStickersBtn);
+        recordAudio = findViewById(R.id.recordAudio);
+        sendMediaBtn = findViewById(R.id.sendMediaBtn);
+        chatLayout = findViewById(R.id.chatLayout);
+        replyHolder = findViewById(R.id.replyHolder);
+        closeReplyHolder = findViewById(R.id.closeReplyHolder);
+        messagesRecycler = findViewById(R.id.messagesRecycler);
+        recordingAudioImage = findViewById(R.id.recordingAudioImage);
+        recordTimeText = findViewById(R.id.recordTimeText);
+        adapter = new MessagesAdapter(this, messages, this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        messagesRecycler.setLayoutManager(layoutManager);
+        messagesRecycler.setAdapter(adapter);
+
+        messagesRecycler.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int id = layoutManager.findFirstVisibleItemPosition();
+                if (id < 5){
+                    if (!loadingMessagesNow) {
+                        loadMessages();
+                    }
+                }
+            }
+        });
+
+        stickersRecycler = findViewById(R.id.stickersRecycler);
+        stickersAdapter = new StickersAdapter(this, stickers, this);
+        stickersRecycler.setLayoutManager(new GridLayoutManager(this, 3));
+        stickersRecycler.setAdapter(stickersAdapter);
+
+        messageText = findViewById(R.id.messageText);
+        sendBtn = findViewById(R.id.sendBtn);
+
+        objectMapper.coercionConfigFor(LogicalType.POJO)
+                .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
+
+        messageText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!messageText.getText().toString().isEmpty()){
+                    recordAudio.setVisibility(View.GONE);
+                    sendBtn.setVisibility(View.VISIBLE);
+                }
+                else{
+                    recordAudio.setVisibility(View.VISIBLE);
+                    sendBtn.setVisibility(View.GONE);
+                }
+                try {
+                    UniversalJSONObject obj = new UniversalJSONObject();
+                    obj.chat = UserData.table_name;
+                    obj.username = UserData.username;
+                    obj.identifier = UserData.identifier;
+                    obj.typingType = "text";
+                    obj.event = "Typing";
+                    webSocket.send(objectMapper.writeValueAsString(obj));
+                }
+                catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeChat();
+            }
+        });
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!messageText.getText().toString().isEmpty()){
+                    sendMessage(messageText.getText().toString().trim());
+                    messageText.setText("");
+                }
+                else{
+                    Toast.makeText(ChatActivity.this, "Введите текст сообщения!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        openStickersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (stickersHolder.getVisibility() == View.GONE)
+                    openStickers();
+                else
+                    closeStickers();
+            }
+        });
+        closeReplyHolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endReplying();
+            }
+        });
+        sendMediaBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mediaPickerIntent = new Intent(Intent.ACTION_PICK);
+
+                mediaPickerIntent.setType("image/*, video/*");
+
+                startActivityForResult(mediaPickerIntent, GALLERY_REQUEST);
+
+            }
+        });
+        recordAudio.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(!recording){
+                    try {
+                        File file = new File(dirAudio, audioFileName);
+                        mediaRecorder = new MediaRecorder();
+                        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                        mediaRecorder.setAudioEncodingBitRate(48000);
+                        mediaRecorder.setAudioSamplingRate(44100);
+                        mediaRecorder.setOutputFile(file.getPath());
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                        recording = true;
+                        Toast.makeText(getApplicationContext(), "Запись началась!", Toast.LENGTH_SHORT).show();
+                        Glide.with(ChatActivity.this).load(R.drawable.white_mic_active).into(recordingAudioImage);
+                        messageText.setVisibility(View.INVISIBLE);
+                        recordTime = 0;
+                        recordTimeText.setVisibility(View.VISIBLE);
+
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (recording) {
+                                    recordTime++;
+                                    int mins = recordTime / 60;
+                                    int secs = recordTime % 60;
+                                    String strMins = String.valueOf(mins);
+                                    if (strMins.length() < 2)
+                                        strMins = "0" + strMins;
+                                    String strSecs = String.valueOf(secs);
+                                    if (strSecs.length() < 2)
+                                        strSecs = "0" + strSecs;
+                                    recordTimeText.setText(strMins + ":" + strSecs);
+                                    handler.postDelayed(this, 1000);
+                                }
+                            }
+                        }, 1000);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println(e);
+                        Toast.makeText(getApplicationContext(), "Ошибка!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    if (mediaRecorder != null) {
+                        mediaRecorder.stop();
+                        mediaRecorder.release();
+                        uploadFile(new File(dirAudio, audioFileName));
+                        recording = false;
+                        recordTimeText.setVisibility(View.GONE);
+                        messageText.setVisibility(View.VISIBLE);
+                        Glide.with(ChatActivity.this).load(R.drawable.white_mic).into(recordingAudioImage);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+
+            uploadFile(uri);
+        }
+    }
+    private void uploadFile(Uri fileUri) {
+
+        FileUploadService service = ServiceGenerator.createService(FileUploadService.class);
+
+        File file = FileUtils.getFile(this, fileUri);
+        String type = getContentResolver().getType(fileUri);
+        RequestBody requestFile;
+        if (type != null)
+            requestFile =
+                RequestBody.create(
+                        MediaType.parse(type),
+                        file
+                );
+        else
+            requestFile =
+                    RequestBody.create(
+                            MediaType.parse("audio/ogg"),
+                            file
+                    );
+
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+        String descriptionString = "file";
+        RequestBody description = RequestBody.create(okhttp3.MultipartBody.FORM, descriptionString);
+
+        Call<ResponseBody> call = service.upload(description, body);
+        call.enqueue(new Callback<ResponseBody>() {
+
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        String reply = response.body().string();
+                        UniversalJSONObject obj = objectMapper.readValue(reply, UniversalJSONObject.class);
+                        String[] typeData = obj.filePath.split("\\.");
+                        String type = typeData[typeData.length-1];
+                        if (type.equals("jpg") || type.equals("png") || type.equals("jpeg") || type.equals("gif"))
+                            sendMedia(obj.filePath, "image");
+                        else if (type.equals("mp4") || type.equals("avi"))
+                            sendMedia(obj.filePath, "video");
+                        else if (type.equals("mp3") || type.equals("wav"))
+                            sendMedia(obj.filePath, "audio");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("Upload error:", t.getMessage());
+            }
+        });
+    }
+    private void uploadFile(File file) {
+
+        FileUploadService service = ServiceGenerator.createService(FileUploadService.class);
+
+        Uri fileUri = Uri.fromFile(file);
+        String type = getContentResolver().getType(fileUri);
+        RequestBody requestFile;
+        if (type == null)
+            type = URLConnection.guessContentTypeFromName(file.getName());
+        Log.e("Type", type);
+        requestFile =
+                RequestBody.create(
+                        MediaType.parse(type),
+                        file
+                );
+
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+        String descriptionString = "file";
+        RequestBody description = RequestBody.create(okhttp3.MultipartBody.FORM, descriptionString);
+
+        Call<ResponseBody> call = service.upload(description, body);
+        call.enqueue(new Callback<ResponseBody>() {
+
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        String reply = response.body().string();
+                        UniversalJSONObject obj = objectMapper.readValue(reply, UniversalJSONObject.class);
+                        String[] typeData = obj.filePath.split("\\.");
+                        String type = typeData[typeData.length-1];
+                        if (type.equals("jpg") || type.equals("png") || type.equals("jpeg") || type.equals("gif"))
+                            sendMedia(obj.filePath, "image");
+                        else if (type.equals("mp4") || type.equals("avi"))
+                            sendMedia(obj.filePath, "video");
+                        else if (type.equals("mp3") || type.equals("wav") || type.equals("ogg"))
+                            sendMedia(obj.filePath, "audio");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("Upload error:", t.getMessage());
+            }
+        });
+    }
+    private void sendMessage(String messageText) {
+        try {
+            if (editingMessage == null) {
+                UniversalJSONObject msg = new UniversalJSONObject();
+                msg.sender = UserData.identifier;
+                msg.dataType = "text";
+                msg.value = messageText;
+                if (replyingMessage == null)
+                    msg.reply = "";
+                else {
+                    UniversalJSONObject replyMsg = new UniversalJSONObject();
+                    replyMsg.sender = replyingMessage.sender;
+                    replyMsg.value = replyingMessage.value;
+                    replyMsg.dataType = replyingMessage.dataType;
+                    replyMsg.chat = UserData.table_name;
+                    replyMsg.username = replyingMessage.username;
+                    replyMsg.isRead = replyingMessage.isRead;
+                    msg.reply = objectMapper.writeValueAsString(replyMsg);
+                }
+                msg.chat = UserData.table_name;
+                msg.username = UserData.username;
+                msg.isRead = 0;
+                msg.event = "message";
+
+                webSocket.send(objectMapper.writeValueAsString(msg));
+                endReplying();
+            }
+            else{
+                endEditing();
+            }
+        }
+        catch (JsonProcessingException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void sendMedia(String url, String type){
+        try {
+            if (editingMessage == null) {
+                UniversalJSONObject msg = new UniversalJSONObject();
+                msg.sender = UserData.identifier;
+                msg.dataType = type;
+                msg.value = url;
+                if (replyingMessage == null)
+                    msg.reply = "";
+                else {
+                    UniversalJSONObject replyMsg = new UniversalJSONObject();
+                    replyMsg.sender = replyingMessage.sender;
+                    replyMsg.value = replyingMessage.value;
+                    replyMsg.dataType = replyingMessage.dataType;
+                    replyMsg.chat = UserData.table_name;
+                    replyMsg.username = replyingMessage.username;
+                    replyMsg.isRead = replyingMessage.isRead;
+                    msg.reply = objectMapper.writeValueAsString(replyMsg);
+                }
+                msg.chat = UserData.table_name;
+                msg.username = UserData.username;
+                msg.isRead = 0;
+                msg.event = "message";
+
+                webSocket.send(objectMapper.writeValueAsString(msg));
+                endReplying();
+            }
+            else{
+                endEditing();
+            }
+        }
+        catch (JsonProcessingException e){
+            throw new RuntimeException(e);
+        }
+    }
+    private void loadMessages(){
+        try {
+            loadingMessagesNow = true;
+            UniversalJSONObject obj = new UniversalJSONObject();
+            obj.table_name = UserData.table_name;
+            obj.identifier = UserData.identifier;
+            obj.loadedMessages = loadedMessages;
+            obj.event = "GetChatMessages";
+            webSocket.send(objectMapper.writeValueAsString(obj));
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void setLastOnlineText(){
+        Date onlineDateAsDate = new Date(lastOnline * 1000);
+        Date nowDateAsDate = new Date(System.currentTimeMillis());
+        String onlineDate = new SimpleDateFormat("dd.MM.YYYY").format(onlineDateAsDate);
+        String nowDate = new SimpleDateFormat("dd.MM.YYYY").format(nowDateAsDate);
+        String time = new SimpleDateFormat("HH:mm").format(onlineDateAsDate);
+
+        if (onlineDate.equals(nowDate)){
+            onlineText.setText("Был(а) в сети: " + time);
+        }
+        else if (onlineDateAsDate.getYear() == nowDateAsDate.getYear() && onlineDateAsDate.getMonth() == nowDateAsDate.getMonth()
+                && onlineDateAsDate.getDay() == nowDateAsDate.getDay() - 1){
+            onlineText.setText("Был(а) в сети: вчера в " + time);
+        }
+        else{
+            onlineText.setText("Был(а) в сети: " + new SimpleDateFormat("dd.MM.YYYY").format(onlineDateAsDate) + " в " + time);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            closeChat();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    private void openStickers(){
+        stickersHolder.setVisibility(View.VISIBLE);
+    }
+    public void closeStickers(){
+        stickersHolder.setVisibility(View.GONE);
+    }
+    public void sendSticker(String v){
+        try {
+            UniversalJSONObject msg = new UniversalJSONObject();
+            msg.sender = UserData.identifier;
+            msg.dataType = "sticker";
+            msg.value = v;
+            if (replyingMessage == null)
+                msg.reply = "";
+            else {
+                UniversalJSONObject replyMsg = new UniversalJSONObject();
+                replyMsg.sender = replyingMessage.sender;
+                replyMsg.value = replyingMessage.value;
+                replyMsg.dataType = replyingMessage.dataType;
+                replyMsg.chat = UserData.table_name;
+                replyMsg.username = replyingMessage.username;
+                replyMsg.isRead = replyingMessage.isRead;
+                msg.reply = objectMapper.writeValueAsString(replyMsg);
+            }
+            msg.chat = UserData.table_name;
+            msg.username = UserData.username;
+            msg.isRead = 0;
+            msg.event = "message";
+
+            webSocket.send(objectMapper.writeValueAsString(msg));
+            endReplying();
+        }
+        catch (JsonProcessingException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int getUserIndex(String identifier){
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).identifier.equals(identifier)){
+                return i;
+            }
+        }
+        return -1;
+    }
+    private int getMessageIndex(long id){
+        if (adapter.messages.get(0).id <= id) {
+            int left = 0;
+            int right = adapter.messages.size();
+            int lastIndex = 0;
+            boolean end = false;
+            while (!end) {
+                int middle = (right + left) / 2;
+                if (middle == lastIndex)
+                    end = true;
+                if (adapter.messages.get(middle).id > id)
+                    right = middle;
+                else if (adapter.messages.get(middle).id < id)
+                    left = middle;
+                else
+                    return middle;
+                lastIndex = middle;
+            }
+            return lastIndex;
+        }
+        else{
+            return -1;
+        }
+    }
+    public void startReplying(Message message){
+        replyingMessage = message;
+        replyHolder.setVisibility(View.VISIBLE);
+        String replyText = message.username + ": ";
+        if (message.dataType.equals("text")){
+            replyText += message.value;
+        }
+        else{
+            replyText += "Вложение";
+        }
+        ((TextView) findViewById(R.id.replyTextHolder)).setText(replyText);
+    }
+    public void endReplying(){
+        replyingMessage = null;
+        replyHolder.setVisibility(View.GONE);
+    }
+    public void startEditing(Message message){
+        editingMessage = message;
+        messageText.setText(message.value);
+    }
+    public void endEditing(){
+        UniversalJSONObject msg = new UniversalJSONObject();
+        msg.value = messageText.getText().toString();
+        msg.id = editingMessage.id;
+        msg.chat = UserData.table_name;
+        msg.event = "EditMessage";
+        try {
+            webSocket.send(objectMapper.writeValueAsString(msg));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        editingMessage = null;
+        messageText.setText("");
+    }
+    public void deleteMessage(Message message){
+        long id = message.id;
+        UniversalJSONObject msg = new UniversalJSONObject();
+        msg.id = id;
+        msg.chat = UserData.table_name;
+        msg.event = "DeleteMessage";
+        try {
+            webSocket.send(objectMapper.writeValueAsString(msg));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void closeChat(){
+        UserData.table_name = null;
+        UserData.chatId = null;
+        UserData.isLocalChat = 0;
+        finish();
+        webSocket.close(1000, null);
+    }
+    private boolean isMicrophonePresent(){
+        if(this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    private void getMicrophonePermission(){
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED){
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
+        }
+    }
+}
