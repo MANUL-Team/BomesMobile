@@ -1,6 +1,8 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.SimpleObjects;
 
 import android.view.View;
+
+import com.MANUL.Bomes.Adapters.MessageViewHolder;
 
 public class Message {
     public String username;

@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -12,6 +12,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,19 +30,32 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.MANUL.Bomes.Adapters.MessagesAdapter;
+import com.MANUL.Bomes.Adapters.StickersAdapter;
 import com.MANUL.Bomes.ExplosionField.ExplosionField;
+import com.MANUL.Bomes.ImportantClasses.FileUploadService;
+import com.MANUL.Bomes.ImportantClasses.ServiceGenerator;
+import com.MANUL.Bomes.R;
+import com.MANUL.Bomes.SimpleObjects.Message;
+import com.MANUL.Bomes.SimpleObjects.Sticker;
+import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.SimpleObjects.UserData;
+import com.MANUL.Bomes.Utils.FileUtils;
+import com.MANUL.Bomes.Utils.PermissionUtils;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.type.LogicalType;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import okhttp3.MediaType;
@@ -56,14 +71,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class ChatActivity extends AppCompatActivity {
-
     ObjectMapper objectMapper = new ObjectMapper();
     WebSocket webSocket;
     private final int GALLERY_REQUEST = 100;
     private static final int MICROPHONE_PERMISSION_CODE = 200;
+    private static final int PERMISSION_STORAGE = 101;
 
     ExplosionField explosionField;
     MediaRecorder mediaRecorder;
+
+
 
     CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio;
     ImageView inChatAvatar, recordingAudioImage;
@@ -77,6 +94,7 @@ public class ChatActivity extends AppCompatActivity {
     long loadedMessages = 0;
 
     boolean loadingMessagesNow = false;
+    Animation alpha_in, alpha_out;
     boolean typing = false;
     boolean recording = false;
     int recordTime = 0;
@@ -102,10 +120,6 @@ public class ChatActivity extends AppCompatActivity {
         File boMesDirectoryAudio = new File(dirAudio);
         boMesDirectoryAudio.mkdirs();
         audioFileName = "record.mp3";
-
-        if(isMicrophonePresent()){
-            getMicrophonePermission();
-        }
 
         init();
         connectToServer();
@@ -182,6 +196,7 @@ public class ChatActivity extends AppCompatActivity {
                             }
                             else if (obj.event.equals("message")){
                                 messages.add(new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender));
+                                loadedMessages++;
                                 if (!obj.sender.equals(UserData.identifier) && obj.isRead == 0){
                                     UniversalJSONObject readMsg = new UniversalJSONObject();
                                     readMsg.chat = UserData.table_name;
@@ -190,7 +205,8 @@ public class ChatActivity extends AppCompatActivity {
                                     webSocket.send(objectMapper.writeValueAsString(readMsg));
                                 }
                                 messagesRecycler.scrollToPosition(messages.size()-1);
-                                adapter.notifyItemInserted(messages.size()-1);
+                                adapter.notifyItemInserted(messages.size());
+                                //adapter.notifyDataSetChanged();
                             }
                             else if (obj.event.equals("MessageIsRead")){
                                 long id = obj.id;
@@ -240,9 +256,7 @@ public class ChatActivity extends AppCompatActivity {
                             }
                             else if (obj.event.equals("ReturnChatUsers")){
                                 users.clear();
-                                for (UniversalJSONObject u:obj.members) {
-                                    users.add(u);
-                                }
+                                users.addAll(Arrays.asList(obj.members));
                             }
                             else if (obj.event.equals("EditMessageForUsers")){
                                 int index = getMessageIndex(obj.messageId);
@@ -258,7 +272,7 @@ public class ChatActivity extends AppCompatActivity {
                                 long id = obj.messageId;
                                 int index = getMessageIndex(id);
                                 if (index != -1){
-                                    Message msg = adapter.messages.get(index);
+                                    Message msg = messages.get(index);
                                     View explode = msg.holder;
                                     if (explode != null && msg.viewHolder.message.equals(msg))
                                         explosionField.explode(explode);
@@ -337,6 +351,8 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
     private void init(){
+        alpha_in = AnimationUtils.loadAnimation(this, R.anim.alpha_in);
+        alpha_out = AnimationUtils.loadAnimation(this, R.anim.alpha_out);
         backBtn = findViewById(R.id.backBtn);
         inChatAvatar = findViewById(R.id.inChatAvatar);
         username = findViewById(R.id.username);
@@ -452,6 +468,8 @@ public class ChatActivity extends AppCompatActivity {
         sendMediaBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getStoragePermission();
+
                 Intent mediaPickerIntent = new Intent(Intent.ACTION_PICK);
 
                 mediaPickerIntent.setType("image/*, video/*");
@@ -463,6 +481,7 @@ public class ChatActivity extends AppCompatActivity {
         recordAudio.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                getMicrophonePermission();
                 if(!recording){
                     try {
                         File file = new File(dirAudio, audioFileName);
@@ -471,16 +490,18 @@ public class ChatActivity extends AppCompatActivity {
                         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
                         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                         mediaRecorder.setAudioEncodingBitRate(48000);
-                        mediaRecorder.setAudioSamplingRate(44100);
+                        mediaRecorder.setAudioSamplingRate(41200);
                         mediaRecorder.setOutputFile(file.getPath());
                         mediaRecorder.prepare();
                         mediaRecorder.start();
                         recording = true;
                         Toast.makeText(getApplicationContext(), "Запись началась!", Toast.LENGTH_SHORT).show();
-                        Glide.with(ChatActivity.this).load(R.drawable.white_mic_active).into(recordingAudioImage);
+                        Picasso.with(ChatActivity.this).load(R.drawable.white_mic_active).into(recordingAudioImage);
+                        messageText.startAnimation(alpha_out);
                         messageText.setVisibility(View.INVISIBLE);
                         recordTime = 0;
                         recordTimeText.setVisibility(View.VISIBLE);
+                        recordTimeText.startAnimation(alpha_in);
 
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -496,14 +517,26 @@ public class ChatActivity extends AppCompatActivity {
                                     if (strSecs.length() < 2)
                                         strSecs = "0" + strSecs;
                                     recordTimeText.setText(strMins + ":" + strSecs);
+
+                                    UniversalJSONObject obj = new UniversalJSONObject();
+                                    obj.chat = UserData.table_name;
+                                    obj.username = UserData.username;
+                                    obj.identifier = UserData.identifier;
+                                    obj.typingType = "audio";
+                                    obj.event = "Typing";
+                                    try {
+                                        webSocket.send(objectMapper.writeValueAsString(obj));
+                                    } catch (JsonProcessingException e) {
+                                        throw new RuntimeException(e);
+                                    }
+
                                     handler.postDelayed(this, 1000);
                                 }
                             }
                         }, 1000);
 
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
-                        System.out.println(e);
                         Toast.makeText(getApplicationContext(), "Ошибка!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -513,9 +546,11 @@ public class ChatActivity extends AppCompatActivity {
                         mediaRecorder.release();
                         uploadFile(new File(dirAudio, audioFileName));
                         recording = false;
+                        recordTimeText.startAnimation(alpha_out);
                         recordTimeText.setVisibility(View.GONE);
                         messageText.setVisibility(View.VISIBLE);
-                        Glide.with(ChatActivity.this).load(R.drawable.white_mic).into(recordingAudioImage);
+                        messageText.startAnimation(alpha_in);
+                        Picasso.with(ChatActivity.this).load(R.drawable.white_mic).into(recordingAudioImage);
                     }
                 }
             }
@@ -749,8 +784,10 @@ public class ChatActivity extends AppCompatActivity {
     }
     private void openStickers(){
         stickersHolder.setVisibility(View.VISIBLE);
+        stickersHolder.startAnimation(alpha_in);
     }
     public void closeStickers(){
+        stickersHolder.startAnimation(alpha_out);
         stickersHolder.setVisibility(View.GONE);
     }
     public void sendSticker(String v){
@@ -793,18 +830,18 @@ public class ChatActivity extends AppCompatActivity {
         return -1;
     }
     private int getMessageIndex(long id){
-        if (adapter.messages.get(0).id <= id) {
+        if (messages.get(0).id <= id) {
             int left = 0;
-            int right = adapter.messages.size();
+            int right = messages.size();
             int lastIndex = 0;
             boolean end = false;
             while (!end) {
                 int middle = (right + left) / 2;
                 if (middle == lastIndex)
                     end = true;
-                if (adapter.messages.get(middle).id > id)
+                if (messages.get(middle).id > id)
                     right = middle;
-                else if (adapter.messages.get(middle).id < id)
+                else if (messages.get(middle).id < id)
                     left = middle;
                 else
                     return middle;
@@ -879,9 +916,15 @@ public class ChatActivity extends AppCompatActivity {
             return false;
         }
     }
+    private void getStoragePermission(){
+        if (PermissionUtils.hasPermissions(this)) return;
+        PermissionUtils.requestPermissions(this, PERMISSION_STORAGE);
+    }
     private void getMicrophonePermission(){
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED){
-            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
+        if(isMicrophonePresent()) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
+            }
         }
     }
 }

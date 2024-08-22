@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.SimpleObjects;
 
 public class Chat {
     public String chatName;

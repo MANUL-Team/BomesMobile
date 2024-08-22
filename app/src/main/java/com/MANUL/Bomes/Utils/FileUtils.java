@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.Utils;
 
 import android.content.ContentUris;
 import android.content.Context;

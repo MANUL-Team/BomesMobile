@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.SimpleObjects;
 
 public class UniversalJSONObject {
     public String event;
@@ -26,6 +26,7 @@ public class UniversalJSONObject {
     public boolean isOnline;
     public long loadedMessages;
     public UniversalJSONObject[] messages;
+    public UniversalJSONObject[] users;
     public String value;
     public String reply;
     public String reaction;
@@ -44,6 +45,15 @@ public class UniversalJSONObject {
     public long messageId;
     public String fileName;
     public String filePath;
+    public int friendsCount;
+    public String table;
+    public String column;
+    public String where;
+    public String variable;
+    public String name;
+    public String[] usersToAdd;
+    public int code;
+    public String userIndentifier;
 
 
 

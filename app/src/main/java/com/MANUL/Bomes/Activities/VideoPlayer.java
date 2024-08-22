@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.Activities;
 
 import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
@@ -9,6 +9,8 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.MANUL.Bomes.R;
 
 public class VideoPlayer extends AppCompatActivity {
     public static String Video_URL;

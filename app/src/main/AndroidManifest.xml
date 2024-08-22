@@ -5,7 +5,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -21,12 +25,21 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".VideoPlayer"
+            android:name=".Activities.CodeConfirmActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.RegistrationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.UserPageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.VideoPlayer"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
 
         <service
-            android:name=".NotificationService"
+            android:name=".ImportantClasses.NotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -34,19 +47,19 @@
         </service>
 
         <activity
-            android:name=".ChatActivity"
+            android:name=".Activities.ChatActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".ChatsActivity"
+            android:name=".Activities.ChatsActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".UserInfoActivity"
+            android:name=".Activities.UserInfoActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true">
             <intent-filter>

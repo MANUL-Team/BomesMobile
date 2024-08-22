@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.Adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -10,18 +10,24 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.MANUL.Bomes.Activities.ChatActivity;
+import com.MANUL.Bomes.Activities.VideoPlayer;
+import com.MANUL.Bomes.SimpleObjects.Message;
+import com.MANUL.Bomes.R;
+import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -33,16 +39,20 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     ArrayList<Message> messages;
     ObjectMapper objectMapper = new ObjectMapper();
     ChatActivity activity;
+    Animation alpha_in, alpha_out;
     public MessagesAdapter(Context context, ArrayList<Message> messages, ChatActivity activity){
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.messages = messages;
         this.activity = activity;
+        alpha_in = AnimationUtils.loadAnimation(context, R.anim.alpha_in);
+        alpha_out = AnimationUtils.loadAnimation(context, R.anim.alpha_out);
     }
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.message_item, parent, false);
+        view.startAnimation(alpha_in);
         return new MessageViewHolder(view);
     }
 
@@ -127,7 +137,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                     public void onClick(View v) {
                         if (!mediaPlayer.isPlaying()){
                             mediaPlayer.start();
-                            Glide.with(context).load(R.drawable.white_stop_audio).into(holder.audio_display_controls);
+                            Picasso.with(context).load(R.drawable.white_stop_audio).into(holder.audio_display_controls);
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -140,14 +150,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         }
                         else{
                             mediaPlayer.pause();
-                            Glide.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
+                            Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
                         }
                     }
                 });
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        Glide.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
+                        Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
                     }
                 });
 
@@ -244,31 +254,5 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
             secsStr = "0" + secsStr;
         String currentTimeStr = minsStr + ":" + secsStr;
         return currentTimeStr + "/" + durationStr;
-    }
-}
-class MessageViewHolder extends RecyclerView.ViewHolder {
-    TextView usernameMsg, textValueMsg, timeMsg, replyText, audioTimeText;
-    ConstraintLayout messageLayout;
-    ImageView imageMsg, stickerMsg, isReadMsg, audio_display_controls;
-    CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard;
-    Message message;
-    public MessageViewHolder(@NonNull View itemView) {
-        super(itemView);
-        usernameMsg = itemView.findViewById(R.id.usernameMsg);
-        textValueMsg = itemView.findViewById(R.id.textValueMsg);
-        timeMsg = itemView.findViewById(R.id.timeMsg);
-        messageLayout = itemView.findViewById(R.id.messageLayout);
-        imageMsg = itemView.findViewById(R.id.imageMsg);
-        stickerMsg = itemView.findViewById(R.id.stickerMsg);
-        isReadMsg = itemView.findViewById(R.id.isReadMsg);
-        messageCard = itemView.findViewById(R.id.messageCard);
-        replyCard = itemView.findViewById(R.id.replyCard);
-        replyText = itemView.findViewById(R.id.replyText);
-        imageCard = itemView.findViewById(R.id.imageCard);
-        videoCard = itemView.findViewById(R.id.videoCard);
-        audioPlayerCard = itemView.findViewById(R.id.audioPlayerCard);
-        playAudioCard = itemView.findViewById(R.id.playAudioCard);
-        audioTimeText = itemView.findViewById(R.id.audioTimeText);
-        audio_display_controls = itemView.findViewById(R.id.audio_display_controls);
     }
 }

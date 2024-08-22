@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import com.MANUL.Bomes.R;
+import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs;
     EditText emailField, passwordField;
     CardView loginBtn;
+    TextView registerBtnLogin;
     String identifier;
 
     @Override
@@ -54,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
         loginBtn = findViewById(R.id.loginBtn);
+        registerBtnLogin = findViewById(R.id.registerBtnLogin);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +90,16 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+            }
+        });
+        registerBtnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                finish();
+                webSocket.close(1000, null);
             }
         });
     }
@@ -120,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 Intent intent = new Intent(MainActivity.this, ChatsActivity.class);
                                 startActivity(intent);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                 finish();
                                 webSocket.close(1000, null);
                             }
@@ -137,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     Intent intent = new Intent(MainActivity.this, ChatsActivity.class);
                                     startActivity(intent);
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                     finish();
                                     webSocket.close(1000, null);
                                 }

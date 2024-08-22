@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.ImportantClasses;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.MANUL.Bomes.Activities.ChatActivity;
+import com.MANUL.Bomes.R;
+import com.MANUL.Bomes.SimpleObjects.Sticker;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;

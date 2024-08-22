@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
-    tools:context=".ChatActivity">
+    tools:context=".Activities.ChatActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/header"
@@ -108,6 +108,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/anonymous_pro"
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:text="Печатает..."
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"

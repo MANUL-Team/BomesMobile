@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,6 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.MANUL.Bomes.SimpleObjects.Chat;
+import com.MANUL.Bomes.Activities.ChatsActivity;
+import com.MANUL.Bomes.R;
+import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
@@ -98,7 +102,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatViewHolder> {
             return "Был(а) в сети: " + time;
         }
         else if (onlineDateAsDate.getYear() == nowDateAsDate.getYear() && onlineDateAsDate.getMonth() == nowDateAsDate.getMonth()
-                && onlineDateAsDate.getDay() == nowDateAsDate.getDay() - 1){
+                && onlineDateAsDate.getDate() == nowDateAsDate.getDate() - 1){
             return "Был(а) в сети: вчера в " + time;
         }
         else{

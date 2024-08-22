@@ -1,40 +1,29 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.Fragments;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
+import com.MANUL.Bomes.SimpleObjects.Chat;
+import com.MANUL.Bomes.Activities.ChatsActivity;
+import com.MANUL.Bomes.Adapters.ChatsAdapter;
+import com.MANUL.Bomes.R;
+import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
-import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,36 +35,44 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-public class ChatsActivity extends AppCompatActivity {
+public class ChatsFragment extends Fragment {
+
     ObjectMapper objectMapper = new ObjectMapper();
     WebSocket webSocket;
+    ChatsActivity activity;
 
-    Toolbar mainToolbar;
-    AccountHeader header;
-    Drawer drawer;
 
     RecyclerView chatsRecycler;
     ChatsAdapter adapter;
     ArrayList<Chat> chats = new ArrayList<>();
 
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    // FCM SDK (and your app) can post notifications.
-                } else {
-                    // TODO: Inform user that that your app will not show notifications.
-                }
-            });
+    public ChatsFragment(ChatsActivity activity){
+        this.activity = activity;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chats);
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.blue));
+    }
 
-        askNotificationPermission();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_chats, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        init(view);
         connectToServer();
-        init();
+    }
+
+    public void init(View view){
+        chatsRecycler = view.findViewById(R.id.chatsRecycler);
+        adapter = new ChatsAdapter(activity, chats, activity);
+        chatsRecycler.setLayoutManager(new LinearLayoutManager(activity));
+        chatsRecycler.setAdapter(adapter);
     }
     private void connectToServer(){
         OkHttpClient client = new OkHttpClient.Builder().build();
@@ -90,7 +87,7 @@ public class ChatsActivity extends AppCompatActivity {
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text) {
                 super.onMessage(ws, text);
-                runOnUiThread(new Runnable() {
+                activity.runOnUiThread(new Runnable() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void run() {
@@ -174,71 +171,13 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
     }
-    private void init(){
-        chatsRecycler = findViewById(R.id.chatsRecycler);
-        adapter = new ChatsAdapter(this, chats, this);
-        chatsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        chatsRecycler.setAdapter(adapter);
-
-        mainToolbar = findViewById(R.id.mainToolbar);
-
-        setSupportActionBar(mainToolbar);
-
-        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
-            @Override
-            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                Glide.with(ChatsActivity.this).load(uri).placeholder(placeholder).into(imageView);
-            }
-        });
-
-        setHeader();
-        setDrawer();
-    }
-    private void setDrawer(){
-        drawer = new DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(mainToolbar)
-                .withAccountHeader(header)
-                .addDrawerItems(
-                        new PrimaryDrawerItem()
-                                .withIconTintingEnabled(true)
-                                .withName("Чаты")
-                                .withSelectable(true)
-                                .withIcon(R.drawable.chats),
-                        new PrimaryDrawerItem()
-                                .withIconTintingEnabled(true)
-                                .withName("Все пользователи")
-                                .withSelectable(true)
-                                .withIcon(R.drawable.people),
-                        new PrimaryDrawerItem()
-                                .withIconTintingEnabled(true)
-                                .withName("Создать чат")
-                                .withSelectable(true)
-                                .withIcon(R.drawable.new_chat),
-                        new PrimaryDrawerItem()
-                                .withIconTintingEnabled(true)
-                                .withName("Настройки")
-                                .withSelectable(true)
-                                .withIcon(R.drawable.human)
-                )
-                .build();
-    }
-
-    private void setHeader(){
-        Log.e("Data", UserData.username + " " + UserData.email + " " + UserData.avatar);
-        ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem()
-                .withName(UserData.username)
-                .withEmail(UserData.email);
-        if (UserData.avatar.isEmpty())
-            profileDrawerItem.withIcon(R.drawable.icon);
-        else
-            profileDrawerItem.withIcon("https://bomes.ru/" + UserData.avatar);
-        header = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withHeaderBackground(R.drawable.gradient)
-                .addProfiles(
-                        profileDrawerItem
-                ).build();
+    private void reverseArray(UniversalJSONObject[] arr) {
+        UniversalJSONObject temp;
+        for (int i = 0; i < arr.length / 2; i++) {
+            temp = arr[i];
+            arr[i] = arr[arr.length - 1 - i];
+            arr[arr.length - 1 - i] = temp;
+        }
     }
     private void getUserChats(){
         try {
@@ -251,39 +190,9 @@ public class ChatsActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
     }
-    private void reverseArray(UniversalJSONObject[] arr) {
-        UniversalJSONObject temp;
-        for (int i = 0; i < arr.length / 2; i++) {
-            temp = arr[i];
-            arr[i] = arr[arr.length - 1 - i];
-            arr[arr.length - 1 - i] = temp;
-        }
-    }
     @Override
-    protected void onResume() {
+    public void onResume() {
         getUserChats();
         super.onResume();
     }
-    public void openChat(){
-        Intent intent = new Intent(ChatsActivity.this, ChatActivity.class);
-        startActivity(intent);
-    }
-    private void askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                    PackageManager.PERMISSION_GRANTED) {
-                // FCM SDK (and your app) can post notifications.
-            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // TODO: display an educational UI explaining to the user the features that will be enabled
-                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
-                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-                //       If the user selects "No thanks," allow the user to continue without notifications.
-            } else {
-                // Directly ask for the permission
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-            }
-        }
-    }
-
 }

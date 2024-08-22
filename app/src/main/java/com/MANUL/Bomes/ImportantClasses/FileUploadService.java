@@ -1,4 +1,4 @@
-package com.MANUL.Bomes;
+package com.MANUL.Bomes.ImportantClasses;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
