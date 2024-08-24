@@ -3,6 +3,7 @@ package com.MANUL.Bomes.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -133,6 +134,19 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
+            }
+            @Override
+            public void onClosed(@NonNull WebSocket ws, int code, @NonNull String reason) {
+                super.onClosed(webSocket, code, reason);
+                Handler handler = new Handler();
+                WebSocketListener listener = this;
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(RegistrationActivity.this, "Reconnection", Toast.LENGTH_SHORT).show();
+                        webSocket = client.newWebSocket(request, listener);
+                    }
+                }, 1000);
             }
         });
     }

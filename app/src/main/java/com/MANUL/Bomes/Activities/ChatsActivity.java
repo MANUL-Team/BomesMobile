@@ -60,6 +60,10 @@ public class ChatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chats);
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.blue));
 
+        if (UserData.avatar == null){
+            toSplash();
+        }
+
         prefs = getSharedPreferences("user", Context.MODE_PRIVATE);
 
         askNotificationPermission();
@@ -207,5 +211,11 @@ public class ChatsActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameMainMenu, fragment);
         fragmentTransaction.commit();
+    }
+    private void toSplash(){
+        Intent intent = new Intent(ChatsActivity.this, SplashScreen.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        finish();
     }
 }

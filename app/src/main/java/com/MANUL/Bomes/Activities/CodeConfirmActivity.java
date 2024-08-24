@@ -3,7 +3,7 @@ package com.MANUL.Bomes.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -71,7 +71,19 @@ public class CodeConfirmActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull WebSocket ws, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(ws, t, response);
-                Log.e("Fail", t.getMessage());
+                WebSocketListener listener = this;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                webSocket = client.newWebSocket(request, listener);
+                            }
+                        }, 1000);
+                    }
+                });
             }
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text) {

@@ -16,6 +16,7 @@ firebaseMessaging = "24.0.0"
 explosionfield = "1.0.1"
 androidImageCropper = "2.8.0"
 androidImageCropperVersion = "prefix infimum version for "
+legacySupportV4 = "1.0.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -39,6 +40,7 @@ google-services = { group = "com.google.gms", name = "google-services", version.
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 android-image-cropper = { group = "com.theartofdev.edmodo", name = "android-image-cropper", version.ref = "androidImageCropper" }
 edmodo-android-image-cropper = { group = "com.theartofdev.edmodo", name = "android-image-cropper", version.ref = "androidImageCropperVersion" }
+legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

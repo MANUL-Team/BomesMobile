@@ -6,15 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.MANUL.Bomes.R;
@@ -23,86 +20,43 @@ import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-public class MainActivity extends AppCompatActivity {
+@SuppressLint("CustomSplashScreen")
+public class SplashScreen extends AppCompatActivity {
+
     ObjectMapper objectMapper = new ObjectMapper();
     WebSocket webSocket;
     SharedPreferences prefs;
-    EditText emailField, passwordField;
-    CardView loginBtn;
-    TextView registerBtnLogin;
     String identifier;
+    Handler handler = new Handler();
 
+    Animation splash_in;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_splash_screen);
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.blue));
 
-        prefs = getSharedPreferences("user", Context.MODE_PRIVATE);
+        splash_in = AnimationUtils.loadAnimation(this, R.anim.splash_in);
 
+        findViewById(R.id.splash_icon).startAnimation(splash_in);
+
+        prefs = getSharedPreferences("user", Context.MODE_PRIVATE);
         identifier = prefs.getString("identifier", "none");
 
-        connectToServer();
-        init();
-
-    }
-    private void init(){
-        emailField = findViewById(R.id.emailField);
-        passwordField = findViewById(R.id.passwordField);
-        loginBtn = findViewById(R.id.loginBtn);
-        registerBtnLogin = findViewById(R.id.registerBtnLogin);
-
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                if (webSocket != null){
-                    UniversalJSONObject sendObj = new UniversalJSONObject();
-                    try {
-                        sendObj.event = "login";
-                        sendObj.email = emailField.getText().toString();
-
-                        String plaintext = passwordField.getText().toString();
-                        MessageDigest m = null;
-
-                        m = MessageDigest.getInstance("MD5");
-                        m.reset();
-                        m.update(plaintext.getBytes());
-                        byte[] digest = m.digest();
-                        BigInteger bigInt = new BigInteger(1,digest);
-                        String hashtext = bigInt.toString(16);
-                        sendObj.password = hashtext;
-
-                        String sendData = objectMapper.writeValueAsString(sendObj);
-
-                        webSocket.send(sendData);
-
-                    } catch (NoSuchAlgorithmException | JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
+            public void run() {
+                connectToServer();
             }
-        });
-        registerBtnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
-                webSocket.close(1000, null);
-            }
-        });
+        }, 500);
     }
     private void connectToServer(){
         OkHttpClient client = new OkHttpClient.Builder().build();
@@ -135,28 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-
-                            if (obj.event.equals("TruePassword")){
-                                Toast.makeText(MainActivity.this, "Верный пароль!", Toast.LENGTH_SHORT).show();
-                                UserData.email = obj.email;
-                                UserData.identifier = obj.identifier;
-                                UserData.password = obj.password;
-                                UserData.username = obj.username;
-                                UserData.avatar = obj.avatar;
-                                UserData.description = obj.description;
-
-                                prefs.edit().putString("identifier", obj.identifier).apply();
-
-                                Intent intent = new Intent(MainActivity.this, ChatsActivity.class);
-                                startActivity(intent);
-                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                finish();
-                                webSocket.close(1000, null);
-                            }
-                            else if (obj.event.equals("WrongPassword")){
-                                Toast.makeText(MainActivity.this, "Неверный пароль!", Toast.LENGTH_SHORT).show();
-                            }
-                            else if (obj.event.equals("ReturnUser")){
+                            if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.identifier = obj.user.identifier;
@@ -165,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
 
-                                    Intent intent = new Intent(MainActivity.this, ChatsActivity.class);
+                                    Intent intent = new Intent(SplashScreen.this, ChatsActivity.class);
                                     startActivity(intent);
                                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                     finish();
@@ -192,6 +125,12 @@ public class MainActivity extends AppCompatActivity {
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
+                }
+                else{
+                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    finish();
                 }
             }
         });

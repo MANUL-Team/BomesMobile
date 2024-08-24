@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.MANUL.Bomes.Activities.ChatActivity;
+import com.MANUL.Bomes.Activities.PhotoPlayer;
 import com.MANUL.Bomes.Activities.VideoPlayer;
 import com.MANUL.Bomes.SimpleObjects.Message;
 import com.MANUL.Bomes.R;
@@ -106,6 +107,15 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
             holder.imageCard.setVisibility(View.VISIBLE);
             holder.imageMsg.setVisibility(View.VISIBLE);
             Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.imageMsg);
+
+            holder.imageCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PhotoPlayer.PHOTO_URL = message.value;
+                    Intent intent = new Intent(context, PhotoPlayer.class);
+                    activity.startActivity(intent);
+                }
+            });
         }
         else if (message.dataType.equals("sticker")){
             holder.stickerMsg.setVisibility(View.VISIBLE);

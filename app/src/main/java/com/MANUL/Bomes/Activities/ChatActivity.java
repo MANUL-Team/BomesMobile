@@ -94,6 +94,7 @@ public class ChatActivity extends AppCompatActivity {
     long loadedMessages = 0;
 
     boolean loadingMessagesNow = false;
+    boolean isStop = false;
     Animation alpha_in, alpha_out;
     boolean typing = false;
     boolean recording = false;
@@ -104,6 +105,7 @@ public class ChatActivity extends AppCompatActivity {
 
     ArrayList<Message> messages = new ArrayList<>();
     ArrayList<Sticker> stickers = new ArrayList<>();
+    ArrayList<Message> waitingMessages = new ArrayList<>();
     ArrayList<UniversalJSONObject> users = new ArrayList<>();
     Message replyingMessage;
     Message editingMessage;
@@ -133,7 +135,19 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull WebSocket ws, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(ws, t, response);
-                Log.e("Fail", t.getMessage());
+                WebSocketListener listener = this;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                webSocket = client.newWebSocket(request, listener);
+                            }
+                        }, 1000);
+                    }
+                });
             }
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text)  {
@@ -145,7 +159,6 @@ public class ChatActivity extends AppCompatActivity {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
                             if (obj.event.equals("ReturnUser")){
-                                Log.e("Id", obj.user.identifier);
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.password = obj.user.password;
@@ -195,18 +208,21 @@ public class ChatActivity extends AppCompatActivity {
                                 loadingMessagesNow = false;
                             }
                             else if (obj.event.equals("message")){
-                                messages.add(new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender));
+                                Message message = new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender);
+                                messages.add(message);
                                 loadedMessages++;
-                                if (!obj.sender.equals(UserData.identifier) && obj.isRead == 0){
+                                if (!obj.sender.equals(UserData.identifier) && obj.isRead == 0 && !isStop){
                                     UniversalJSONObject readMsg = new UniversalJSONObject();
                                     readMsg.chat = UserData.table_name;
                                     readMsg.id = obj.id;
                                     readMsg.event = "ReadMessage";
                                     webSocket.send(objectMapper.writeValueAsString(readMsg));
                                 }
+                                else if (isStop){
+                                    waitingMessages.add(message);
+                                }
                                 messagesRecycler.scrollToPosition(messages.size()-1);
                                 adapter.notifyItemInserted(messages.size());
-                                //adapter.notifyDataSetChanged();
                             }
                             else if (obj.event.equals("MessageIsRead")){
                                 long id = obj.id;
@@ -905,8 +921,8 @@ public class ChatActivity extends AppCompatActivity {
         UserData.table_name = null;
         UserData.chatId = null;
         UserData.isLocalChat = 0;
-        finish();
         webSocket.close(1000, null);
+        finish();
     }
     private boolean isMicrophonePresent(){
         if(this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE)){
@@ -926,5 +942,31 @@ public class ChatActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        isStop = true;
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        isStop = false;
+        for (int i = 0; i < waitingMessages.size(); i++) {
+            Message message = waitingMessages.get(i);
+            if (!message.sender.equals(UserData.identifier) && message.isRead == 0 && !isStop){
+                UniversalJSONObject readMsg = new UniversalJSONObject();
+                readMsg.chat = UserData.table_name;
+                readMsg.id = message.id;
+                readMsg.event = "ReadMessage";
+                try {
+                    webSocket.send(objectMapper.writeValueAsString(readMsg));
+                } catch (JsonProcessingException e) {
+                    Log.e("Json", "Json");
+                }
+            }
+        }
+        super.onResume();
     }
 }

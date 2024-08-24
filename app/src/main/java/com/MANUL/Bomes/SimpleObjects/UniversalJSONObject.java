@@ -54,6 +54,7 @@ public class UniversalJSONObject {
     public String[] usersToAdd;
     public int code;
     public String userIndentifier;
+    public String whichFriend;
 
 
 

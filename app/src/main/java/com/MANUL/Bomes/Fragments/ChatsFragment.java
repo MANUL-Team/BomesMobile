@@ -1,7 +1,9 @@
 package com.MANUL.Bomes.Fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +15,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.MANUL.Bomes.SimpleObjects.Chat;
 import com.MANUL.Bomes.Activities.ChatsActivity;
+import com.MANUL.Bomes.Activities.SplashScreen;
 import com.MANUL.Bomes.Adapters.ChatsAdapter;
 import com.MANUL.Bomes.R;
+import com.MANUL.Bomes.SimpleObjects.Chat;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,6 +48,8 @@ public class ChatsFragment extends Fragment {
     RecyclerView chatsRecycler;
     ChatsAdapter adapter;
     ArrayList<Chat> chats = new ArrayList<>();
+
+    public ChatsFragment(){}
 
     public ChatsFragment(ChatsActivity activity){
         this.activity = activity;
@@ -82,7 +87,19 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onFailure(@NonNull WebSocket ws, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(ws, t, response);
-                Log.e("Fail", t.getMessage());
+                WebSocketListener listener = this;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                webSocket = client.newWebSocket(request, listener);
+                            }
+                        }, 1000);
+                    }
+                });
             }
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text) {
@@ -122,7 +139,8 @@ public class ChatsFragment extends Fragment {
                                 getUserChats();
                             }
                         } catch (JsonProcessingException e) {
-                            throw new RuntimeException(e);
+                            if (e.getMessage() != null)
+                                Log.e("JSON", e.getMessage());
                         }
                     }
                 });
@@ -166,7 +184,8 @@ public class ChatsFragment extends Fragment {
                             });
                 }
                 catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+                    if (e.getMessage() != null)
+                        Log.e("JSON", e.getMessage());
                 }
             }
         });
@@ -187,12 +206,21 @@ public class ChatsFragment extends Fragment {
             webSocket.send(objectMapper.writeValueAsString(loadChats));
         }
         catch (JsonProcessingException e){
-            throw new RuntimeException(e);
+            if (e.getMessage() != null)
+                Log.e("JSON", e.getMessage());
         }
     }
     @Override
     public void onResume() {
-        getUserChats();
+        if (UserData.identifier == null){
+            Intent intent = new Intent(activity, SplashScreen.class);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            activity.finish();
+        }
+        else {
+            getUserChats();
+        }
         super.onResume();
     }
 }

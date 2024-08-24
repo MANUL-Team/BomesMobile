@@ -7,6 +7,7 @@ public class User {
     public String identifier;
     public int friendsCount;
     public boolean isFriend;
+    public String whichFriend;
     public User(String username, String avatar, String identifier, int friendsCount){
         this.username = username;
         this.avatar = avatar;
@@ -14,5 +15,6 @@ public class User {
         this.friendsCount = friendsCount;
         this.description = "";
         this.isFriend = false;
+        this.whichFriend = "";
     }
 }

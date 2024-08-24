@@ -2,7 +2,7 @@ package com.MANUL.Bomes.Fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.MANUL.Bomes.Adapters.UsersAdapter;
 import com.MANUL.Bomes.Activities.ChatsActivity;
+import com.MANUL.Bomes.Adapters.UsersAdapter;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.User;
@@ -41,6 +41,8 @@ public class UsersFragment extends Fragment {
     RecyclerView users_recycler;
     UsersAdapter adapter;
     ArrayList<User> users = new ArrayList<>();
+
+    public UsersFragment(){}
 
     public UsersFragment(ChatsActivity activity){
         this.activity = activity;
@@ -77,7 +79,19 @@ public class UsersFragment extends Fragment {
             @Override
             public void onFailure(@NonNull WebSocket ws, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(ws, t, response);
-                Log.e("Fail", t.getMessage());
+                WebSocketListener listener = this;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                webSocket = client.newWebSocket(request, listener);
+                            }
+                        }, 1000);
+                    }
+                });
             }
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text) {

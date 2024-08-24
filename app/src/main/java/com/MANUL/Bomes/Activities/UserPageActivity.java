@@ -3,7 +3,7 @@ package com.MANUL.Bomes.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -60,10 +60,28 @@ public class UserPageActivity extends AppCompatActivity {
         addFriendText = findViewById(R.id.addFriendText_userpage);
     }
     private void setValues(){
-        if (openedUser.avatar.isEmpty())
+        if (openedUser.avatar.isEmpty()) {
             Glide.with(this).load("https://bomes.ru/media/icon.png").into(avatar);
-        else
+            avatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PhotoPlayer.PHOTO_URL = "media/icon.png";
+                    Intent intent = new Intent(UserPageActivity.this, PhotoPlayer.class);
+                    startActivity(intent);
+                }
+            });
+        }
+        else {
             Glide.with(this).load("https://bomes.ru/" + openedUser.avatar).into(avatar);
+            avatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PhotoPlayer.PHOTO_URL = openedUser.avatar;
+                    Intent intent = new Intent(UserPageActivity.this, PhotoPlayer.class);
+                    startActivity(intent);
+                }
+            });
+        }
         username.setText(openedUser.username);
         if (!openedUser.description.isEmpty())
             description.setText(openedUser.description);
@@ -74,8 +92,26 @@ public class UserPageActivity extends AppCompatActivity {
             addFriend.setVisibility(View.GONE);
         }
         else{
-            if (openedUser.isFriend){
+            if (openedUser.whichFriend.equals("friend")){
                 addFriendText.setText("Удалить из друзей");
+                addFriend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeFriendMethod();
+                    }
+                });
+            }
+            else if (openedUser.whichFriend.equals("incomingRequest")){
+                addFriendText.setText("Ответить на заявку");
+                addFriend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addFriendMethod();
+                    }
+                });
+            }
+            else if (openedUser.whichFriend.equals("sentRequest")){
+                addFriendText.setText("Отменить заявку");
                 addFriend.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -129,7 +165,19 @@ public class UserPageActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull WebSocket ws, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(ws, t, response);
-                Log.e("Fail", t.getMessage());
+                WebSocketListener listener = this;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                webSocket = client.newWebSocket(request, listener);
+                            }
+                        }, 1000);
+                    }
+                });
             }
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text) {
@@ -150,7 +198,7 @@ public class UserPageActivity extends AppCompatActivity {
                                 }
                                 if (obj.user.identifier.equals(openedUser.identifier)){
                                     openedUser.description = obj.user.description;
-                                    openedUser.isFriend = obj.user.isFriend;
+                                    openedUser.whichFriend = obj.user.whichFriend;
                                     setValues();
                                 }
                             }
@@ -208,7 +256,14 @@ public class UserPageActivity extends AppCompatActivity {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        addFriendText.setText("Удалить из друзей");
+        if (openedUser.whichFriend.equals("incomingRequest")){
+            addFriendText.setText("Удалить из друзей");
+            openedUser.whichFriend = "friend";
+        }
+        else{
+            addFriendText.setText("Отменить заявку");
+            openedUser.whichFriend = "sentRequest";
+        }
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -226,7 +281,14 @@ public class UserPageActivity extends AppCompatActivity {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        addFriendText.setText("Добавить в друзья");
+        if (openedUser.whichFriend.equals("friend")){
+            addFriendText.setText("Ответить на заявку");
+            openedUser.whichFriend = "incomingRequest";
+        }
+        else if (openedUser.whichFriend.equals("sentRequest")){
+            addFriendText.setText("Добавить в друзья");
+            openedUser.whichFriend = "";
+        }
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
