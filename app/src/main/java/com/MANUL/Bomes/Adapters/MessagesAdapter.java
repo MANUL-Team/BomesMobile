@@ -68,6 +68,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         holder.message = message;
         message.holder = holder.messageCard;
         message.viewHolder = holder;
+        holder.startPosX = holder.moveCard.getX();
 
         if (message.reply.isEmpty()){
             holder.replyCard.setVisibility(View.GONE);
@@ -183,36 +184,55 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         holder.timeMsg.setText(new SimpleDateFormat("HH:mm").format(message.time*1000));
 
         ConstraintSet set = new ConstraintSet();
-        set.clone(holder.messageLayout);
+        set.clone(holder.messageInnerLayout);
         if (message.sender.equals(UserData.identifier)){
             holder.isMyMessage = true;
             set.clear(R.id.messageCard, ConstraintSet.LEFT);
-            set.connect(R.id.messageCard, ConstraintSet.RIGHT, R.id.messageLayout, ConstraintSet.RIGHT);
+            set.connect(R.id.messageCard, ConstraintSet.RIGHT, R.id.messageInnerLayout, ConstraintSet.RIGHT);
         }
         else{
             holder.isMyMessage = false;
             set.clear(R.id.messageCard, ConstraintSet.RIGHT);
-            set.connect(R.id.messageCard, ConstraintSet.LEFT, R.id.messageLayout, ConstraintSet.LEFT);
+            set.connect(R.id.messageCard, ConstraintSet.LEFT, R.id.messageInnerLayout, ConstraintSet.LEFT);
         }
-        set.applyTo(holder.messageLayout);
+        set.applyTo(holder.messageInnerLayout);
 
         View.OnTouchListener touchListener = new View.OnTouchListener() {
             private void moveBack(){
                 Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        float newPos = holder.messageCard.getX() + 8;
-                        if (newPos <= holder.startPosX){
-                            holder.messageCard.setX(newPos);
-                            handler.postDelayed(this, 1);
+                holder.replyBack = true;
+                if (holder.moveCard.getX() < holder.startPosX) {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            float newPos = holder.moveCard.getX() + 8;
+                            if (newPos <= holder.startPosX) {
+                                holder.moveCard.setX(newPos);
+                                handler.postDelayed(this, 1);
+                            } else {
+                                holder.moveCard.setX(holder.startPosX);
+                                holder.replyBack = false;
+                                holder.drag = false;
+                            }
                         }
-                        else{
-                            holder.messageCard.setX(holder.startPosX);
-                            holder.drag = false;
+                    }, 1);
+                }
+                else{
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            float newPos = holder.moveCard.getX() - 8;
+                            if (newPos >= holder.startPosX) {
+                                holder.moveCard.setX(newPos);
+                                handler.postDelayed(this, 1);
+                            } else {
+                                holder.moveCard.setX(holder.startPosX);
+                                holder.replyBack = false;
+                                holder.drag = false;
+                            }
                         }
-                    }
-                }, 1);
+                    }, 1);
+                }
             }
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -224,23 +244,24 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         if (!holder.drag) {
                             holder.drag = true;
                             holder.dragX = evX;
-                            holder.startPosX = holder.messageCard.getX();
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
                         if (holder.drag){
                             float diffX = evX - holder.dragX;
-                            if (diffX < 0 && Math.abs(diffX) <= MAX_DIST){
+                            if (Math.abs(diffX) <= MAX_DIST){
                                 activity.messagesRecycler.suppressLayout(true);
-                                holder.messageCard.setX(holder.startPosX - Math.abs(diffX));
+                                holder.moveCard.setX(holder.startPosX + diffX);
                             }
-                            else if (diffX < 0 && Math.abs(diffX) > MAX_DIST){
-                                activity.startReplying(message);
-                                Vibrator vibration = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    vibration.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
-                                } else {
-                                    vibration.vibrate(10);
+                            else if (Math.abs(diffX) > MAX_DIST){
+                                if (!holder.replyBack) {
+                                    activity.startReplying(message);
+                                    Vibrator vibration = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        vibration.vibrate(VibrationEffect.createOneShot(25, VibrationEffect.DEFAULT_AMPLITUDE));
+                                    } else {
+                                        vibration.vibrate(25);
+                                    }
                                 }
                                 moveBack();
                                 activity.messagesRecycler.suppressLayout(false);
