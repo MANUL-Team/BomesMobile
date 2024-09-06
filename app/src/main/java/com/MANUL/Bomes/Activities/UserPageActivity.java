@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -188,6 +189,23 @@ public class UserPageActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
+                            if (obj.event.equals("WrongAuthInIdentifier")){
+                                Toast.makeText(UserPageActivity.this, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
+                                UserData.avatar = null;
+                                UserData.identifier = null;
+                                UserData.email = null;
+                                UserData.description = null;
+                                UserData.username = null;
+                                UserData.table_name = null;
+                                UserData.chatId = null;
+                                UserData.chatAvatar = null;
+                                UserData.isLocalChat = 0;
+                                Intent intent = new Intent(UserPageActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                finish();
+                                webSocket.close(1000, null);
+                            }
                             if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
@@ -226,6 +244,7 @@ public class UserPageActivity extends AppCompatActivity {
                     UniversalJSONObject obj = new UniversalJSONObject();
                     obj.event = "setIdentifier";
                     obj.identifier = UserData.identifier;
+                    obj.password = UserData.password;
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
                     UniversalJSONObject loadMe = new UniversalJSONObject();
@@ -317,5 +336,11 @@ public class UserPageActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return "";
+    }
+
+    @Override
+    protected void onDestroy() {
+        webSocket.close(1000, null);
+        super.onDestroy();
     }
 }

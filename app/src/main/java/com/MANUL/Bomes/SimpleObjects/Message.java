@@ -15,6 +15,7 @@ public class Message {
     public String sender;
     public View holder;
     public MessageViewHolder viewHolder;
+
     public Message(String username, String dataType, String value, String reply, int isRead, long time, long id, String sender){
         this.username = username;
         this.dataType = dataType;

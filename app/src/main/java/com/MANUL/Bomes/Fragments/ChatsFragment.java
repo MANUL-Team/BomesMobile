@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.MANUL.Bomes.Activities.ChatsActivity;
+import com.MANUL.Bomes.Activities.MainActivity;
 import com.MANUL.Bomes.Activities.SplashScreen;
 import com.MANUL.Bomes.Adapters.ChatsAdapter;
 import com.MANUL.Bomes.R;
@@ -53,6 +55,7 @@ public class ChatsFragment extends Fragment {
 
     public ChatsFragment(ChatsActivity activity){
         this.activity = activity;
+        connectToServer();
     }
 
     @Override
@@ -70,7 +73,6 @@ public class ChatsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
-        connectToServer();
     }
 
     public void init(View view){
@@ -110,6 +112,23 @@ public class ChatsFragment extends Fragment {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
+                            if (obj.event.equals("WrongAuthInIdentifier")){
+                                Toast.makeText(activity, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
+                                UserData.avatar = null;
+                                UserData.identifier = null;
+                                UserData.email = null;
+                                UserData.description = null;
+                                UserData.username = null;
+                                UserData.table_name = null;
+                                UserData.chatId = null;
+                                UserData.chatAvatar = null;
+                                UserData.isLocalChat = 0;
+                                Intent intent = new Intent(activity, MainActivity.class);
+                                activity.startActivity(intent);
+                                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                activity.finish();
+                                webSocket.close(1000, null);
+                            }
                             if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
@@ -152,6 +171,7 @@ public class ChatsFragment extends Fragment {
                     UniversalJSONObject obj = new UniversalJSONObject();
                     obj.event = "setIdentifier";
                     obj.identifier = UserData.identifier;
+                    obj.password = UserData.password;
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
                     UniversalJSONObject loadMe = new UniversalJSONObject();
@@ -223,4 +243,5 @@ public class ChatsFragment extends Fragment {
         }
         super.onResume();
     }
+
 }

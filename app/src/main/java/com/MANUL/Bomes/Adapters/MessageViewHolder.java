@@ -16,8 +16,12 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     TextView usernameMsg, textValueMsg, timeMsg, replyText, audioTimeText;
     ConstraintLayout messageLayout;
     ImageView imageMsg, stickerMsg, isReadMsg, audio_display_controls;
-    CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard;
+    CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard, touchEventer;
     public Message message;
+    public boolean drag;
+    public float dragX, startPosX;
+    public boolean isMyMessage;
+    public long touchTime;
 
     public MessageViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -37,5 +41,6 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         playAudioCard = itemView.findViewById(R.id.playAudioCard);
         audioTimeText = itemView.findViewById(R.id.audioTimeText);
         audio_display_controls = itemView.findViewById(R.id.audio_display_controls);
+        touchEventer = itemView.findViewById(R.id.touchEventer);
     }
 }

@@ -21,6 +21,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.MANUL.Bomes.Activities.ChatsActivity;
+import com.MANUL.Bomes.Activities.MainActivity;
 import com.MANUL.Bomes.ImportantClasses.FileUploadService;
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator;
 import com.MANUL.Bomes.R;
@@ -64,6 +65,7 @@ public class ProfileFragment extends Fragment {
 
     public ProfileFragment(ChatsActivity activity){
         this.activity = activity;
+        connectToServer();
     }
 
     @Override
@@ -82,7 +84,6 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         init(view);
         setValues();
-        connectToServer();
     }
     private void init(View view){
         avatar = view.findViewById(R.id.profile_avatar);
@@ -163,6 +164,23 @@ public class ProfileFragment extends Fragment {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
+                            if (obj.event.equals("WrongAuthInIdentifier")){
+                                Toast.makeText(activity, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
+                                UserData.avatar = null;
+                                UserData.identifier = null;
+                                UserData.email = null;
+                                UserData.description = null;
+                                UserData.username = null;
+                                UserData.table_name = null;
+                                UserData.chatId = null;
+                                UserData.chatAvatar = null;
+                                UserData.isLocalChat = 0;
+                                Intent intent = new Intent(activity, MainActivity.class);
+                                activity.startActivity(intent);
+                                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                activity.finish();
+                                webSocket.close(1000, null);
+                            }
                             if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
@@ -170,7 +188,6 @@ public class ProfileFragment extends Fragment {
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
-                                    setValues();
                                 }
                             }
                             else if (obj.event.equals("MatDetected")){
@@ -197,6 +214,7 @@ public class ProfileFragment extends Fragment {
                     UniversalJSONObject obj = new UniversalJSONObject();
                     obj.event = "setIdentifier";
                     obj.identifier = UserData.identifier;
+                    obj.password = UserData.password;
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
                     UniversalJSONObject loadMe = new UniversalJSONObject();

@@ -85,7 +85,8 @@ public class ChatActivity extends AppCompatActivity {
     CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio;
     ImageView inChatAvatar, recordingAudioImage;
     TextView username, onlineText, typingMsg, recordTimeText;
-    RecyclerView messagesRecycler, stickersRecycler;
+    public RecyclerView messagesRecycler;
+    RecyclerView stickersRecycler;
     MessagesAdapter adapter;
     StickersAdapter stickersAdapter;
     EditText messageText;
@@ -158,6 +159,23 @@ public class ChatActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
+                            if (obj.event.equals("WrongAuthInIdentifier")){
+                                Toast.makeText(ChatActivity.this, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
+                                UserData.avatar = null;
+                                UserData.identifier = null;
+                                UserData.email = null;
+                                UserData.description = null;
+                                UserData.username = null;
+                                UserData.table_name = null;
+                                UserData.chatId = null;
+                                UserData.chatAvatar = null;
+                                UserData.isLocalChat = 0;
+                                Intent intent = new Intent(ChatActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                finish();
+                                webSocket.close(1000, null);
+                            }
                             if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
@@ -316,6 +334,7 @@ public class ChatActivity extends AppCompatActivity {
                                 UniversalJSONObject obj = new UniversalJSONObject();
                                 obj.event = "setIdentifier";
                                 obj.identifier = UserData.identifier;
+                                obj.password = UserData.password;
                                 webSocket.send(objectMapper.writeValueAsString(obj));
 
                                 UniversalJSONObject loadMe = new UniversalJSONObject();
@@ -504,7 +523,7 @@ public class ChatActivity extends AppCompatActivity {
                         mediaRecorder = new MediaRecorder();
                         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
                         mediaRecorder.setAudioEncodingBitRate(48000);
                         mediaRecorder.setAudioSamplingRate(41200);
                         mediaRecorder.setOutputFile(file.getPath());

@@ -6,8 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -21,8 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.MANUL.Bomes.Activities.ChatActivity;
 import com.MANUL.Bomes.Activities.PhotoPlayer;
 import com.MANUL.Bomes.Activities.VideoPlayer;
-import com.MANUL.Bomes.SimpleObjects.Message;
 import com.MANUL.Bomes.R;
+import com.MANUL.Bomes.SimpleObjects.Message;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;
@@ -41,6 +45,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     ObjectMapper objectMapper = new ObjectMapper();
     ChatActivity activity;
     Animation alpha_in, alpha_out;
+    private final float MAX_DIST = 150;
     public MessagesAdapter(Context context, ArrayList<Message> messages, ChatActivity activity){
         this.context = context;
         this.inflater = LayoutInflater.from(context);
@@ -53,7 +58,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.message_item, parent, false);
-        view.startAnimation(alpha_in);
         return new MessageViewHolder(view);
     }
 
@@ -99,142 +103,165 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         holder.videoCard.setVisibility(View.GONE);
         holder.audioPlayerCard.setVisibility(View.GONE);
 
-        if (message.dataType.equals("text")){
-            holder.textValueMsg.setVisibility(View.VISIBLE);
-            holder.textValueMsg.setText(message.value);
-        }
-        else if (message.dataType.equals("image")){
-            holder.imageCard.setVisibility(View.VISIBLE);
-            holder.imageMsg.setVisibility(View.VISIBLE);
-            Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.imageMsg);
+        switch (message.dataType) {
+            case "text":
+                holder.textValueMsg.setVisibility(View.VISIBLE);
+                holder.textValueMsg.setText(message.value);
+                break;
+            case "image":
+                holder.imageCard.setVisibility(View.VISIBLE);
+                holder.imageMsg.setVisibility(View.VISIBLE);
+                Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.imageMsg);
 
-            holder.imageCard.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PhotoPlayer.PHOTO_URL = message.value;
-                    Intent intent = new Intent(context, PhotoPlayer.class);
-                    activity.startActivity(intent);
-                }
-            });
-        }
-        else if (message.dataType.equals("sticker")){
-            holder.stickerMsg.setVisibility(View.VISIBLE);
-            Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.stickerMsg);
-        }
-        else if (message.dataType.equals("video")){
-            holder.videoCard.setVisibility(View.VISIBLE);
-            holder.videoCard.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    VideoPlayer.Video_URL = message.value;
-                    Intent intent = new Intent(context, VideoPlayer.class);
-                    activity.startActivity(intent);
-                }
-            });
-        }
-        else if (message.dataType.equals("audio")){
-            holder.audioPlayerCard.setVisibility(View.VISIBLE);
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            Handler handler = new Handler();
-            try {
-                mediaPlayer.setDataSource("https://bomes.ru/" + message.value);
-                mediaPlayer.prepare();
-
-                holder.audioTimeText.setText(getAudioTime(mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
-
-                holder.playAudioCard.setOnClickListener(new View.OnClickListener() {
+                holder.imageCard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!mediaPlayer.isPlaying()){
-                            mediaPlayer.start();
-                            Picasso.with(context).load(R.drawable.white_stop_audio).into(holder.audio_display_controls);
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mediaPlayer.isPlaying()){
-                                        holder.audioTimeText.setText(getAudioTime(mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
-                                        handler.postDelayed(this, 100);
+                        PhotoPlayer.PHOTO_URL = message.value;
+                        Intent intent = new Intent(context, PhotoPlayer.class);
+                        activity.startActivity(intent);
+                    }
+                });
+                break;
+            case "sticker":
+                holder.stickerMsg.setVisibility(View.VISIBLE);
+                Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.stickerMsg);
+                break;
+            case "video":
+                holder.videoCard.setVisibility(View.VISIBLE);
+                holder.videoCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        VideoPlayer.Video_URL = message.value;
+                        Intent intent = new Intent(context, VideoPlayer.class);
+                        activity.startActivity(intent);
+                    }
+                });
+                break;
+            case "audio":
+                holder.audioPlayerCard.setVisibility(View.VISIBLE);
+                MediaPlayer mediaPlayer = new MediaPlayer();
+                Handler handler = new Handler();
+                try {
+                    mediaPlayer.setDataSource("https://bomes.ru/" + message.value);
+                    mediaPlayer.prepare();
+
+                    holder.audioTimeText.setText(getAudioTime(mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
+
+                    holder.playAudioCard.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!mediaPlayer.isPlaying()) {
+                                mediaPlayer.start();
+                                Picasso.with(context).load(R.drawable.white_stop_audio).into(holder.audio_display_controls);
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mediaPlayer.isPlaying()) {
+                                            holder.audioTimeText.setText(getAudioTime(mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
+                                            handler.postDelayed(this, 100);
+                                        }
                                     }
-                                }
-                            }, 100);
+                                }, 100);
+                            } else {
+                                mediaPlayer.pause();
+                                Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
+                            }
                         }
-                        else{
-                            mediaPlayer.pause();
+                    });
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
                             Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
                         }
-                    }
-                });
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
-                    }
-                });
+                    });
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
         }
         holder.timeMsg.setText(new SimpleDateFormat("HH:mm").format(message.time*1000));
 
         ConstraintSet set = new ConstraintSet();
         set.clone(holder.messageLayout);
         if (message.sender.equals(UserData.identifier)){
+            holder.isMyMessage = true;
             set.clear(R.id.messageCard, ConstraintSet.LEFT);
-            set.connect(R.id.messageCard, ConstraintSet.RIGHT, R.id.messageLayout, ConstraintSet.RIGHT, 16);
+            set.connect(R.id.messageCard, ConstraintSet.RIGHT, R.id.messageLayout, ConstraintSet.RIGHT);
         }
         else{
+            holder.isMyMessage = false;
             set.clear(R.id.messageCard, ConstraintSet.RIGHT);
-            set.connect(R.id.messageCard, ConstraintSet.LEFT, R.id.messageLayout, ConstraintSet.LEFT, 16);
+            set.connect(R.id.messageCard, ConstraintSet.LEFT, R.id.messageLayout, ConstraintSet.LEFT);
         }
         set.applyTo(holder.messageLayout);
 
-
-        holder.messageCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialog dialog = new Dialog(context);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-                dialog.setContentView(R.layout.dialog);
-                dialog.show();
-                CardView replyCardDialog = dialog.findViewById(R.id.replyCardDialog);
-                replyCardDialog.setOnClickListener(new View.OnClickListener() {
+        View.OnTouchListener touchListener = new View.OnTouchListener() {
+            private void moveBack(){
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
                     @Override
-                    public void onClick(View v) {
-                        activity.startReplying(message);
-                        dialog.dismiss();
+                    public void run() {
+                        float newPos = holder.messageCard.getX() + 8;
+                        if (newPos <= holder.startPosX){
+                            holder.messageCard.setX(newPos);
+                            handler.postDelayed(this, 1);
+                        }
+                        else{
+                            holder.messageCard.setX(holder.startPosX);
+                            holder.drag = false;
+                        }
                     }
-                });
-
-                CardView editCardDialog = dialog.findViewById(R.id.editCardDialog);
-                if (message.sender.equals(UserData.identifier) && message.dataType.equals("text")) {
-                    editCardDialog.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            activity.startEditing(message);
-                            dialog.dismiss();
-                        }
-                    });
-                }
-                else{
-                    editCardDialog.setVisibility(View.GONE);
-                }
-
-                CardView deleteCardDialog = dialog.findViewById(R.id.deleteCardDialog);
-                if (message.sender.equals(UserData.identifier)) {
-                    deleteCardDialog.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            activity.deleteMessage(message);
-                            dialog.dismiss();
-                        }
-                    });
-                }
-                else{
-                    deleteCardDialog.setVisibility(View.GONE);
-                }
+                }, 1);
             }
-        });
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float evX = event.getX();
+                float evY = event.getY();
+
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        if (!holder.drag) {
+                            holder.drag = true;
+                            holder.dragX = evX;
+                            holder.startPosX = holder.messageCard.getX();
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (holder.drag){
+                            float diffX = evX - holder.dragX;
+                            if (diffX < 0 && Math.abs(diffX) <= MAX_DIST){
+                                activity.messagesRecycler.suppressLayout(true);
+                                holder.messageCard.setX(holder.startPosX - Math.abs(diffX));
+                            }
+                            else if (diffX < 0 && Math.abs(diffX) > MAX_DIST){
+                                activity.startReplying(message);
+                                Vibrator vibration = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    vibration.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                                } else {
+                                    vibration.vibrate(10);
+                                }
+                                moveBack();
+                                activity.messagesRecycler.suppressLayout(false);
+                            }
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (Math.abs(evX - holder.dragX) < 20){
+                            holder.drag = false;
+                            createDialog(message);
+                        }
+                        else {
+                            moveBack();
+                            activity.messagesRecycler.suppressLayout(false);
+                        }
+                        break;
+                }
+                return true;
+            }
+        };
+        holder.touchEventer.setOnTouchListener(touchListener);
     }
 
     @Override
@@ -264,5 +291,47 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
             secsStr = "0" + secsStr;
         String currentTimeStr = minsStr + ":" + secsStr;
         return currentTimeStr + "/" + durationStr;
+    }
+    public void createDialog(Message message){
+        Dialog dialog = new Dialog(context);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        dialog.setContentView(R.layout.dialog);
+        dialog.show();
+        CardView replyCardDialog = dialog.findViewById(R.id.replyCardDialog);
+        replyCardDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.startReplying(message);
+                dialog.dismiss();
+            }
+        });
+
+        CardView editCardDialog = dialog.findViewById(R.id.editCardDialog);
+        if (message.sender.equals(UserData.identifier) && message.dataType.equals("text")) {
+            editCardDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.startEditing(message);
+                    dialog.dismiss();
+                }
+            });
+        }
+        else{
+            editCardDialog.setVisibility(View.GONE);
+        }
+
+        CardView deleteCardDialog = dialog.findViewById(R.id.deleteCardDialog);
+        if (message.sender.equals(UserData.identifier)) {
+            deleteCardDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.deleteMessage(message);
+                    dialog.dismiss();
+                }
+            });
+        }
+        else{
+            deleteCardDialog.setVisibility(View.GONE);
+        }
     }
 }
