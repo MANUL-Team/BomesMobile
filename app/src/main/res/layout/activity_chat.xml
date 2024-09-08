@@ -12,7 +12,7 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="#1AFFFFFF"
+        app:cardBackgroundColor="#1A000000"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +44,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_margin="5dp"
-                    app:srcCompat="@drawable/back" />
+                    app:srcCompat="@drawable/white_back" />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -76,7 +76,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/anonymous_pro"
                 android:singleLine="true"
-                android:text="Username"
+                android:text="Загрузка..."
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -93,7 +93,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/anonymous_pro"
                 android:singleLine="true"
-                android:text="Online"
+                android:text="Загрузка..."
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -107,9 +107,9 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/anonymous_pro"
                 android:singleLine="true"
-                android:ellipsize="end"
                 android:text="Печатает..."
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
@@ -369,5 +369,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/messagesRecycler"
+        app:layout_constraintTop_toTopOf="@+id/header" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

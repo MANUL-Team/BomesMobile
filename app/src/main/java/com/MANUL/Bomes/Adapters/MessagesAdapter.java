@@ -44,7 +44,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     ArrayList<Message> messages;
     ObjectMapper objectMapper = new ObjectMapper();
     ChatActivity activity;
-    Animation alpha_in, alpha_out;
+    Animation alpha_in, alpha_out, click_down, click_up;
     private final float MAX_DIST = 150;
     public MessagesAdapter(Context context, ArrayList<Message> messages, ChatActivity activity){
         this.context = context;
@@ -53,6 +53,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         this.activity = activity;
         alpha_in = AnimationUtils.loadAnimation(context, R.anim.alpha_in);
         alpha_out = AnimationUtils.loadAnimation(context, R.anim.alpha_out);
+        click_down = AnimationUtils.loadAnimation(context, R.anim.click_down);
+        click_up = AnimationUtils.loadAnimation(context, R.anim.click_up);
     }
     @NonNull
     @Override
@@ -85,6 +87,25 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                     replyText += "Вложение";
                 }
                 holder.replyText.setText(replyText);
+
+                holder.replyCard.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()){
+                            case MotionEvent.ACTION_DOWN:
+                                holder.replyCard.startAnimation(click_down);
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                holder.replyCard.startAnimation(click_up);
+                                activity.scrollToMessage(reply.id);
+                                break;
+                            case MotionEvent.ACTION_CANCEL:
+                                holder.replyCard.startAnimation(click_up);
+                                break;
+                        }
+                        return true;
+                    }
+                });
             }
             catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
@@ -201,6 +222,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
             private void moveBack(){
                 Handler handler = new Handler();
                 holder.replyBack = true;
+                holder.move = false;
                 if (holder.moveCard.getX() < holder.startPosX) {
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -244,14 +266,16 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         if (!holder.drag) {
                             holder.drag = true;
                             holder.dragX = evX;
+                            holder.dragY = evY;
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
                         if (holder.drag){
                             float diffX = evX - holder.dragX;
-                            if (Math.abs(diffX) <= MAX_DIST){
-                                activity.messagesRecycler.suppressLayout(true);
+                            float diffY = evY - holder.dragY;
+                            if (Math.abs(diffX) <= MAX_DIST && Math.abs(diffY) < 30){
                                 holder.moveCard.setX(holder.startPosX + diffX);
+                                holder.move = true;
                             }
                             else if (Math.abs(diffX) > MAX_DIST){
                                 if (!holder.replyBack) {
@@ -264,25 +288,37 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                                     }
                                 }
                                 moveBack();
-                                activity.messagesRecycler.suppressLayout(false);
                             }
+                            else if (Math.abs(diffY) >= 30){
+                                moveBack();
+                            }
+                            return true;
                         }
                         break;
                     case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
                         if (Math.abs(evX - holder.dragX) < 20){
+                            moveBack();
                             holder.drag = false;
-                            createDialog(message);
                         }
                         else {
                             moveBack();
-                            activity.messagesRecycler.suppressLayout(false);
                         }
-                        break;
+                        return true;
                 }
-                return true;
+                return false;
             }
         };
         holder.touchEventer.setOnTouchListener(touchListener);
+        holder.touchEventer.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!holder.move) {
+                    createDialog(message);
+                }
+                return false;
+            }
+        });
     }
 
     @Override

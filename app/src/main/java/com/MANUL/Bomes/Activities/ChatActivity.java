@@ -140,6 +140,7 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Toast.makeText(ChatActivity.this, "Переподключение...", Toast.LENGTH_LONG).show();
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -224,6 +225,7 @@ public class ChatActivity extends AppCompatActivity {
                                 }
                                 loadedMessages += obj.messages.length;
                                 loadingMessagesNow = false;
+                                findViewById(R.id.loadingBar).setVisibility(View.GONE);
                             }
                             else if (obj.event.equals("message")){
                                 Message message = new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender);
@@ -523,9 +525,9 @@ public class ChatActivity extends AppCompatActivity {
                         mediaRecorder = new MediaRecorder();
                         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
+                        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                         mediaRecorder.setAudioEncodingBitRate(48000);
-                        mediaRecorder.setAudioSamplingRate(41200);
+                        mediaRecorder.setAudioSamplingRate(48000);
                         mediaRecorder.setOutputFile(file.getPath());
                         mediaRecorder.prepare();
                         mediaRecorder.start();
@@ -618,7 +620,7 @@ public class ChatActivity extends AppCompatActivity {
         else
             requestFile =
                     RequestBody.create(
-                            MediaType.parse("audio/ogg"),
+                            MediaType.parse("audio/amr"),
                             file
                     );
 
@@ -642,7 +644,7 @@ public class ChatActivity extends AppCompatActivity {
                             sendMedia(obj.filePath, "image");
                         else if (type.equals("mp4") || type.equals("avi"))
                             sendMedia(obj.filePath, "video");
-                        else if (type.equals("mp3") || type.equals("wav"))
+                        else if (type.equals("mp3") || type.equals("wav") || type.equals("amr"))
                             sendMedia(obj.filePath, "audio");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -692,7 +694,7 @@ public class ChatActivity extends AppCompatActivity {
                             sendMedia(obj.filePath, "image");
                         else if (type.equals("mp4") || type.equals("avi"))
                             sendMedia(obj.filePath, "video");
-                        else if (type.equals("mp3") || type.equals("wav") || type.equals("ogg"))
+                        else if (type.equals("mp3") || type.equals("wav") || type.equals("amr") || type.equals("ogg"))
                             sendMedia(obj.filePath, "audio");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -723,6 +725,7 @@ public class ChatActivity extends AppCompatActivity {
                     replyMsg.chat = UserData.table_name;
                     replyMsg.username = replyingMessage.username;
                     replyMsg.isRead = replyingMessage.isRead;
+                    replyMsg.id = replyingMessage.id;
                     msg.reply = objectMapper.writeValueAsString(replyMsg);
                 }
                 msg.chat = UserData.table_name;
@@ -759,6 +762,7 @@ public class ChatActivity extends AppCompatActivity {
                     replyMsg.chat = UserData.table_name;
                     replyMsg.username = replyingMessage.username;
                     replyMsg.isRead = replyingMessage.isRead;
+                    replyMsg.id = replyingMessage.id;
                     msg.reply = objectMapper.writeValueAsString(replyMsg);
                 }
                 msg.chat = UserData.table_name;
@@ -841,6 +845,7 @@ public class ChatActivity extends AppCompatActivity {
                 replyMsg.chat = UserData.table_name;
                 replyMsg.username = replyingMessage.username;
                 replyMsg.isRead = replyingMessage.isRead;
+                replyMsg.id = replyingMessage.id;
                 msg.reply = objectMapper.writeValueAsString(replyMsg);
             }
             msg.chat = UserData.table_name;
@@ -942,6 +947,13 @@ public class ChatActivity extends AppCompatActivity {
         UserData.isLocalChat = 0;
         webSocket.close(1000, null);
         finish();
+    }
+
+    public void scrollToMessage(long id){
+        int index = getMessageIndex(id);
+        if (index != -1){
+            messagesRecycler.smoothScrollToPosition(index);
+        }
     }
     private boolean isMicrophonePresent(){
         if(this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE)){
