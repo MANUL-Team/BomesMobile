@@ -267,6 +267,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                             holder.drag = true;
                             holder.dragX = evX;
                             holder.dragY = evY;
+                            holder.isScroll = false;
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
@@ -291,6 +292,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                             }
                             else if (Math.abs(diffY) >= 30){
                                 moveBack();
+                                holder.move = true;
                             }
                             return true;
                         }
@@ -304,6 +306,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         else {
                             moveBack();
                         }
+                        if (event.getAction() == MotionEvent.ACTION_CANCEL){
+                            holder.isScroll = true;
+                        }
                         return true;
                 }
                 return false;
@@ -313,7 +318,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         holder.touchEventer.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!holder.move) {
+                if (!holder.move && !holder.isScroll) {
                     createDialog(message);
                 }
                 return false;

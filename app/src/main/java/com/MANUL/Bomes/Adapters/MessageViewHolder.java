@@ -18,7 +18,7 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     ImageView imageMsg, stickerMsg, isReadMsg, audio_display_controls;
     CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard, touchEventer, moveCard;
     public Message message;
-    public boolean drag, move;
+    public boolean drag, move, isScroll;
     public float dragX, dragY, startPosX;
     public boolean isMyMessage;
     public boolean replyBack = false;
