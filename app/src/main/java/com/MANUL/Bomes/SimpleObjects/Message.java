@@ -13,10 +13,11 @@ public class Message {
     public long time;
     public long id;
     public String sender;
+    public UniversalJSONObject[] reactions;
     public View holder;
     public MessageViewHolder viewHolder;
 
-    public Message(String username, String dataType, String value, String reply, int isRead, long time, long id, String sender){
+    public Message(String username, String dataType, String value, String reply, int isRead, long time, long id, String sender, UniversalJSONObject[] reactions){
         this.username = username;
         this.dataType = dataType;
         this.value = value;
@@ -25,5 +26,6 @@ public class Message {
         this.time = time;
         this.id = id;
         this.sender = sender;
+        this.reactions = reactions;
     }
 }

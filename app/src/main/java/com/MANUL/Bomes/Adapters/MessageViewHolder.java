@@ -2,6 +2,7 @@ package com.MANUL.Bomes.Adapters;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,10 +17,12 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     TextView usernameMsg, textValueMsg, timeMsg, replyText, audioTimeText;
     ConstraintLayout messageLayout, messageInnerLayout;
     ImageView imageMsg, stickerMsg, isReadMsg, audio_display_controls;
-    CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard, touchEventer, moveCard;
+    CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard, touchEventer, moveCard, reactionsHolder;
+    LinearLayout reactionsLayout;
     public Message message;
     public boolean drag, move, isScroll;
     public float dragX, dragY, startPosX;
+    public float diffX;
     public boolean isMyMessage;
     public boolean replyBack = false;
     public long touchTime;
@@ -45,5 +48,7 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         touchEventer = itemView.findViewById(R.id.touchEventer);
         moveCard = itemView.findViewById(R.id.moveCard);
         messageInnerLayout = itemView.findViewById(R.id.messageInnerLayout);
+        reactionsHolder = itemView.findViewById(R.id.reactionsHolder);
+        reactionsLayout = itemView.findViewById(R.id.reactionsLayout);
     }
 }

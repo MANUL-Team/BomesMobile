@@ -69,6 +69,7 @@ dependencies {
     implementation("com.squareup.picasso:picasso:2.5.2")
 
     implementation("com.github.MikeOrtiz:TouchImageView:3.6")
+    implementation ("com.github.pedromassango:doubleClick:3.0")
 
 
     implementation(libs.lifecycle.runtime.ktx)

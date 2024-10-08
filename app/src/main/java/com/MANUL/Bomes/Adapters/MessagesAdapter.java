@@ -16,11 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.MANUL.Bomes.Activities.ChatActivity;
 import com.MANUL.Bomes.Activities.PhotoPlayer;
@@ -32,6 +35,8 @@ import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pedromassango.doubleclick.DoubleClick;
+import com.pedromassango.doubleclick.DoubleClickListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -63,10 +68,46 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         return new MessageViewHolder(view);
     }
 
-    @SuppressLint({"SimpleDateFormat", "ClickableViewAccessibility"})
+    @SuppressLint({"SimpleDateFormat", "ClickableViewAccessibility", "ResourceAsColor"})
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
+
+        holder.reactionsLayout.removeAllViews();
+        ArrayList<String> wasTypes = new ArrayList<>();
+        String myType = "";
+        for (int i = 0; i < message.reactions.length; i++) {
+            if (message.reactions[i].sender.equals(UserData.identifier))
+                myType = message.reactions[i].type;
+        }
+        for (int i = 0; i < message.reactions.length; i++) {
+            if (!wasTypes.contains(message.reactions[i].type)) {
+                View view = inflater.inflate(R.layout.reaction_item, null);
+                ImageView imageView = view.findViewById(R.id.reaction_image);
+                TextView textView = view.findViewById(R.id.reaction_count_text);
+                CardView cardView = view.findViewById(R.id.reaction_card);
+                final boolean isMyType = myType.equals(message.reactions[i].type);
+                final String reactionType = message.reactions[i].type;
+                if (isMyType)
+                    cardView.setCardBackgroundColor(R.color.myReaction);
+                Glide.with(context).load("https://bomes.ru/" + message.reactions[i].type).into(imageView);
+                textView.setText(String.valueOf(getReactionTypeCount(message.reactions[i].type, message.reactions)));
+                holder.reactionsLayout.addView(view);
+                wasTypes.add(message.reactions[i].type);
+
+                cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isMyType){
+                            activity.removeReaction(message.id);
+                        }
+                        else{
+                            activity.addReaction(reactionType, message.id);
+                        }
+                    }
+                });
+            }
+        }
         holder.message = message;
         message.holder = holder.messageCard;
         message.viewHolder = holder;
@@ -271,13 +312,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         break;
                     case MotionEvent.ACTION_MOVE:
                         if (holder.drag){
-                            float diffX = evX - holder.dragX;
+                            holder.diffX = evX - holder.dragX;
                             float diffY = evY - holder.dragY;
-                            if (Math.abs(diffX) <= MAX_DIST && Math.abs(diffY) < 30){
-                                holder.moveCard.setX(holder.startPosX + diffX);
-                                holder.move = true;
+                            if (Math.abs(holder.diffX) <= MAX_DIST && Math.abs(diffY) < 25){
+                                holder.moveCard.setX(holder.startPosX + holder.diffX);
+                                if (Math.abs(holder.diffX) > 30)
+                                    holder.move = true;
                             }
-                            else if (Math.abs(diffX) > MAX_DIST){
+                            else if (Math.abs(holder.diffX) > MAX_DIST){
                                 if (!holder.replyBack) {
                                     activity.startReplying(message);
                                     Vibrator vibration = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
@@ -324,6 +366,24 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                 return false;
             }
         });
+        holder.touchEventer.setOnClickListener(new DoubleClick(new DoubleClickListener() {
+            @Override
+            public void onSingleClick(View view) {
+
+            }
+
+            @Override
+            public void onDoubleClick(View view) {
+                activity.addReaction(activity.reactions.get(0), message.id);
+            }
+        }));
+    }
+    public int getReactionTypeCount(String type, UniversalJSONObject[] reactions){
+        int count = 0;
+        for (int i = 0; i < reactions.length; i++) {
+            if (reactions[i].type.equals(type)) count++;
+        }
+        return count;
     }
 
     @Override
@@ -359,6 +419,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.setContentView(R.layout.dialog);
         dialog.show();
+
+        RecyclerView reactionsRecycler = dialog.findViewById(R.id.reactionsRecycler);
+        ReactionsAdapter adapter = new ReactionsAdapter(context, activity.reactions, activity, message.id, dialog);
+        reactionsRecycler.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        reactionsRecycler.setAdapter(adapter);
+
         CardView replyCardDialog = dialog.findViewById(R.id.replyCardDialog);
         replyCardDialog.setOnClickListener(new View.OnClickListener() {
             @Override

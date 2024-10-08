@@ -29,10 +29,13 @@ public class UniversalJSONObject {
     public UniversalJSONObject[] users;
     public String value;
     public String reply;
-    public String reaction;
+    public UniversalJSONObject[] reaction;
+    public UniversalJSONObject[] reactions;
+    public String[] reactionsURLs;
+    public String sender;
+    public String type;
     public int isRead;
     public long time;
-    public String sender;
     public String chatName;
     public String[] stickers;
     public String[][] hints;
@@ -56,7 +59,7 @@ public class UniversalJSONObject {
     public int code;
     public String userIndentifier;
     public String whichFriend;
-
+    public long msgId;
 
 
     public long getLastUpdate(){

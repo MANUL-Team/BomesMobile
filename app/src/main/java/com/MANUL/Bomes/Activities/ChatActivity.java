@@ -109,6 +109,7 @@ public class ChatActivity extends AppCompatActivity {
     ArrayList<Sticker> allStickers = new ArrayList<>();
     ArrayList<Message> waitingMessages = new ArrayList<>();
     ArrayList<UniversalJSONObject> users = new ArrayList<>();
+    public ArrayList<String> reactions = new ArrayList<>();
     String[][] hints = new String[0][0];
     Message replyingMessage;
     Message editingMessage;
@@ -212,7 +213,7 @@ public class ChatActivity extends AppCompatActivity {
                             }
                             else if (obj.event.equals("ReturnChatMessages")){
                                 for (UniversalJSONObject msg : obj.messages) {
-                                    messages.add(0, new Message(msg.username, msg.dataType, msg.value, msg.reply, msg.isRead, msg.time, msg.id, msg.sender));
+                                    messages.add(0, new Message(msg.username, msg.dataType, msg.value, msg.reply, msg.isRead, msg.time, msg.id, msg.sender, msg.reaction));
                                     adapter.notifyItemInserted(0);
                                     if (!msg.sender.equals(UserData.identifier)){
                                         UniversalJSONObject readMsg = new UniversalJSONObject();
@@ -230,7 +231,7 @@ public class ChatActivity extends AppCompatActivity {
                                 findViewById(R.id.loadingBar).setVisibility(View.GONE);
                             }
                             else if (obj.event.equals("message")){
-                                Message message = new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender);
+                                Message message = new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender, new UniversalJSONObject[0]);
                                 messages.add(message);
                                 loadedMessages++;
                                 if (!obj.sender.equals(UserData.identifier) && obj.isRead == 0 && !isStop){
@@ -293,6 +294,9 @@ public class ChatActivity extends AppCompatActivity {
                                 hints = obj.hints;
                                 stickersAdapter.notifyDataSetChanged();
                             }
+                            else if (obj.event.equals("ReturnReactions")){
+                                reactions.addAll(Arrays.asList(obj.reactionsURLs));
+                            }
                             else if (obj.event.equals("ReturnChatUsers")){
                                 users.clear();
                                 users.addAll(Arrays.asList(obj.members));
@@ -321,6 +325,13 @@ public class ChatActivity extends AppCompatActivity {
                                 }
                                 else{
                                     Toast.makeText(ChatActivity.this, "Непрогруженное сообщение удалено", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            else if (obj.event.equals("ReactionForUsers")){
+                                int index = getMessageIndex(obj.messageId);
+                                if (index != -1) {
+                                    messages.get(index).reactions = obj.reactions;
+                                    adapter.notifyItemChanged(index);
                                 }
                             }
                         } catch (JsonProcessingException e) {
@@ -355,6 +366,10 @@ public class ChatActivity extends AppCompatActivity {
                                 UniversalJSONObject getStickers = new UniversalJSONObject();
                                 getStickers.event = "GetStickers";
                                 webSocket.send(objectMapper.writeValueAsString(getStickers));
+
+                                UniversalJSONObject getReactions = new UniversalJSONObject();
+                                getReactions.event = "GetReactions";
+                                webSocket.send(objectMapper.writeValueAsString(getReactions));
 
                                 if (UserData.isLocalChat == 0) {
                                     UniversalJSONObject getChatUsers = new UniversalJSONObject();
@@ -956,6 +971,31 @@ public class ChatActivity extends AppCompatActivity {
         msg.id = id;
         msg.chat = UserData.table_name;
         msg.event = "DeleteMessage";
+        try {
+            webSocket.send(objectMapper.writeValueAsString(msg));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void addReaction(String type, long id){
+        UniversalJSONObject msg = new UniversalJSONObject();
+        msg.msgId = id;
+        msg.type = type;
+        msg.sender = UserData.identifier;
+        msg.chat = UserData.table_name;
+        msg.event = "AddReaction";
+        try {
+            webSocket.send(objectMapper.writeValueAsString(msg));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void removeReaction(long id){
+        UniversalJSONObject msg = new UniversalJSONObject();
+        msg.msgId = id;
+        msg.sender = UserData.identifier;
+        msg.chat = UserData.table_name;
+        msg.event = "RemoveReaction";
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
