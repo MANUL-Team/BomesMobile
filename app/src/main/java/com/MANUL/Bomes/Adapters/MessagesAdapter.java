@@ -222,7 +222,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
             private void moveBack(){
                 Handler handler = new Handler();
                 holder.replyBack = true;
-                holder.move = false;
                 if (holder.moveCard.getX() < holder.startPosX) {
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -294,10 +293,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                                 moveBack();
                                 holder.move = true;
                             }
-                            return true;
+                            return false;
                         }
                         break;
                     case MotionEvent.ACTION_UP:
+                        holder.move = false;
                     case MotionEvent.ACTION_CANCEL:
                         if (Math.abs(evX - holder.dragX) < 20){
                             moveBack();
@@ -309,7 +309,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         if (event.getAction() == MotionEvent.ACTION_CANCEL){
                             holder.isScroll = true;
                         }
-                        return true;
+                        return false;
                 }
                 return false;
             }

@@ -35,6 +35,7 @@ public class UniversalJSONObject {
     public String sender;
     public String chatName;
     public String[] stickers;
+    public String[][] hints;
     public String token;
     public String friendId;
     public boolean isFriend;

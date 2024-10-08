@@ -106,8 +106,10 @@ public class ChatActivity extends AppCompatActivity {
 
     ArrayList<Message> messages = new ArrayList<>();
     ArrayList<Sticker> stickers = new ArrayList<>();
+    ArrayList<Sticker> allStickers = new ArrayList<>();
     ArrayList<Message> waitingMessages = new ArrayList<>();
     ArrayList<UniversalJSONObject> users = new ArrayList<>();
+    String[][] hints = new String[0][0];
     Message replyingMessage;
     Message editingMessage;
 
@@ -286,8 +288,9 @@ public class ChatActivity extends AppCompatActivity {
                             }
                             else if (obj.event.equals("ReturnStickers")){
                                 for (String l : obj.stickers) {
-                                    stickers.add(new Sticker(l));
+                                    allStickers.add(new Sticker(l));
                                 }
+                                hints = obj.hints;
                                 stickersAdapter.notifyDataSetChanged();
                             }
                             else if (obj.event.equals("ReturnChatUsers")){
@@ -438,9 +441,13 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!messageText.getText().toString().isEmpty()){
+                if (stickersHolder.getVisibility() == View.VISIBLE)
+                    closeStickers();
+                String value = messageText.getText().toString();
+                if (!value.isEmpty()){
                     recordAudio.setVisibility(View.GONE);
                     sendBtn.setVisibility(View.VISIBLE);
                 }
@@ -460,7 +467,18 @@ public class ChatActivity extends AppCompatActivity {
                 catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
+                stickers.clear();
 
+                boolean has = false;
+                for (int i = 0; i < hints.length; i++) {
+                    if (Arrays.asList(hints[i]).contains(value)){
+                        has = true;
+                        stickers.add(allStickers.get(i));
+                    }
+                }
+                stickersAdapter.notifyDataSetChanged();
+                if (has)
+                    openStickers();
             }
 
             @Override
@@ -490,8 +508,12 @@ public class ChatActivity extends AppCompatActivity {
         openStickersBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (stickersHolder.getVisibility() == View.GONE)
+                if (stickersHolder.getVisibility() == View.GONE) {
+                    stickers.clear();
+                    stickers.addAll(allStickers);
+                    stickersAdapter.notifyDataSetChanged();
                     openStickers();
+                }
                 else
                     closeStickers();
             }
