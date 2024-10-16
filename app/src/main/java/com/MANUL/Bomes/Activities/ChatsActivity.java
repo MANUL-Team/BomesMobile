@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.MANUL.Bomes.Fragments.ChatsFragment;
+import com.MANUL.Bomes.Fragments.CreatingChatFragment;
 import com.MANUL.Bomes.Fragments.ProfileFragment;
 import com.MANUL.Bomes.Fragments.UsersFragment;
 import com.MANUL.Bomes.R;
@@ -54,6 +55,7 @@ public class ChatsActivity extends AppCompatActivity {
     ChatsFragment chatsFragment = new ChatsFragment(this);
     UsersFragment usersFragment = new UsersFragment(this);
     ProfileFragment profileFragment = new ProfileFragment(this);
+    CreatingChatFragment creatingChatFragment = new CreatingChatFragment();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,12 +128,21 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withIconTintingEnabled(true)
                                 .withName("Создать чат")
                                 .withSelectable(true)
-                                .withIcon(R.drawable.new_chat),
+                                .withIcon(R.drawable.new_chat)
+                                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        switchFragment(creatingChatFragment);
+                                        mainToolbar.setTitle("Создание чата");
+                                        return false;
+                                    }
+                                }),
                         new PrimaryDrawerItem()
                                 .withIconTintingEnabled(true)
                                 .withName("Профиль")
                                 .withSelectable(true)
-                                .withIcon(R.drawable.human).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                .withIcon(R.drawable.human)
+                                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                                         switchFragment(profileFragment);

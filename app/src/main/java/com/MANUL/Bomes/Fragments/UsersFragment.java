@@ -132,6 +132,8 @@ public class UsersFragment extends Fragment {
                                 }
                             }
                             else if(obj.event.equals("ReturnUsers")){
+                                users.clear();
+                                adapter.notifyDataSetChanged();
                                 for (UniversalJSONObject jsonObject:obj.users) {
                                     User user = new User(jsonObject.username, jsonObject.avatar, jsonObject.identifier, jsonObject.friendsCount);
                                     users.add(user);

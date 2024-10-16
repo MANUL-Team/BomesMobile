@@ -26,6 +26,7 @@ public class NotificationService extends FirebaseMessagingService {
     @WorkerThread
     public void onNewToken(@NonNull String token){
         this.token = token;
+        Log.e("New Token!", token);
         connectToServer();
     }
 
