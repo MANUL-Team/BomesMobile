@@ -52,10 +52,6 @@ public class ChatsActivity extends AppCompatActivity {
                 }
             });
 
-    ChatsFragment chatsFragment = new ChatsFragment(this);
-    UsersFragment usersFragment = new UsersFragment(this);
-    ProfileFragment profileFragment = new ProfileFragment(this);
-    CreatingChatFragment creatingChatFragment = new CreatingChatFragment();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +66,7 @@ public class ChatsActivity extends AppCompatActivity {
 
         askNotificationPermission();
         init();
-
+        ChatsFragment chatsFragment = new ChatsFragment(this);
         switchFragment(chatsFragment);
     }
 
@@ -106,6 +102,7 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        ChatsFragment chatsFragment = new ChatsFragment(ChatsActivity.this);
                                         switchFragment(chatsFragment);
                                         mainToolbar.setTitle("Чаты");
                                         return false;
@@ -119,6 +116,7 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        UsersFragment usersFragment = new UsersFragment(ChatsActivity.this);
                                         switchFragment(usersFragment);
                                         mainToolbar.setTitle("Все пользователи");
                                         return false;
@@ -132,6 +130,7 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        CreatingChatFragment creatingChatFragment = new CreatingChatFragment();
                                         switchFragment(creatingChatFragment);
                                         mainToolbar.setTitle("Создание чата");
                                         return false;
@@ -145,6 +144,7 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        ProfileFragment profileFragment = new ProfileFragment(ChatsActivity.this);
                                         switchFragment(profileFragment);
                                         mainToolbar.setTitle("Профиль");
                                         return false;

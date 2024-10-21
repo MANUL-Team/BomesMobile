@@ -98,7 +98,7 @@ public class CodeConfirmActivity extends AppCompatActivity {
                                 Toast.makeText(CodeConfirmActivity.this, "Неправильный код!", Toast.LENGTH_SHORT).show();
                             }
                             else if (obj.event.equals("RightCode")){
-                                UserData.identifier = obj.userIndentifier;
+                                UserData.identifier = obj.userIdentifier;
                                 UserData.email = obj.email;
                                 UserData.password = obj.password;
                                 UserData.username = obj.username;

@@ -1,5 +1,6 @@
 package com.MANUL.Bomes.Activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -461,7 +462,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (stickersHolder.getVisibility() == View.VISIBLE)
                     closeStickers();
-                String value = messageText.getText().toString();
+                String value = messageText.getText().toString().toLowerCase();
                 if (!value.isEmpty()){
                     recordAudio.setVisibility(View.GONE);
                     sendBtn.setVisibility(View.VISIBLE);
@@ -555,8 +556,12 @@ public class ChatActivity extends AppCompatActivity {
         recordAudio.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                getMicrophonePermission();
+                if (!isMicrophonePresent()) {
+                    getMicrophonePermission();
+                    return;
+                }
                 if(!recording){
+                    Log.e("Has MICRO!", "Has MICRO!");
                     try {
                         File file = new File(dirAudio, audioFileName);
                         mediaRecorder = new MediaRecorder();
@@ -1018,23 +1023,14 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
     private boolean isMicrophonePresent(){
-        if(this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
     }
     private void getStoragePermission(){
         if (PermissionUtils.hasPermissions(this)) return;
         PermissionUtils.requestPermissions(this, PERMISSION_STORAGE);
     }
     private void getMicrophonePermission(){
-        if(isMicrophonePresent()) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
-            }
-        }
+        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
     }
 
     @Override

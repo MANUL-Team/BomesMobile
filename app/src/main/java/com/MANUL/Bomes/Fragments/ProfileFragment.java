@@ -65,7 +65,6 @@ public class ProfileFragment extends Fragment {
 
     public ProfileFragment(ChatsActivity activity){
         this.activity = activity;
-        connectToServer();
     }
 
     @Override
@@ -84,6 +83,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         init(view);
         setValues();
+        connectToServer();
     }
     private void init(View view){
         avatar = view.findViewById(R.id.profile_avatar);
@@ -293,5 +293,17 @@ public class ProfileFragment extends Fragment {
                 Log.e("Upload error:", t.getMessage());
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (webSocket == null)
+            connectToServer();
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        webSocket.close(1000, null);
+        webSocket = null;
     }
 }

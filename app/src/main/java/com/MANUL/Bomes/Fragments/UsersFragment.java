@@ -40,7 +40,6 @@ public class UsersFragment extends Fragment {
     ChatsActivity activity;
 
 
-
     RecyclerView users_recycler;
     UsersAdapter adapter;
     ArrayList<User> users = new ArrayList<>();
@@ -49,7 +48,6 @@ public class UsersFragment extends Fragment {
 
     public UsersFragment(ChatsActivity activity){
         this.activity = activity;
-        connectToServer();
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +64,7 @@ public class UsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
+        connectToServer();
     }
     private void init(View view){
         users = new ArrayList<>();
@@ -99,7 +98,7 @@ public class UsersFragment extends Fragment {
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text) {
                 super.onMessage(ws, text);
-                getActivity().runOnUiThread(new Runnable() {
+                activity.runOnUiThread(new Runnable() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void run() {
@@ -176,8 +175,14 @@ public class UsersFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (webSocket == null)
+            connectToServer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         webSocket.close(1000, null);
         webSocket = null;
-        connectToServer();
     }
 }

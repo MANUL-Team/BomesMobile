@@ -51,11 +51,12 @@ public class ChatsFragment extends Fragment {
     ChatsAdapter adapter;
     ArrayList<Chat> chats = new ArrayList<>();
 
+    boolean pause = false;
+
     public ChatsFragment(){}
 
     public ChatsFragment(ChatsActivity activity){
         this.activity = activity;
-        connectToServer();
     }
 
     @Override
@@ -73,6 +74,7 @@ public class ChatsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
+        connectToServer();
     }
 
     public void init(View view){
@@ -232,6 +234,9 @@ public class ChatsFragment extends Fragment {
     }
     @Override
     public void onResume() {
+        pause = false;
+        if (webSocket == null)
+            connectToServer();
         if (UserData.identifier == null){
             Intent intent = new Intent(activity, SplashScreen.class);
             activity.startActivity(intent);
@@ -244,4 +249,15 @@ public class ChatsFragment extends Fragment {
         super.onResume();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        pause = true;
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        webSocket.close(1000, null);
+        webSocket = null;
+    }
 }
