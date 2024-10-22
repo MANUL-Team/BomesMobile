@@ -41,7 +41,11 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     Context context;
@@ -72,6 +76,22 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
+//        Date nowDate = new Date(message.time);
+//        if (position == 0) {
+//            holder.date_text.setText(simpleDateFormat.format(nowDate));
+//            holder.date_text.setVisibility(View.VISIBLE);
+//        }
+//        else {
+//            Date dateBefore = new Date(messages.get(position-1).time);
+//            if (nowDate.getDate() != dateBefore.getDate()){
+//                holder.date_text.setText(simpleDateFormat.format(nowDate));
+//                holder.date_text.setVisibility(View.VISIBLE);
+//            }
+//            else{
+//                holder.date_text.setVisibility(View.GONE);
+//            }
+//        }
 
         holder.reactionsLayout.removeAllViews();
         ArrayList<String> wasTypes = new ArrayList<>();

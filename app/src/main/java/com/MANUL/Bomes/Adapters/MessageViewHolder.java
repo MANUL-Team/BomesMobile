@@ -14,7 +14,7 @@ import com.MANUL.Bomes.SimpleObjects.Message;
 import com.MANUL.Bomes.R;
 
 public class MessageViewHolder extends RecyclerView.ViewHolder {
-    TextView usernameMsg, textValueMsg, timeMsg, replyText, audioTimeText;
+    TextView usernameMsg, textValueMsg, timeMsg, replyText, audioTimeText, date_text;
     ConstraintLayout messageLayout, messageInnerLayout;
     ImageView imageMsg, stickerMsg, isReadMsg, audio_display_controls;
     CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard, touchEventer, moveCard, reactionsHolder;
@@ -50,5 +50,6 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         messageInnerLayout = itemView.findViewById(R.id.messageInnerLayout);
         reactionsHolder = itemView.findViewById(R.id.reactionsHolder);
         reactionsLayout = itemView.findViewById(R.id.reactionsLayout);
+        date_text = itemView.findViewById(R.id.date_text);
     }
 }
