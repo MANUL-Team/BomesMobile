@@ -41,11 +41,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     Context context;
@@ -76,22 +73,22 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
-//        Date nowDate = new Date(message.time);
-//        if (position == 0) {
-//            holder.date_text.setText(simpleDateFormat.format(nowDate));
-//            holder.date_text.setVisibility(View.VISIBLE);
-//        }
-//        else {
-//            Date dateBefore = new Date(messages.get(position-1).time);
-//            if (nowDate.getDate() != dateBefore.getDate()){
-//                holder.date_text.setText(simpleDateFormat.format(nowDate));
-//                holder.date_text.setVisibility(View.VISIBLE);
-//            }
-//            else{
-//                holder.date_text.setVisibility(View.GONE);
-//            }
-//        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
+        Date nowDate = new Date(message.time*1000);
+        if (position == 0) {
+            holder.date_text.setText(simpleDateFormat.format(nowDate));
+            holder.date_text.setVisibility(View.VISIBLE);
+        }
+        else {
+            Date dateBefore = new Date(messages.get(position-1).time*1000);
+            if (!simpleDateFormat.format(nowDate).equals(simpleDateFormat.format(dateBefore))){
+                holder.date_text.setText(simpleDateFormat.format(nowDate));
+                holder.date_text.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.date_text.setVisibility(View.GONE);
+            }
+        }
 
         holder.reactionsLayout.removeAllViews();
         ArrayList<String> wasTypes = new ArrayList<>();
@@ -453,6 +450,19 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                 dialog.dismiss();
             }
         });
+        CardView copyCardDialog = dialog.findViewById(R.id.copyCardDialog);
+        if (message.dataType.equals("text")) {
+            copyCardDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.copyMessage(message);
+                    dialog.dismiss();
+                }
+            });
+        }
+        else{
+            copyCardDialog.setVisibility(View.GONE);
+        }
 
         CardView editCardDialog = dialog.findViewById(R.id.editCardDialog);
         if (message.sender.equals(UserData.identifier) && message.dataType.equals("text")) {

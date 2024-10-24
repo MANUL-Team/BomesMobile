@@ -2,6 +2,9 @@ package com.MANUL.Bomes.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
@@ -1006,6 +1009,13 @@ public class ChatActivity extends AppCompatActivity {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void copyMessage(Message message){
+        ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("", message.value);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(ChatActivity.this, "Скопировано в буфер обмена", Toast.LENGTH_SHORT).show();
     }
 
     private void closeChat(){

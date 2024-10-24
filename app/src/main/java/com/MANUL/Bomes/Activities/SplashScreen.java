@@ -29,6 +29,9 @@ import okhttp3.WebSocketListener;
 @SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
 
+    public static final int APP_VERSION = 31;
+
+
     ObjectMapper objectMapper = new ObjectMapper();
     WebSocket webSocket;
     SharedPreferences prefs;
@@ -105,6 +108,22 @@ public class SplashScreen extends AppCompatActivity {
                                     webSocket.close(1000, null);
                                 }
                             }
+                            if (obj.event.equals("ReturnCurrentAndroidVersion")){
+                                if (!obj.version.equals(String.valueOf(APP_VERSION))){
+                                    Intent intent = new Intent(SplashScreen.this, UpgradeBomesActivity.class);
+                                    startActivity(intent);
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                    finish();
+                                    webSocket.close(1000, null);
+                                }
+                                else{
+                                    UniversalJSONObject loadMe = new UniversalJSONObject();
+                                    loadMe.event = "GetUser";
+                                    loadMe.identifier = identifier;
+                                    loadMe.friendId = identifier;
+                                    webSocket.send(objectMapper.writeValueAsString(loadMe));
+                                }
+                            }
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException(e);
                         }
@@ -117,11 +136,9 @@ public class SplashScreen extends AppCompatActivity {
                 super.onOpen(webSocket, response);
                 if (!identifier.equals("none")){
                     try {
-                        UniversalJSONObject loadMe = new UniversalJSONObject();
-                        loadMe.event = "GetUser";
-                        loadMe.identifier = identifier;
-                        loadMe.friendId = identifier;
-                        webSocket.send(objectMapper.writeValueAsString(loadMe));
+                        UniversalJSONObject loadVersion = new UniversalJSONObject();
+                        loadVersion.event = "GetCurrentAndroidVersion";
+                        webSocket.send(objectMapper.writeValueAsString(loadVersion));
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }

@@ -61,6 +61,7 @@ public class UniversalJSONObject {
     public String userIndentifier;
     public String whichFriend;
     public long msgId;
+    public String version;
 
 
     public long getLastUpdate(){

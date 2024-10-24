@@ -10,10 +10,15 @@
         android:id="@+id/date_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/anonymous_pro"
         android:text="Сегодня, 22 октября"
+        android:textColor="@color/white"
+        android:textSize="20sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/touchEventer"
@@ -32,7 +37,7 @@
         android:id="@+id/moveCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="2dp"
         app:cardBackgroundColor="#00FFFFFF"
         app:cardCornerRadius="0dp"
