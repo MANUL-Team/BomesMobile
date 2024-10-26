@@ -129,4 +129,10 @@ public class SelectStickerForHints extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (webSocket != null) webSocket.close(1000, null);
+    }
 }
