@@ -72,6 +72,7 @@ dependencies {
 
     implementation("com.github.MikeOrtiz:TouchImageView:3.6")
     implementation ("com.github.pedromassango:doubleClick:3.0")
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
 
 
     implementation(libs.lifecycle.runtime.ktx)

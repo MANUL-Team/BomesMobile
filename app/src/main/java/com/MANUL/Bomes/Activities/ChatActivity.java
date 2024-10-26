@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -118,7 +119,7 @@ public class ChatActivity extends AppCompatActivity {
     ArrayList<Message> waitingMessages = new ArrayList<>();
     ArrayList<UniversalJSONObject> users = new ArrayList<>();
     public ArrayList<String> reactions = new ArrayList<>();
-    String[][] hints = new String[0][0];
+    ArrayList<ArrayList<String>> hints = new ArrayList<>();
     Message replyingMessage;
     Message editingMessage;
 
@@ -300,7 +301,19 @@ public class ChatActivity extends AppCompatActivity {
                                 for (String l : obj.stickers) {
                                     allStickers.add(new Sticker(l));
                                 }
-                                hints = obj.hints;
+                                SharedPreferences preferences = getSharedPreferences("StickersHints", MODE_PRIVATE);
+                                for (int i = 0; i < obj.hints.length; i++) {
+                                    hints.add(new ArrayList<>());
+                                    for (int j = 0; j < obj.hints[i].length; j++) {
+                                        hints.get(i).add(obj.hints[i][j]);
+                                    }
+                                    String data = preferences.getString(String.valueOf(i), "");
+                                    String[] values = data.split(CustomizeStickerHints.separator);
+                                    for (int j = 0; j < values.length; j++) {
+                                        if (!values[j].isEmpty())
+                                            hints.get(i).add(values[j]);
+                                    }
+                                }
                                 stickersAdapter.notifyDataSetChanged();
                             }
                             else if (obj.event.equals("ReturnReactions")){
@@ -495,8 +508,8 @@ public class ChatActivity extends AppCompatActivity {
                 stickers.clear();
 
                 boolean has = false;
-                for (int i = 0; i < hints.length; i++) {
-                    if (Arrays.asList(hints[i]).contains(value)){
+                for (int i = 0; i < hints.size(); i++) {
+                    if (hints.get(i).contains(value)){
                         has = true;
                         stickers.add(allStickers.get(i));
                     }

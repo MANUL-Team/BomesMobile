@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -24,6 +23,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.MANUL.Bomes.Fragments.ChatsFragment;
 import com.MANUL.Bomes.Fragments.CreatingChatFragment;
 import com.MANUL.Bomes.Fragments.ProfileFragment;
+import com.MANUL.Bomes.Fragments.SettingsFragment;
 import com.MANUL.Bomes.Fragments.UsersFragment;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UserData;
@@ -152,27 +152,15 @@ public class ChatsActivity extends AppCompatActivity {
                                 }),
                         new PrimaryDrawerItem()
                                 .withIconTintingEnabled(true)
-                                .withName("Выйти")
+                                .withName("Настройки")
                                 .withSelectable(true)
-                                .withIcon(R.drawable.logout)
+                                .withIcon(R.drawable.settings_icon)
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        UserData.identifier = null;
-                                        UserData.avatar = null;
-                                        UserData.email = null;
-                                        UserData.chatId = null;
-                                        UserData.password = null;
-                                        UserData.description = null;
-                                        UserData.isLocalChat = 0;
-                                        UserData.chatAvatar = null;
-                                        UserData.table_name = null;
-                                        UserData.chatName = null;
-                                        prefs.edit().putString("identifier", "none").apply();
-                                        Intent intent = new Intent(ChatsActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                        finish();
+                                        SettingsFragment settingsFragment = new SettingsFragment(ChatsActivity.this);
+                                        switchFragment(settingsFragment);
+                                        mainToolbar.setTitle("Настройки");
                                         return false;
                                     }
                                 })
@@ -181,7 +169,6 @@ public class ChatsActivity extends AppCompatActivity {
     }
 
     private void setHeader(){
-        //Log.e("Data", UserData.username + " " + UserData.email + " " + UserData.avatar);
         ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem()
                 .withName(UserData.username)
                 .withEmail(UserData.email);
@@ -189,12 +176,22 @@ public class ChatsActivity extends AppCompatActivity {
             profileDrawerItem.withIcon(R.drawable.icon);
         else
             profileDrawerItem.withIcon("https://bomes.ru/" + UserData.avatar);
+        profileDrawerItem.withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                ProfileFragment profileFragment = new ProfileFragment(ChatsActivity.this);
+                switchFragment(profileFragment);
+                mainToolbar.setTitle("Профиль");
+                return false;
+            }
+        });
         header = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.gradient)
                 .addProfiles(
                         profileDrawerItem
-                ).build();
+                )
+                .build();
     }
     public void openChat(){
         Intent intent = new Intent(ChatsActivity.this, ChatActivity.class);
