@@ -43,6 +43,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.Message;
 import com.MANUL.Bomes.SimpleObjects.Sticker;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.SimpleObjects.User;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.FileUtils;
 import com.MANUL.Bomes.Utils.PermissionUtils;
@@ -81,12 +82,15 @@ public class ChatActivity extends AppCompatActivity {
     private static final int MICROPHONE_PERMISSION_CODE = 200;
     private static final int PERMISSION_STORAGE = 101;
 
+    User openedUser;
+
+
     ExplosionField explosionField;
     MediaRecorder mediaRecorder;
 
 
 
-    CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio;
+    CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio, userInfoCard;
     ImageView inChatAvatar, recordingAudioImage;
     TextView username, onlineText, typingMsg, recordTimeText;
     public RecyclerView messagesRecycler;
@@ -197,6 +201,7 @@ public class ChatActivity extends AppCompatActivity {
                                         Glide.with(ChatActivity.this).load("https://bomes.ru/" + obj.user.avatar).into(inChatAvatar);
                                     else
                                         Glide.with(ChatActivity.this).load("https://bomes.ru/media/icon.png").into(inChatAvatar);
+                                    openedUser = new User(obj.user.username, obj.user.avatar, obj.user.identifier, obj.user.friendsCount);
                                     username.setText(obj.user.username);
                                     lastOnline = obj.user.lastOnline;
                                     UniversalJSONObject isUserOnline = new UniversalJSONObject();
@@ -217,7 +222,7 @@ public class ChatActivity extends AppCompatActivity {
                             }
                             else if (obj.event.equals("ReturnChatMessages")){
                                 for (UniversalJSONObject msg : obj.messages) {
-                                    messages.add(0, new Message(msg.username, msg.dataType, msg.value, msg.reply, msg.isRead, msg.time, msg.id, msg.sender, msg.reaction));
+                                    messages.add(0, new Message(msg.username, msg.dataType, msg.value, msg.reply, msg.isRead, msg.time, msg.id, msg.sender, msg.reaction, msg.avatar));
                                     adapter.notifyItemInserted(0);
                                     if (!msg.sender.equals(UserData.identifier)){
                                         UniversalJSONObject readMsg = new UniversalJSONObject();
@@ -235,7 +240,7 @@ public class ChatActivity extends AppCompatActivity {
                                 findViewById(R.id.loadingBar).setVisibility(View.GONE);
                             }
                             else if (obj.event.equals("message")){
-                                Message message = new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender, new UniversalJSONObject[0]);
+                                Message message = new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender, new UniversalJSONObject[0], obj.avatar);
                                 messages.add(message);
                                 loadedMessages++;
                                 if (!obj.sender.equals(UserData.identifier) && obj.isRead == 0 && !isStop){
@@ -427,6 +432,7 @@ public class ChatActivity extends AppCompatActivity {
         messagesRecycler = findViewById(R.id.messagesRecycler);
         recordingAudioImage = findViewById(R.id.recordingAudioImage);
         recordTimeText = findViewById(R.id.recordTimeText);
+        userInfoCard = findViewById(R.id.userInfoCard);
         adapter = new MessagesAdapter(this, messages, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         messagesRecycler.setLayoutManager(layoutManager);
@@ -634,6 +640,17 @@ public class ChatActivity extends AppCompatActivity {
                         messageText.startAnimation(alpha_in);
                         Picasso.with(ChatActivity.this).load(R.drawable.white_mic).into(recordingAudioImage);
                     }
+                }
+            }
+        });
+
+        userInfoCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (UserData.isLocalChat == 1) {
+                    UserPageActivity.openedUser = openedUser;
+                    Intent intent = new Intent(ChatActivity.this, UserPageActivity.class);
+                    startActivity(intent);
                 }
             }
         });

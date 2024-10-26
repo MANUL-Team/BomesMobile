@@ -16,8 +16,8 @@ import com.MANUL.Bomes.R;
 public class MessageViewHolder extends RecyclerView.ViewHolder {
     TextView usernameMsg, textValueMsg, timeMsg, replyText, audioTimeText, date_text;
     ConstraintLayout messageLayout, messageInnerLayout;
-    ImageView imageMsg, stickerMsg, isReadMsg, audio_display_controls;
-    CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard, touchEventer, moveCard, reactionsHolder;
+    ImageView imageMsg, stickerMsg, isReadMsg, audio_display_controls, avatarImageMessage;
+    CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard, touchEventer, moveCard, reactionsHolder, avatarCardMessage;
     LinearLayout reactionsLayout;
     public Message message;
     public boolean drag, move, isScroll;
@@ -51,5 +51,7 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         reactionsHolder = itemView.findViewById(R.id.reactionsHolder);
         reactionsLayout = itemView.findViewById(R.id.reactionsLayout);
         date_text = itemView.findViewById(R.id.date_text);
+        avatarCardMessage = itemView.findViewById(R.id.avatarCardMessage);
+        avatarImageMessage = itemView.findViewById(R.id.avatarImageMessage);
     }
 }

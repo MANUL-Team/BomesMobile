@@ -27,10 +27,12 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.MANUL.Bomes.Activities.ChatActivity;
 import com.MANUL.Bomes.Activities.PhotoPlayer;
+import com.MANUL.Bomes.Activities.UserPageActivity;
 import com.MANUL.Bomes.Activities.VideoPlayer;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.Message;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.SimpleObjects.User;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -183,99 +185,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         holder.videoCard.setVisibility(View.GONE);
         holder.audioPlayerCard.setVisibility(View.GONE);
 
-        switch (message.dataType) {
-            case "text":
-                holder.textValueMsg.setVisibility(View.VISIBLE);
-                holder.textValueMsg.setText(message.value);
-                break;
-            case "image":
-                holder.imageCard.setVisibility(View.VISIBLE);
-                holder.imageMsg.setVisibility(View.VISIBLE);
-                Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.imageMsg);
-
-                holder.imageCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        PhotoPlayer.PHOTO_URL = message.value;
-                        Intent intent = new Intent(context, PhotoPlayer.class);
-                        activity.startActivity(intent);
-                    }
-                });
-                break;
-            case "sticker":
-                holder.stickerMsg.setVisibility(View.VISIBLE);
-                Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.stickerMsg);
-                break;
-            case "video":
-                holder.videoCard.setVisibility(View.VISIBLE);
-                holder.videoCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        VideoPlayer.Video_URL = message.value;
-                        Intent intent = new Intent(context, VideoPlayer.class);
-                        activity.startActivity(intent);
-                    }
-                });
-                break;
-            case "audio":
-                holder.audioPlayerCard.setVisibility(View.VISIBLE);
-                MediaPlayer mediaPlayer = new MediaPlayer();
-                Handler handler = new Handler();
-                try {
-                    mediaPlayer.setDataSource("https://bomes.ru/" + message.value);
-                    mediaPlayer.prepare();
-
-                    holder.audioTimeText.setText(getAudioTime(mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
-
-                    holder.playAudioCard.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (!mediaPlayer.isPlaying()) {
-                                mediaPlayer.start();
-                                Picasso.with(context).load(R.drawable.white_stop_audio).into(holder.audio_display_controls);
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (mediaPlayer.isPlaying()) {
-                                            holder.audioTimeText.setText(getAudioTime(mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
-                                            handler.postDelayed(this, 100);
-                                        }
-                                    }
-                                }, 100);
-                            } else {
-                                mediaPlayer.pause();
-                                Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
-                            }
-                        }
-                    });
-                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
-                        }
-                    });
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-        }
-        holder.timeMsg.setText(new SimpleDateFormat("HH:mm").format(message.time*1000));
-
-        ConstraintSet set = new ConstraintSet();
-        set.clone(holder.messageInnerLayout);
-        if (message.sender.equals(UserData.identifier)){
-            holder.isMyMessage = true;
-            set.clear(R.id.messageCard, ConstraintSet.LEFT);
-            set.connect(R.id.messageCard, ConstraintSet.RIGHT, R.id.messageInnerLayout, ConstraintSet.RIGHT);
-        }
-        else{
-            holder.isMyMessage = false;
-            set.clear(R.id.messageCard, ConstraintSet.RIGHT);
-            set.connect(R.id.messageCard, ConstraintSet.LEFT, R.id.messageInnerLayout, ConstraintSet.LEFT);
-        }
-        set.applyTo(holder.messageInnerLayout);
-
         View.OnTouchListener touchListener = new View.OnTouchListener() {
             private void moveBack(){
                 Handler handler = new Handler();
@@ -394,6 +303,116 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                 activity.addReaction(activity.reactions.get(0), message.id);
             }
         }));
+        holder.avatarCardMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserPageActivity.openedUser = new User(message.username, message.avatar, message.sender, 0);
+                Intent intent = new Intent(context, UserPageActivity.class);
+                context.startActivity(intent);
+            }
+        });
+
+
+        switch (message.dataType) {
+            case "text":
+                holder.textValueMsg.setVisibility(View.VISIBLE);
+                holder.textValueMsg.setText(message.value);
+                break;
+            case "image":
+                holder.imageCard.setVisibility(View.VISIBLE);
+                holder.imageMsg.setVisibility(View.VISIBLE);
+                Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.imageMsg);
+
+                holder.imageCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PhotoPlayer.PHOTO_URL = message.value;
+                        Intent intent = new Intent(context, PhotoPlayer.class);
+                        activity.startActivity(intent);
+                    }
+                });
+                break;
+            case "sticker":
+                holder.stickerMsg.setVisibility(View.VISIBLE);
+                Glide.with(context).load("https://bomes.ru/" + message.value).into(holder.stickerMsg);
+                break;
+            case "video":
+                holder.videoCard.setVisibility(View.VISIBLE);
+                holder.videoCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        VideoPlayer.Video_URL = message.value;
+                        Intent intent = new Intent(context, VideoPlayer.class);
+                        activity.startActivity(intent);
+                    }
+                });
+                break;
+            case "audio":
+                holder.audioPlayerCard.setVisibility(View.VISIBLE);
+                MediaPlayer mediaPlayer = new MediaPlayer();
+                Handler handler = new Handler();
+                try {
+                    mediaPlayer.setDataSource("https://bomes.ru/" + message.value);
+                    mediaPlayer.prepare();
+
+                    holder.audioTimeText.setText(getAudioTime(mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
+
+                    holder.playAudioCard.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!mediaPlayer.isPlaying()) {
+                                mediaPlayer.start();
+                                Picasso.with(context).load(R.drawable.white_stop_audio).into(holder.audio_display_controls);
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mediaPlayer.isPlaying()) {
+                                            holder.audioTimeText.setText(getAudioTime(mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
+                                            handler.postDelayed(this, 100);
+                                        }
+                                    }
+                                }, 100);
+                            } else {
+                                mediaPlayer.pause();
+                                Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
+                            }
+                        }
+                    });
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            Picasso.with(context).load(R.drawable.white_play_audio).into(holder.audio_display_controls);
+                        }
+                    });
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+        }
+        holder.timeMsg.setText(new SimpleDateFormat("HH:mm").format(message.time*1000));
+
+        ConstraintSet set = new ConstraintSet();
+        set.clone(holder.messageInnerLayout);
+        if (message.sender.equals(UserData.identifier)){
+            holder.avatarImageMessage.setVisibility(View.GONE);
+            holder.isMyMessage = true;
+            set.clear(R.id.messageConstraint, ConstraintSet.LEFT);
+            set.connect(R.id.messageConstraint, ConstraintSet.RIGHT, R.id.messageInnerLayout, ConstraintSet.RIGHT);
+        }
+        else{
+            holder.avatarImageMessage.setVisibility(View.VISIBLE);
+            if (!message.avatar.isEmpty()){
+                Glide.with(context).load("https://bomes.ru/" + message.avatar).into(holder.avatarImageMessage);
+            }
+            else{
+                Glide.with(context).load(R.drawable.icon).into(holder.avatarImageMessage);
+            }
+            holder.isMyMessage = false;
+            set.clear(R.id.messageConstraint, ConstraintSet.RIGHT);
+            set.connect(R.id.messageConstraint, ConstraintSet.LEFT, R.id.messageInnerLayout, ConstraintSet.LEFT);
+        }
+        set.applyTo(holder.messageInnerLayout);
     }
     public int getReactionTypeCount(String type, UniversalJSONObject[] reactions){
         int count = 0;

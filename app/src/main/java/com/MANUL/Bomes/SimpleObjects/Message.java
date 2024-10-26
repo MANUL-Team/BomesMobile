@@ -9,6 +9,7 @@ public class Message {
     public String dataType;
     public String value;
     public String reply;
+    public String avatar;
     public int isRead;
     public long time;
     public long id;
@@ -27,5 +28,18 @@ public class Message {
         this.id = id;
         this.sender = sender;
         this.reactions = reactions;
+        this.avatar = "";
+    }
+    public Message(String username, String dataType, String value, String reply, int isRead, long time, long id, String sender, UniversalJSONObject[] reactions, String avatar){
+        this.username = username;
+        this.dataType = dataType;
+        this.value = value;
+        this.reply = reply;
+        this.isRead = isRead;
+        this.time = time;
+        this.id = id;
+        this.sender = sender;
+        this.reactions = reactions;
+        this.avatar = avatar;
     }
 }
