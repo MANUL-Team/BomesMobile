@@ -79,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
                         m.update(plaintext.getBytes());
                         byte[] digest = m.digest();
                         BigInteger bigInt = new BigInteger(1,digest);
-                        String hashtext = bigInt.toString(16);
-                        sendObj.password = hashtext;
+                        sendObj.password = bigInt.toString(16);
 
                         String sendData = objectMapper.writeValueAsString(sendObj);
 
@@ -137,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
 
                             if (obj.event.equals("TruePassword")){
-                                Toast.makeText(MainActivity.this, "Верный пароль!", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(MainActivity.this, "Верный пароль!", Toast.LENGTH_SHORT).show();
                                 UserData.email = obj.email;
                                 UserData.identifier = obj.identifier;
                                 UserData.password = obj.password;

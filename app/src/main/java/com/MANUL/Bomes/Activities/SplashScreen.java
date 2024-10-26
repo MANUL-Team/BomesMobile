@@ -54,12 +54,7 @@ public class SplashScreen extends AppCompatActivity {
         prefs = getSharedPreferences("user", Context.MODE_PRIVATE);
         identifier = prefs.getString("identifier", "none");
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                connectToServer();
-            }
-        }, 500);
+        handler.postDelayed(this::connectToServer, 500);
     }
     private void connectToServer(){
         OkHttpClient client = new OkHttpClient.Builder().build();

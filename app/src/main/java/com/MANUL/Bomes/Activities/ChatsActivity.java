@@ -181,7 +181,7 @@ public class ChatsActivity extends AppCompatActivity {
     }
 
     private void setHeader(){
-        Log.e("Data", UserData.username + " " + UserData.email + " " + UserData.avatar);
+        //Log.e("Data", UserData.username + " " + UserData.email + " " + UserData.avatar);
         ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem()
                 .withName(UserData.username)
                 .withEmail(UserData.email);
