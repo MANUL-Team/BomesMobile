@@ -6,13 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.MANUL.Bomes.R
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.MANUL.Bomes.databinding.FragmentCreatingChatBinding
+import com.MANUL.Bomes.presentation.createChat.AddUserListAdapter
+import com.MANUL.Bomes.presentation.createChat.AddedUserListAdapter
 import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
 import com.empire_mammoth.vk_client.presentation.account.CreatingChatViewModel
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
+
 
 class CreatingChatFragment : Fragment() {
 
@@ -34,10 +40,23 @@ class CreatingChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_creating_chat, container, false)
+    ): View {
+        binding = FragmentCreatingChatBinding.inflate(inflater)
+
+        binding.apply {
+            val layoutManager = FlexboxLayoutManager(context)
+            layoutManager.flexDirection = FlexDirection.ROW
+            layoutManager.justifyContent = JustifyContent.FLEX_START
+            addedUserList.layoutManager = layoutManager
+            addedUserList.adapter = AddedUserListAdapter()
+
+            addUserList.adapter = AddUserListAdapter()
+            addUserList.layoutManager = LinearLayoutManager(activity)
+        }
+
+        return binding.root
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

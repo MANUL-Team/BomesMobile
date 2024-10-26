@@ -10,6 +10,16 @@ plugins {
     id("com.google.gms.google-services") version "4.4.2" apply false
 }
 
+tasks
+    .withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>()
+    .configureEach {
+        compilerOptions
+            .languageVersion
+            .set(
+                org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1
+            )
+    }
+
 dependencies {
 
 }

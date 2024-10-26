@@ -44,11 +44,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:minHeight="48dp" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/resView1"
+            android:id="@+id/added_user_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:padding="16dp"
@@ -57,7 +58,7 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/resView2"
+            android:id="@+id/add_user_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:padding="16dp"
@@ -65,7 +66,7 @@
             app:layout_constraintBottom_toTopOf="@+id/button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/resView1" />
+            app:layout_constraintTop_toBottomOf="@+id/added_user_list" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/button"
