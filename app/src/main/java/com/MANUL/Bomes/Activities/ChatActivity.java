@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -112,6 +113,7 @@ public class ChatActivity extends AppCompatActivity {
     String dirAudio, audioFileName;
 
     Handler handler = new Handler();
+    InputMethodManager imm;
 
     ArrayList<Message> messages = new ArrayList<>();
     ArrayList<Sticker> stickers = new ArrayList<>();
@@ -428,6 +430,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
     private void init(){
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         alpha_in = AnimationUtils.loadAnimation(this, R.anim.alpha_in);
         alpha_out = AnimationUtils.loadAnimation(this, R.anim.alpha_out);
         backBtn = findViewById(R.id.backBtn);
@@ -979,6 +982,14 @@ public class ChatActivity extends AppCompatActivity {
             replyText += "Вложение";
         }
         ((TextView) findViewById(R.id.replyTextHolder)).setText(replyText);
+        messageText.setSelection(messageText.getText().length());
+        messageText.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                messageText.requestFocus();
+                imm.showSoftInput(messageText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        }, 200);
     }
     public void endReplying(){
         replyingMessage = null;
@@ -987,6 +998,14 @@ public class ChatActivity extends AppCompatActivity {
     public void startEditing(Message message){
         editingMessage = message;
         messageText.setText(message.value);
+        messageText.setSelection(messageText.getText().length());
+        messageText.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                messageText.requestFocus();
+                imm.showSoftInput(messageText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        }, 200);
     }
     public void endEditing(){
         UniversalJSONObject msg = new UniversalJSONObject();
