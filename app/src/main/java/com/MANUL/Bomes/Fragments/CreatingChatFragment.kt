@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.MANUL.Bomes.databinding.AddUserItemBinding
 import com.MANUL.Bomes.databinding.FragmentCreatingChatBinding
 import com.MANUL.Bomes.presentation.createChat.AddUserListAdapter
 import com.MANUL.Bomes.presentation.createChat.AddedUserListAdapter
@@ -29,11 +30,34 @@ class CreatingChatFragment : Fragment() {
     private val okHttpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
 
-    private val userAddList = mutableListOf("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18")
+    val checkedList: MutableList<Boolean> = mutableListOf()
+
+    private val userAddList = mutableListOf(
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18"
+    )
     private val userAddedList: MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        for (i in 0..<userAddList.size) checkedList.add(false)
 
         viewModel = ViewModelProvider(this)[CreatingChatViewModel::class.java]
         webSocketListener = CreatingChatWebSocketListener(viewModel)
@@ -53,7 +77,8 @@ class CreatingChatFragment : Fragment() {
             addedUserList.layoutManager = layoutManager
             addedUserList.adapter = AddedUserListAdapter(userAddedList)
 
-            addUserList.adapter = AddUserListAdapter(userAddList, userAddedList, addedUserList.adapter)
+            addUserList.adapter =
+                AddUserListAdapter(userAddList, this@CreatingChatFragment)
             addUserList.layoutManager = LinearLayoutManager(activity)
         }
 
@@ -72,4 +97,22 @@ class CreatingChatFragment : Fragment() {
             .url(webSocketUrl)
             .build()
     }
+
+    fun viewHolderBind(addUserItemBinding: AddUserItemBinding, position: Int) =
+        with(addUserItemBinding) {
+            addUserText.text = userAddList[position]
+            addUserCheckBox.isChecked = checkedList[position]
+            addUserCardview.setOnClickListener {
+                addUserCheckBox.isChecked = !addUserCheckBox.isChecked
+                checkedList[position] = false
+                if (addUserCheckBox.isChecked) {
+                    userAddedList.add(userAddList[position])
+                    checkedList[position] = true
+                } else {
+                    userAddedList.remove(userAddList[position])
+                    checkedList[position] = false
+                }
+                binding.addedUserList.adapter?.notifyDataSetChanged()
+            }
+        }
 }
