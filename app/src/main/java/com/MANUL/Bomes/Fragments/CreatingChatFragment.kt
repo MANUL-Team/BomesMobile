@@ -29,6 +29,9 @@ class CreatingChatFragment : Fragment() {
     private val okHttpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
 
+    private val userAddList = mutableListOf("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18")
+    private val userAddedList: MutableList<String> = mutableListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,9 +51,9 @@ class CreatingChatFragment : Fragment() {
             layoutManager.flexDirection = FlexDirection.ROW
             layoutManager.justifyContent = JustifyContent.FLEX_START
             addedUserList.layoutManager = layoutManager
-            addedUserList.adapter = AddedUserListAdapter()
+            addedUserList.adapter = AddedUserListAdapter(userAddedList)
 
-            addUserList.adapter = AddUserListAdapter()
+            addUserList.adapter = AddUserListAdapter(userAddList, userAddedList, addedUserList.adapter)
             addUserList.layoutManager = LinearLayoutManager(activity)
         }
 

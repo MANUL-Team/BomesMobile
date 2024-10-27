@@ -1,6 +1,5 @@
 package com.MANUL.Bomes.presentation.createChat
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,12 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.databinding.AddedUserItemBinding
 
-class AddedUserListAdapter : RecyclerView.Adapter<AddedUserListAdapter.ViewHolder>() {
+class AddedUserListAdapter(val userAddedList: MutableList<String>) : RecyclerView.Adapter<AddedUserListAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding = AddedUserItemBinding.bind(itemView)
-        fun bind(position: Int) = with(binding){
-            Log.e("AddUserListAdapter", position.toString())
-            addedUserText.text = "Egor"
+        fun bind(user: String) = with(binding){
+            addedUserText.text = user
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,11 +20,11 @@ class AddedUserListAdapter : RecyclerView.Adapter<AddedUserListAdapter.ViewHolde
     }
 
     override fun getItemCount(): Int {
-        return 10
+        return userAddedList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(position)
+        holder.bind(userAddedList[position])
     }
 
 }
