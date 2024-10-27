@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.MANUL.Bomes.Fragments.CreatingChatFragment
 import com.MANUL.Bomes.R
+import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.databinding.AddUserItemBinding
 
 class AddUserListAdapter(
-    val userAddList: MutableList<String>,
+    val userAddList: MutableList<CreatingChatUser>,
     val creatingChatFragment: CreatingChatFragment
 ) :
     RecyclerView.Adapter<AddUserListAdapter.ViewHolder>() {
@@ -18,8 +19,8 @@ class AddUserListAdapter(
         itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
         val binding = AddUserItemBinding.bind(itemView)
-        fun bind(position: Int, creatingChatFragment: CreatingChatFragment) {
-            creatingChatFragment.viewHolderBind(binding, position)
+        fun bind(position: CreatingChatUser, creatingChatFragment: CreatingChatFragment) {
+            creatingChatFragment.addUserViewHolderBind(binding, position)
         }
     }
 
@@ -34,7 +35,7 @@ class AddUserListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(position, creatingChatFragment)
+        holder.bind(userAddList[position], creatingChatFragment)
     }
 
 }

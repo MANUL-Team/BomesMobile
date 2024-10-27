@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
+import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.databinding.AddUserItemBinding
+import com.MANUL.Bomes.databinding.AddedUserItemBinding
 import com.MANUL.Bomes.databinding.FragmentCreatingChatBinding
 import com.MANUL.Bomes.presentation.createChat.AddUserListAdapter
 import com.MANUL.Bomes.presentation.createChat.AddedUserListAdapter
@@ -30,9 +33,9 @@ class CreatingChatFragment : Fragment() {
     private val okHttpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
 
-    val checkedList: MutableList<Boolean> = mutableListOf()
+    val userAddList: MutableList<CreatingChatUser> = mutableListOf()
 
-    private val userAddList = mutableListOf(
+    private val users = mutableListOf(
         "1",
         "2",
         "3",
@@ -52,12 +55,17 @@ class CreatingChatFragment : Fragment() {
         "17",
         "18"
     )
-    private val userAddedList: MutableList<String> = mutableListOf()
+    private val userAddedList: MutableList<CreatingChatUser> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        for (i in 0..<userAddList.size) checkedList.add(false)
+        for (i in 0..<users.size) userAddList.add(
+            CreatingChatUser(
+                User(users[i], "", "", 0),
+                false
+            )
+        )
 
         viewModel = ViewModelProvider(this)[CreatingChatViewModel::class.java]
         webSocketListener = CreatingChatWebSocketListener(viewModel)
@@ -75,7 +83,7 @@ class CreatingChatFragment : Fragment() {
             layoutManager.flexDirection = FlexDirection.ROW
             layoutManager.justifyContent = JustifyContent.FLEX_START
             addedUserList.layoutManager = layoutManager
-            addedUserList.adapter = AddedUserListAdapter(userAddedList)
+            addedUserList.adapter = AddedUserListAdapter(userAddedList, this@CreatingChatFragment)
 
             addUserList.adapter =
                 AddUserListAdapter(userAddList, this@CreatingChatFragment)
@@ -98,21 +106,35 @@ class CreatingChatFragment : Fragment() {
             .build()
     }
 
-    fun viewHolderBind(addUserItemBinding: AddUserItemBinding, position: Int) =
+    fun addUserViewHolderBind(addUserItemBinding: AddUserItemBinding, user: CreatingChatUser) =
         with(addUserItemBinding) {
-            addUserText.text = userAddList[position]
-            addUserCheckBox.isChecked = checkedList[position]
+            addUserText.text = user.user.username
+            addUserCheckBox.isChecked = user.checked
             addUserCardview.setOnClickListener {
                 addUserCheckBox.isChecked = !addUserCheckBox.isChecked
-                checkedList[position] = false
+                user.checked = false
                 if (addUserCheckBox.isChecked) {
-                    userAddedList.add(userAddList[position])
-                    checkedList[position] = true
+                    userAddedList.add(user)
+                    user.checked = true
                 } else {
-                    userAddedList.remove(userAddList[position])
-                    checkedList[position] = false
+                    userAddedList.remove(user)
+                    user.checked = false
                 }
                 binding.addedUserList.adapter?.notifyDataSetChanged()
+            }
+        }
+
+    fun addedUserViewHolderBind(
+        addedUserItemBinding: AddedUserItemBinding,
+        user: CreatingChatUser
+    ) =
+        with(addedUserItemBinding) {
+            addedUserText.text = user.user.username
+            addedUserCancel.setOnClickListener {
+                userAddedList.remove(user)
+                user.checked = false
+                binding.addedUserList.adapter?.notifyDataSetChanged()
+                binding.addUserList.adapter?.notifyDataSetChanged()
             }
         }
 }
