@@ -1,45 +1,24 @@
 package com.MANUL.Bomes.presentation.createChat
 
 import android.R
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.MANUL.Bomes.Activities.MainActivity
-import com.MANUL.Bomes.ImportantClasses.FileUploadService
-import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.SimpleObjects.UserData
-import com.MANUL.Bomes.Utils.FileUtils
-import com.MANUL.Bomes.Utils.PermissionUtils
 import com.MANUL.Bomes.databinding.AddUserItemBinding
 import com.MANUL.Bomes.databinding.AddedUserItemBinding
 import com.MANUL.Bomes.databinding.FragmentCreatingChatBinding
 import com.bumptech.glide.Glide
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import okhttp3.WebSocketListener
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.IOException
 
 class CreatingChatViewModel(
     inflater: LayoutInflater,
@@ -49,17 +28,6 @@ class CreatingChatViewModel(
     private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
     private var users: MutableList<User> = mutableListOf()
     private val userAddedList: MutableList<CreatingChatUser> = mutableListOf()
-
-    val startForResult = activity?.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = result.data?.data
-
-            if (uri != null) {
-                activity.
-                uploadAvatar(uri)
-            }
-        }
-    }
 
     init {
         _binding = FragmentCreatingChatBinding.inflate(inflater)
@@ -74,21 +42,13 @@ class CreatingChatViewModel(
             addUserList.adapter =
                 AddUserListAdapter(userAddList, this@CreatingChatViewModel)
             addUserList.layoutManager = LinearLayoutManager(activity)
-
-            createChatAvatar.setOnClickListener {
-                getStoragePermission()
-                val mediaPickerIntent = Intent(Intent.ACTION_PICK)
-                mediaPickerIntent.setType("image/*")
-                startForResult?.launch(mediaPickerIntent)
-            }
         }
     }
 
     val binding = _binding
 
-    private fun getStoragePermission() {
-        if (PermissionUtils.hasPermissions(activity)) return
-        PermissionUtils.requestPermissions(activity, 101)
+    fun insertingImage(obj: UniversalJSONObject) {
+        Glide.with(activity!!).load("https://bomes.ru/" + obj.filePath).into(binding.createChatAvatar)
     }
 
     fun addUserViewHolderBind(addUserItemBinding: AddUserItemBinding, user: CreatingChatUser) =

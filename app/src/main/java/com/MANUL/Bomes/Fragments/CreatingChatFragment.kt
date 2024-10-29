@@ -1,21 +1,22 @@
 package com.MANUL.Bomes.Fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.MANUL.Bomes.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
-import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
-import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.Utils.FileUtils
+import com.MANUL.Bomes.Utils.PermissionUtils
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
 import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
-import com.bumptech.glide.Glide
-import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -23,7 +24,6 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okhttp3.WebSocket
-import okhttp3.WebSocketListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,6 +36,16 @@ class CreatingChatFragment : Fragment() {
     private lateinit var viewModel: CreatingChatViewModel
     private val okHttpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
+
+    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri: Uri? = result.data?.data
+
+            if (uri != null) {
+                uploadAvatar(uri)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +75,20 @@ class CreatingChatFragment : Fragment() {
         }
         webSocket = okHttpClient.newWebSocket(createRequest(), webSocketListener)
 
+        viewModel.binding.createChatAvatar.setOnClickListener {
+            getStoragePermission()
+            val mediaPickerIntent = Intent(Intent.ACTION_PICK)
+            mediaPickerIntent.setType("image/*")
+            //startActivity(mediaPickerIntent)
+            startForResult?.launch(mediaPickerIntent)
+        }
+
         return viewModel.binding.root
+    }
+
+    private fun getStoragePermission() {
+        if (PermissionUtils.hasPermissions(activity)) return
+        PermissionUtils.requestPermissions(activity, 101)
     }
 
 
@@ -103,23 +126,7 @@ class CreatingChatFragment : Fragment() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     try {
-                        val reply = response.body()!!.string()
-                        val obj: UniversalJSONObject = objectMapper.readValue<UniversalJSONObject>(
-                            reply,
-                            UniversalJSONObject::class.java
-                        )
-
-                        Glide.with(activity!!).load("https://bomes.ru/" + obj.filePath).into(binding.createChatAvatar)
-
-                        val updAvatar = UniversalJSONObject()
-                        updAvatar.table = "users"
-                        updAvatar.column = "identifier"
-                        updAvatar.where = UserData.identifier
-                        updAvatar.variable = "avatar"
-                        updAvatar.value = obj.filePath
-                        updAvatar.event = "UpdateValue"
-
-                        webSocket.send(objectMapper.writeValueAsString(updAvatar))
+                        val text = webSocketListener.processingPhotoUploadRequest(response)
                     } catch (e: IOException) {
                         throw RuntimeException(e)
                     }

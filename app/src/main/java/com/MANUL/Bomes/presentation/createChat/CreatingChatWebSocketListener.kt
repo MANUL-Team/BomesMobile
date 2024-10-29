@@ -1,13 +1,10 @@
 package com.MANUL.Bomes.presentation.createChat
 
-import android.R
-import android.content.Intent
-import android.widget.Toast
-import com.MANUL.Bomes.Activities.MainActivity
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.Response
+import okhttp3.ResponseBody
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
@@ -49,5 +46,14 @@ class CreatingChatWebSocketListener(
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
+    }
+
+    fun processingPhotoUploadRequest(response: retrofit2.Response<ResponseBody>) {
+        val reply = response.body()!!.string()
+        val obj: UniversalJSONObject = objectMapper.readValue<UniversalJSONObject>(
+            reply,
+            UniversalJSONObject::class.java
+        )
+        viewModel.insertingImage(obj)
     }
 }
