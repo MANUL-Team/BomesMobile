@@ -4,19 +4,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.MANUL.Bomes.Fragments.CreatingChatFragment
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.databinding.AddedUserItemBinding
 
 class AddedUserListAdapter(
     val userAddedList: MutableList<CreatingChatUser>,
-    val creatingChatFragment: CreatingChatFragment
+    val creatingChatViewModel: CreatingChatViewModel
 ) : RecyclerView.Adapter<AddedUserListAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding = AddedUserItemBinding.bind(itemView)
-        fun bind(user: CreatingChatUser, creatingChatFragment: CreatingChatFragment) = with(binding){
-            creatingChatFragment.addedUserViewHolderBind(binding, user)
+        fun bind(user: CreatingChatUser, creatingChatViewModel: CreatingChatViewModel) = with(binding){
+            creatingChatViewModel.addedUserViewHolderBind(binding, user)
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,7 +28,7 @@ class AddedUserListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(userAddedList[position], creatingChatFragment)
+        holder.bind(userAddedList[position], creatingChatViewModel)
     }
 
 }
