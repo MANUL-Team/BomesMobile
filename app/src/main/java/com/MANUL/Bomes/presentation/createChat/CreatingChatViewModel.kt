@@ -9,11 +9,13 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.MANUL.Bomes.Activities.MainActivity
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
+import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.databinding.AddUserItemBinding
 import com.MANUL.Bomes.databinding.AddedUserItemBinding
 import com.MANUL.Bomes.databinding.FragmentCreatingChatBinding
+import com.bumptech.glide.Glide
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
@@ -23,37 +25,11 @@ class CreatingChatViewModel(
     private val activity: FragmentActivity?
 ) : ViewModel() {
     private lateinit var _binding: FragmentCreatingChatBinding
-    val userAddList: MutableList<CreatingChatUser> = mutableListOf()
-    private val users = mutableListOf(
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18"
-    )
+    private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
+    private var users: MutableList<User> = mutableListOf()
     private val userAddedList: MutableList<CreatingChatUser> = mutableListOf()
 
     init {
-        for (i in 0..<users.size) userAddList.add(
-            CreatingChatUser(
-                User(users[i], "", "", 0),
-                false
-            )
-        )
-
         _binding = FragmentCreatingChatBinding.inflate(inflater)
 
         _binding.apply {
@@ -69,12 +45,14 @@ class CreatingChatViewModel(
         }
     }
 
-    public val binding = _binding
+    val binding = _binding
 
     fun addUserViewHolderBind(addUserItemBinding: AddUserItemBinding, user: CreatingChatUser) =
         with(addUserItemBinding) {
             addUserText.text = user.user.username
+
             addUserCheckBox.isChecked = user.checked
+
             addUserCardview.setOnClickListener {
                 addUserCheckBox.isChecked = !addUserCheckBox.isChecked
                 user.checked = false
@@ -87,6 +65,12 @@ class CreatingChatViewModel(
                 }
                 binding.addedUserList.adapter?.notifyDataSetChanged()
             }
+
+            if (user.user.avatar.isEmpty()) activity?.let {
+                Glide.with(it).load("https://bomes.ru/media/icon.png")
+                    .into(addUserImage)
+            }
+            else activity?.let { Glide.with(it).load("https://bomes.ru/" + user.user.avatar).into(addUserImage) }
         }
 
     fun addedUserViewHolderBind(
@@ -95,12 +79,20 @@ class CreatingChatViewModel(
     ) =
         with(addedUserItemBinding) {
             addedUserText.text = user.user.username
+
             addedUserCancel.setOnClickListener {
                 userAddedList.remove(user)
                 user.checked = false
                 binding.addedUserList.adapter?.notifyDataSetChanged()
                 binding.addUserList.adapter?.notifyDataSetChanged()
             }
+
+            if (user.user.avatar.isEmpty()) activity?.let {
+                Glide.with(it).load("https://bomes.ru/media/icon.png")
+                    .into(addedUserImage)
+            }
+            else activity?.let { Glide.with(it).load("https://bomes.ru/" + user.user.avatar).into(addedUserImage) }
+
         }
 
     fun responseWrongAuthInIdentifier() {
@@ -118,6 +110,29 @@ class CreatingChatViewModel(
         activity?.startActivity(intent)
         activity?.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         activity?.finish()
+    }
+
+    fun responseReturnFriends(obj: UniversalJSONObject) {
+        users.clear()
+
+        for (jsonObject in obj.users) {
+            val user = User(
+                jsonObject.username,
+                jsonObject.avatar,
+                jsonObject.identifier,
+                jsonObject.friendsCount
+            )
+            users.add(user)
+        }
+
+        for (i in 0..<users.size) userAddList.add(
+            CreatingChatUser(
+                users[i],
+                false
+            )
+        )
+
+        binding.addUserList.adapter?.notifyDataSetChanged()
     }
 
 }

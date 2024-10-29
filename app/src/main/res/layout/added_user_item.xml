@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical">
+
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -27,6 +28,7 @@
                 app:cardElevation="0dp">
 
             <ImageView
+                android:id="@+id/added_user_image"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/icon" />

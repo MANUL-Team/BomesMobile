@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
 import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
 import okhttp3.OkHttpClient
@@ -39,7 +37,7 @@ class CreatingChatFragment : Fragment() {
             activity?.runOnUiThread{
                 run {
                     if (obj.event == "ReturnFriends") {
-                        Log.e("obj.event", "ReturnFriends")
+                        viewModel.responseReturnFriends(obj)
                     }
                     else if (obj.event == "ChatCreated") {
                         Log.e("obj.event", "ChatCreated")
