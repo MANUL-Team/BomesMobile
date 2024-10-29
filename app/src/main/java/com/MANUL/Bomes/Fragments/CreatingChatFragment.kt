@@ -1,13 +1,15 @@
 package com.MANUL.Bomes.Fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
+import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
+import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -23,9 +25,8 @@ class CreatingChatFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[CreatingChatViewModel::class.java]
-        webSocketListener = CreatingChatWebSocketListener(viewModel)
-        webSocket = okHttpClient.newWebSocket(createRequest(), webSocketListener)
+//        viewModel = ViewModelProvider(this)[CreatingChatViewModel::class.java]
+
     }
 
     override fun onCreateView(
@@ -34,7 +35,22 @@ class CreatingChatFragment : Fragment() {
     ): View {
         viewModel = CreatingChatViewModel(inflater, activity)
 
-        return viewModel.binding.root
+        webSocketListener = CreatingChatWebSocketListener(viewModel){obj ->
+            activity?.runOnUiThread{
+                run {
+                    if (obj.event == "ReturnFriends") {
+                        Log.e("obj.event", "ReturnFriends")
+                    }
+                    else if (obj.event == "ChatCreated") {
+                        Log.e("obj.event", "ChatCreated")
+
+                    }
+                }
+            }
+        }
+        webSocket = okHttpClient.newWebSocket(createRequest(), webSocketListener)
+
+        return viewModel.binding!!.root
     }
 
 
