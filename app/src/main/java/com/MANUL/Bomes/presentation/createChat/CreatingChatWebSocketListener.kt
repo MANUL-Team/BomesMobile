@@ -73,6 +73,7 @@ class CreatingChatWebSocketListener(
             addingUsers[i] = (addedUserList[i].user.identifier)
         }
         addingUsers[addedUserList.size] = UserData.identifier
+        tableName += "-" + UserData.identifier
         tableName = UserPageActivity.md5(tableName)
         //Log.e("requestCreateChatForm", tableName)
 
