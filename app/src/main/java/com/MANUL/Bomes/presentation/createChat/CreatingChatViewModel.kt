@@ -47,8 +47,27 @@ class CreatingChatViewModel(
 
     val binding = _binding
 
+    fun getUserAddedListForCreateChat(): MutableList<CreatingChatUser>? {
+        if (binding.createChatEditText.text.isEmpty())
+            Toast.makeText(
+                activity,
+                "Название чата не может быть пустым!",
+                Toast.LENGTH_LONG
+            ).show()
+        else if(userAddedList.size < 3)
+            Toast.makeText(
+                activity,
+                "В чате должно быть по крайней мере 3 пользователя!",
+                Toast.LENGTH_LONG
+            ).show()
+        else
+            return userAddedList
+        return null
+    }
+
     fun insertingImage(obj: UniversalJSONObject) {
-        Glide.with(activity!!).load("https://bomes.ru/" + obj.filePath).into(binding.createChatAvatar)
+        Glide.with(activity!!).load("https://bomes.ru/" + obj.filePath)
+            .into(binding.createChatAvatar)
     }
 
     fun addUserViewHolderBind(addUserItemBinding: AddUserItemBinding, user: CreatingChatUser) =
@@ -74,7 +93,9 @@ class CreatingChatViewModel(
                 Glide.with(it).load("https://bomes.ru/media/icon.png")
                     .into(addUserImage)
             }
-            else activity?.let { Glide.with(it).load("https://bomes.ru/" + user.user.avatar).into(addUserImage) }
+            else activity?.let {
+                Glide.with(it).load("https://bomes.ru/" + user.user.avatar).into(addUserImage)
+            }
         }
 
     fun addedUserViewHolderBind(
@@ -95,7 +116,9 @@ class CreatingChatViewModel(
                 Glide.with(it).load("https://bomes.ru/media/icon.png")
                     .into(addedUserImage)
             }
-            else activity?.let { Glide.with(it).load("https://bomes.ru/" + user.user.avatar).into(addedUserImage) }
+            else activity?.let {
+                Glide.with(it).load("https://bomes.ru/" + user.user.avatar).into(addedUserImage)
+            }
 
         }
 

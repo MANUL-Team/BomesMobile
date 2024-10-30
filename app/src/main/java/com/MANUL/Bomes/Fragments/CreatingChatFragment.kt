@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -75,12 +76,24 @@ class CreatingChatFragment : Fragment() {
         }
         webSocket = okHttpClient.newWebSocket(createRequest(), webSocketListener)
 
-        viewModel.binding.createChatAvatar.setOnClickListener {
+        viewModel.binding.apply {
+        createChatAvatar.setOnClickListener {
             getStoragePermission()
             val mediaPickerIntent = Intent(Intent.ACTION_PICK)
             mediaPickerIntent.setType("image/*")
             //startActivity(mediaPickerIntent)
-            startForResult?.launch(mediaPickerIntent)
+            startForResult.launch(mediaPickerIntent)
+        }
+
+        buttonCreatingChat.setOnClickListener {
+            val addedUserList = viewModel.getUserAddedListForCreateChat()
+            val request = addedUserList?.let { it1 -> webSocketListener.requestCreateChatForm(it1) }
+            if (request != null) {
+                webSocket!!.send(request)
+            }
+        }
+
+
         }
 
         return viewModel.binding.root

@@ -1,19 +1,26 @@
 package com.MANUL.Bomes.presentation.createChat
 
+import android.util.Log
+import com.MANUL.Bomes.Activities.UserPageActivity
+import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.SimpleObjects.UserData.table_name
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.Response
 import okhttp3.ResponseBody
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import java.util.Calendar
+
 
 class CreatingChatWebSocketListener(
     private val viewModel: CreatingChatViewModel,
     private val messageListener: (UniversalJSONObject) -> Unit
 ) : WebSocketListener() {
+    private var objectMapper: ObjectMapper = ObjectMapper()
 
-    var objectMapper: ObjectMapper = ObjectMapper()
+    private lateinit var pathImage: String
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
@@ -54,6 +61,29 @@ class CreatingChatWebSocketListener(
             reply,
             UniversalJSONObject::class.java
         )
+        pathImage = obj.filePath
         viewModel.insertingImage(obj)
+    }
+
+    fun requestCreateChatForm(addedUserList: MutableList<CreatingChatUser>): String {
+        val addingUsers: MutableList<String> = mutableListOf()
+        var tableName = Calendar.getInstance().time.toString()
+        for (i in 0 until addedUserList.size) {
+            tableName += "-" + addedUserList[i].user.identifier
+            addingUsers.add(addedUserList[i].user.identifier)
+        }
+        tableName = UserPageActivity.md5(tableName)
+        Log.e("requestCreateChatForm", tableName)
+
+        val creatingChat = UniversalJSONObject()
+        creatingChat.event = "CreateChat"
+        creatingChat.table_name = tableName
+        creatingChat.usersToAdd = addingUsers.toTypedArray()
+        creatingChat.chat_name = viewModel.binding.createChatEditText.text.toString()
+        creatingChat.isLocalChat = 0
+        creatingChat.avatar = pathImage
+        creatingChat.owner = UserData.identifier
+
+        return objectMapper.writeValueAsString(creatingChat)
     }
 }
