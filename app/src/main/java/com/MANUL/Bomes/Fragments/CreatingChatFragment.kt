@@ -58,23 +58,22 @@ class CreatingChatFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         viewModel = CreatingChatViewModel(inflater, activity)
 
-        webSocketListener = CreatingChatWebSocketListener(viewModel){obj ->
-            activity?.runOnUiThread{
+        webSocketListener = CreatingChatWebSocketListener(viewModel) { obj ->
+            activity?.runOnUiThread {
                 run {
                     if (obj.event == "ReturnFriends") {
                         viewModel.responseReturnFriends(obj)
-                    }
-                    else if (obj.event == "ChatCreated") {
+                    } else if (obj.event == "ChatCreated") {
                         //Log.e("obj.event", "ChatCreated")
                         webSocketListener.responseChatCreated(obj)
                         val intent = Intent(
-                            activity,
-                            ChatActivity::class.java
+                                activity,
+                                ChatActivity::class.java
                         )
                         startActivity(intent)
                         requireActivity().finish()
@@ -87,21 +86,21 @@ class CreatingChatFragment : Fragment() {
         webSocket = okHttpClient.newWebSocket(createRequest(), webSocketListener)
 
         viewModel.binding.apply {
-        createChatAvatar.setOnClickListener {
-            getStoragePermission()
-            val mediaPickerIntent = Intent(Intent.ACTION_PICK)
-            mediaPickerIntent.setType("image/*")
-            //startActivity(mediaPickerIntent)
-            startForResult.launch(mediaPickerIntent)
-        }
-
-        buttonCreatingChat.setOnClickListener {
-            val addedUserList = viewModel.getUserAddedListForCreateChat()
-            val request = addedUserList?.let { it1 -> webSocketListener.requestCreateChatForm(it1) }
-            if (request != null) {
-                webSocket!!.send(request)
+            createChatAvatar.setOnClickListener {
+                getStoragePermission()
+                val mediaPickerIntent = Intent(Intent.ACTION_PICK)
+                mediaPickerIntent.setType("image/*")
+                //startActivity(mediaPickerIntent)
+                startForResult.launch(mediaPickerIntent)
             }
-        }
+
+            buttonCreatingChat.setOnClickListener {
+                val addedUserList = viewModel.getUserAddedListForCreateChat()
+                val request = addedUserList?.let { it1 -> webSocketListener.requestCreateChatForm(it1) }
+                if (request != null) {
+                    webSocket!!.send(request)
+                }
+            }
 
 
         }
@@ -123,20 +122,20 @@ class CreatingChatFragment : Fragment() {
     private fun createRequest(): Request {
         val webSocketUrl = "wss://bomes.ru:8000"
         return Request.Builder()
-            .url(webSocketUrl)
-            .build()
+                .url(webSocketUrl)
+                .build()
     }
 
     fun uploadAvatar(fileUri: Uri) {
         val service = ServiceGenerator.createService(
-            FileUploadService::class.java
+                FileUploadService::class.java
         )
 
         val file = FileUtils.getFile(activity, fileUri)
         val type = activity?.contentResolver?.getType(fileUri)
         val requestFile = RequestBody.create(
-            type?.toMediaTypeOrNull(),
-            file
+                type?.toMediaTypeOrNull(),
+                file
         )
 
         val body: MultipartBody.Part = MultipartBody.Part.createFormData("file", file.name, requestFile)
