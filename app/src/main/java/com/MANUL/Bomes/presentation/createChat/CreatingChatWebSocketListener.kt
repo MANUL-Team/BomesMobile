@@ -20,7 +20,7 @@ class CreatingChatWebSocketListener(
 ) : WebSocketListener() {
     private var objectMapper: ObjectMapper = ObjectMapper()
 
-    private lateinit var pathImage: String
+    private var pathImage: String? = null
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
@@ -66,20 +66,23 @@ class CreatingChatWebSocketListener(
     }
 
     fun requestCreateChatForm(addedUserList: MutableList<CreatingChatUser>): String {
-        val addingUsers: MutableList<String> = mutableListOf()
+        val addingUsers: Array<String?> = arrayOfNulls<String>(addedUserList.size+1)
         var tableName = Calendar.getInstance().time.toString()
         for (i in 0 until addedUserList.size) {
             tableName += "-" + addedUserList[i].user.identifier
-            addingUsers.add(addedUserList[i].user.identifier)
+            addingUsers[i] = (addedUserList[i].user.identifier)
         }
+        addingUsers[addedUserList.size] = UserData.identifier
         tableName = UserPageActivity.md5(tableName)
-        Log.e("requestCreateChatForm", tableName)
+        //Log.e("requestCreateChatForm", tableName)
 
         val creatingChat = UniversalJSONObject()
         creatingChat.event = "CreateChat"
         creatingChat.table_name = tableName
-        creatingChat.usersToAdd = addingUsers.toTypedArray()
+        creatingChat.usersToAdd = addingUsers
+        //Log.e("requestCreateChatForm", creatingChat.usersToAdd.toString())
         creatingChat.chat_name = viewModel.binding.createChatEditText.text.toString()
+        //Log.e("requestCreateChatForm", creatingChat.chat_name)
         creatingChat.isLocalChat = 0
         creatingChat.avatar = pathImage
         creatingChat.owner = UserData.identifier
