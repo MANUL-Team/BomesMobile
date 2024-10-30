@@ -12,8 +12,10 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.MANUL.Bomes.Activities.ChatActivity
 import com.MANUL.Bomes.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
+import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.Utils.FileUtils
 import com.MANUL.Bomes.Utils.PermissionUtils
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
@@ -68,7 +70,15 @@ class CreatingChatFragment : Fragment() {
                         viewModel.responseReturnFriends(obj)
                     }
                     else if (obj.event == "ChatCreated") {
-                        Log.e("obj.event", "ChatCreated")
+                        //Log.e("obj.event", "ChatCreated")
+                        webSocketListener.responseChatCreated(obj)
+                        val intent = Intent(
+                            activity,
+                            ChatActivity::class.java
+                        )
+                        startActivity(intent)
+                        requireActivity().finish()
+                        webSocket!!.close(1000, null)
 
                     }
                 }

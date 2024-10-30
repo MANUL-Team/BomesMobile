@@ -20,7 +20,7 @@ class CreatingChatWebSocketListener(
 ) : WebSocketListener() {
     private var objectMapper: ObjectMapper = ObjectMapper()
 
-    private var pathImage: String? = null
+    private var pathImage: String = ""
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
@@ -86,8 +86,17 @@ class CreatingChatWebSocketListener(
         //Log.e("requestCreateChatForm", creatingChat.chat_name)
         creatingChat.isLocalChat = 0
         creatingChat.avatar = pathImage
+        Log.e("requestCreateChatForm", creatingChat.avatar)
         creatingChat.owner = UserData.identifier
 
         return objectMapper.writeValueAsString(creatingChat)
+    }
+
+    fun responseChatCreated(obj: UniversalJSONObject) {
+        UserData.table_name = obj.table_name
+        UserData.chatId = obj.chat_name
+        UserData.isLocalChat = 0
+        UserData.chatAvatar = pathImage
+        UserData.chatName = obj.chat_name
     }
 }
