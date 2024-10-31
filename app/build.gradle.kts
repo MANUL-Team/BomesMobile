@@ -14,8 +14,8 @@ android {
         applicationId = "com.MANUL.BoMes"
         minSdk = 24
         targetSdk = 34
-        versionCode = 31
-        versionName = "2.1.0 Beta"
+        versionCode = 32
+        versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

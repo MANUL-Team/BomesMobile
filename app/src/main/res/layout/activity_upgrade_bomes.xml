@@ -15,7 +15,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:fontFamily="@font/anonymous_pro"
-        android:text="Упс...\nПохоже Ваша версия приложения устарела!"
+        android:text="Упс...\nПохоже, Ваша версия приложения устарела!"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="34sp"

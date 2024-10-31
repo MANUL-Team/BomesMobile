@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.animation.Animation;
@@ -28,9 +30,6 @@ import okhttp3.WebSocketListener;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
-
-    public static final int APP_VERSION = 31;
-
 
     ObjectMapper objectMapper = new ObjectMapper();
     WebSocket webSocket;
@@ -104,7 +103,9 @@ public class SplashScreen extends AppCompatActivity {
                                 }
                             }
                             if (obj.event.equals("ReturnCurrentAndroidVersion")){
-                                if (!obj.version.equals(String.valueOf(APP_VERSION))){
+                                PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                                int versionCode = packageInfo.versionCode;
+                                if (!obj.version.equals(String.valueOf(versionCode))){
                                     Intent intent = new Intent(SplashScreen.this, UpgradeBomesActivity.class);
                                     startActivity(intent);
                                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -112,14 +113,22 @@ public class SplashScreen extends AppCompatActivity {
                                     webSocket.close(1000, null);
                                 }
                                 else{
-                                    UniversalJSONObject loadMe = new UniversalJSONObject();
-                                    loadMe.event = "GetUser";
-                                    loadMe.identifier = identifier;
-                                    loadMe.friendId = identifier;
-                                    webSocket.send(objectMapper.writeValueAsString(loadMe));
+                                    if (identifier.equals("none")){
+                                        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                        startActivity(intent);
+                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                        finish();
+                                    }
+                                    else {
+                                        UniversalJSONObject loadMe = new UniversalJSONObject();
+                                        loadMe.event = "GetUser";
+                                        loadMe.identifier = identifier;
+                                        loadMe.friendId = identifier;
+                                        webSocket.send(objectMapper.writeValueAsString(loadMe));
+                                    }
                                 }
                             }
-                        } catch (JsonProcessingException e) {
+                        } catch (JsonProcessingException | PackageManager.NameNotFoundException e) {
                             throw new RuntimeException(e);
                         }
                     }
@@ -129,20 +138,12 @@ public class SplashScreen extends AppCompatActivity {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
-                if (!identifier.equals("none")){
-                    try {
-                        UniversalJSONObject loadVersion = new UniversalJSONObject();
-                        loadVersion.event = "GetCurrentAndroidVersion";
-                        webSocket.send(objectMapper.writeValueAsString(loadVersion));
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                else{
-                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    finish();
+                try {
+                    UniversalJSONObject loadVersion = new UniversalJSONObject();
+                    loadVersion.event = "GetCurrentAndroidVersion";
+                    webSocket.send(objectMapper.writeValueAsString(loadVersion));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
                 }
             }
         });
