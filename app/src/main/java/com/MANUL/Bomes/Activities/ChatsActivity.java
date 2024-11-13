@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.MANUL.Bomes.Fragments.ChatsFragment;
 import com.MANUL.Bomes.Fragments.CreatingChatFragment;
+import com.MANUL.Bomes.Fragments.FriendsFragment;
 import com.MANUL.Bomes.Fragments.ProfileFragment;
 import com.MANUL.Bomes.Fragments.SettingsFragment;
 import com.MANUL.Bomes.Fragments.UsersFragment;
@@ -147,6 +148,20 @@ public class ChatsActivity extends AppCompatActivity {
                                         ProfileFragment profileFragment = new ProfileFragment(ChatsActivity.this);
                                         switchFragment(profileFragment);
                                         mainToolbar.setTitle("Профиль");
+                                        return false;
+                                    }
+                                }),
+                        new PrimaryDrawerItem()
+                                .withIconTintingEnabled(true)
+                                .withName("Друзья")
+                                .withSelectable(true)
+                                .withIcon(R.drawable.friends)
+                                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        FriendsFragment profileFragment = new FriendsFragment();
+                                        switchFragment(profileFragment);
+                                        mainToolbar.setTitle("Друзья");
                                         return false;
                                     }
                                 }),
