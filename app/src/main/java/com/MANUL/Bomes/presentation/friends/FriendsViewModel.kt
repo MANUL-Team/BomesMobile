@@ -15,6 +15,9 @@ import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.databinding.AddUserItemBinding
 import com.MANUL.Bomes.databinding.AddedUserItemBinding
 import com.MANUL.Bomes.databinding.FragmentCreatingChatBinding
+import com.MANUL.Bomes.databinding.FragmentFriendsBinding
+import com.MANUL.Bomes.presentation.createChat.AddUserListAdapter
+import com.MANUL.Bomes.presentation.createChat.AddedUserListAdapter
 import com.bumptech.glide.Glide
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -24,10 +27,16 @@ class FriendsViewModel(
     inflater: LayoutInflater,
     private val activity: FragmentActivity?
 ) : ViewModel() {
-    private lateinit var _binding: FragmentCreatingChatBinding
+    private lateinit var _binding: FragmentFriendsBinding
 
     init {
-        _binding = FragmentCreatingChatBinding.inflate(inflater)
+        _binding = FragmentFriendsBinding.inflate(inflater)
+
+        _binding.apply {
+            friendsList.adapter =
+                FriendsListAdapter(mutableListOf(1,2,3))
+            friendsList.layoutManager = LinearLayoutManager(activity)
+        }
     }
 
     val binding = _binding
