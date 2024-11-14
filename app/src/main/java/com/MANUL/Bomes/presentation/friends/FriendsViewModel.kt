@@ -27,11 +27,9 @@ class FriendsViewModel(
     inflater: LayoutInflater,
     private val activity: FragmentActivity?
 ) : ViewModel() {
-    private lateinit var _binding: FragmentFriendsBinding
+    private val _binding = FragmentFriendsBinding.inflate(inflater)
 
     init {
-        _binding = FragmentFriendsBinding.inflate(inflater)
-
         _binding.apply {
             friendsList.adapter =
                 FriendsListAdapter(mutableListOf(1,2,3))
