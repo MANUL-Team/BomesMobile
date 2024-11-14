@@ -7,10 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.databinding.FragmentFriendsBinding
+import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
+import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
+import com.MANUL.Bomes.presentation.friends.FriendsViewModel
+import okhttp3.OkHttpClient
+import okhttp3.WebSocket
 
 class FriendsFragment : Fragment(R.layout.fragment_friends) {
 
-    private lateinit var binding: FragmentFriendsBinding
+    private lateinit var viewModel: FriendsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,8 +25,9 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentFriendsBinding.inflate(inflater)
-        return binding.root
+    ): View {
+        viewModel = FriendsViewModel(inflater, activity)
+
+        return viewModel.binding.root
     }
 }
