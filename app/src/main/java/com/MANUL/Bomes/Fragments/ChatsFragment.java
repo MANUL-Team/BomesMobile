@@ -24,6 +24,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.Chat;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
+import com.MANUL.Bomes.Utils.RequestCreationFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -170,16 +171,10 @@ public class ChatsFragment extends Fragment {
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = new UniversalJSONObject();
-                    obj.event = "setIdentifier";
-                    obj.identifier = UserData.identifier;
-                    obj.password = UserData.password;
+                    UniversalJSONObject obj = RequestCreationFactory.create("setIdentifier");
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = new UniversalJSONObject();
-                    loadMe.event = "GetUser";
-                    loadMe.identifier = UserData.identifier;
-                    loadMe.friendId = UserData.identifier;
+                    UniversalJSONObject loadMe = RequestCreationFactory.create("GetUser");
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
 
                     FirebaseMessaging.getInstance().getToken()
@@ -193,11 +188,7 @@ public class ChatsFragment extends Fragment {
 
                                     // Get new FCM registration token
                                     String token = task.getResult();
-                                    UniversalJSONObject setToken = new UniversalJSONObject();
-                                    setToken.identifier = UserData.identifier;
-                                    setToken.password = UserData.password;
-                                    setToken.token = token;
-                                    setToken.event = "SetToken";
+                                    UniversalJSONObject setToken = RequestCreationFactory.create("SetToken", token);
                                     try {
                                         webSocket.send(objectMapper.writeValueAsString(setToken));
                                     } catch (JsonProcessingException e) {
