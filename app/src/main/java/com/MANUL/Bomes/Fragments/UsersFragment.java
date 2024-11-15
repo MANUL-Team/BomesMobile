@@ -22,6 +22,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.User;
 import com.MANUL.Bomes.SimpleObjects.UserData;
+import com.MANUL.Bomes.Utils.RequestCreationFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -149,20 +150,13 @@ public class UsersFragment extends Fragment {
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = new UniversalJSONObject();
-                    obj.event = "setIdentifier";
-                    obj.identifier = UserData.identifier;
-                    obj.password = UserData.password;
+                    UniversalJSONObject obj = RequestCreationFactory.create("setIdentifier");
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = new UniversalJSONObject();
-                    loadMe.event = "GetUser";
-                    loadMe.identifier = UserData.identifier;
-                    loadMe.friendId = UserData.identifier;
+                    UniversalJSONObject loadMe = RequestCreationFactory.create("GetUser");
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
 
-                    UniversalJSONObject getUsers = new UniversalJSONObject();
-                    getUsers.event = "GetUsers";
+                    UniversalJSONObject getUsers = RequestCreationFactory.create("GetUsers");
                     webSocket.send(objectMapper.writeValueAsString(getUsers));
                 }
                 catch (JsonProcessingException e) {

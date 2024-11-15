@@ -16,6 +16,7 @@ class RequestCreationFactory() {
                 "setIdentifier" -> factory.setIdentifier()
                 "GetUser" -> factory.getUser()
                 "GetFriends" -> factory.getFriends()
+                "GetUsers" -> factory.getUsers()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -35,6 +36,12 @@ class RequestCreationFactory() {
                 }
             }
         }
+    }
+
+    private fun getUsers(): UniversalJSONObject {
+        val getUsers = UniversalJSONObject()
+        getUsers.event = "GetUsers"
+        return getUsers
     }
 
     private fun getFriends(): UniversalJSONObject {
