@@ -1,8 +1,10 @@
 package com.MANUL.Bomes.Utils
 
 import android.util.Log
+import com.MANUL.Bomes.SimpleObjects.Message
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.fasterxml.jackson.databind.ObjectMapper
 
 class RequestCreationFactory() {
     companion object {
@@ -17,6 +19,11 @@ class RequestCreationFactory() {
                 "GetUser" -> factory.getUser()
                 "GetFriends" -> factory.getFriends()
                 "GetUsers" -> factory.getUsers()
+                "setChat" -> factory.setChat()
+                "GetStickers" -> factory.getStickers()
+                "GetReactions" -> factory.getReactions()
+                "GetChatUsers" -> factory.getChatUsers()
+                "GetPartner" -> factory.getPartner()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -25,17 +32,124 @@ class RequestCreationFactory() {
         }
 
         @JvmStatic
-        public fun create(event: String, token: String? = null): UniversalJSONObject? {
+        public fun create(event: String, argument: String): UniversalJSONObject? {
             if (!this::factory.isInitialized) factory = RequestCreationFactory()
 
             return when (event) {
-                "SetToken" -> factory.setToken(token)
+                "SetToken" -> factory.setToken(argument)
+                "IsUserOnline" -> factory.isUserOnline(argument)
+                "ReadMessage" -> factory.readMessage(argument)
+                "Typing" -> factory.typing(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
                 }
             }
         }
+
+        @JvmStatic
+        public fun create(
+            event: String,
+            type: String,
+            messageText: String,
+            replyingMessage: Message?
+        ): UniversalJSONObject? {
+            if (!this::factory.isInitialized) factory = RequestCreationFactory()
+
+            return when (event) {
+                "message" -> factory.message(type,messageText, replyingMessage)
+                else -> {
+                    Log.e("RequestCreationFactory", "there is no event")
+                    return null
+                }
+            }
+        }
+    }
+
+    private fun message(type: String,messageText: String, replyingMessage: Message?): UniversalJSONObject {
+        val objectMapper = ObjectMapper()
+        val msg = UniversalJSONObject()
+        msg.sender = UserData.identifier
+        msg.dataType = type
+        msg.value = messageText
+        if (replyingMessage == null) msg.reply = ""
+        else {
+            val replyMsg = UniversalJSONObject()
+            replyMsg.sender = replyingMessage.sender
+            replyMsg.value = replyingMessage.value
+            replyMsg.dataType = replyingMessage.dataType
+            replyMsg.chat = UserData.table_name
+            replyMsg.username = replyingMessage.username
+            replyMsg.isRead = replyingMessage.isRead
+            replyMsg.id = replyingMessage.id
+            msg.reply = objectMapper.writeValueAsString(replyMsg)
+        }
+        msg.chat = UserData.table_name
+        msg.username = UserData.username
+        msg.isRead = 0
+        msg.event = "message"
+
+        return msg
+    }
+
+    private fun typing(argument: String): UniversalJSONObject {
+        val obj = UniversalJSONObject()
+        obj.chat = UserData.table_name
+        obj.username = UserData.username
+        obj.identifier = UserData.identifier
+        obj.typingType = argument
+        obj.event = "Typing"
+        return obj
+    }
+
+    private fun readMessage(argument: String): UniversalJSONObject {
+        val readMsg = UniversalJSONObject()
+        readMsg.chat = UserData.table_name
+        readMsg.id = argument.toLong()
+        readMsg.event = "ReadMessage"
+        return readMsg
+    }
+
+    private fun isUserOnline(argument: String): UniversalJSONObject {
+        val isUserOnline = UniversalJSONObject()
+        isUserOnline.event = "IsUserOnline"
+        isUserOnline.identifier = argument
+        return isUserOnline
+    }
+
+    private fun getPartner(): UniversalJSONObject {
+        val loadOther = UniversalJSONObject()
+        loadOther.event = "GetUser"
+        loadOther.identifier = UserData.identifier
+        loadOther.friendId = UserData.chatId
+        return loadOther
+    }
+
+    private fun getChatUsers(): UniversalJSONObject {
+        val getChatUsers = UniversalJSONObject()
+        getChatUsers.event = "GetChatUsers"
+        getChatUsers.table_name = UserData.table_name
+        getChatUsers.identifier = UserData.identifier
+        return getChatUsers
+    }
+
+    private fun getReactions(): UniversalJSONObject {
+        val getReactions = UniversalJSONObject()
+        getReactions.event = "GetReactions"
+        return getReactions
+    }
+
+    private fun getStickers(): UniversalJSONObject {
+        val getStickers = UniversalJSONObject()
+        getStickers.event = "GetStickers"
+        return getStickers
+    }
+
+    private fun setChat(): UniversalJSONObject {
+        val setChat = UniversalJSONObject()
+        setChat.event = "setChat"
+        setChat.chatName = UserData.table_name
+        return setChat
     }
 
     private fun getUsers(): UniversalJSONObject {
@@ -51,7 +165,7 @@ class RequestCreationFactory() {
         return getFriends
     }
 
-    private fun setToken(token: String?): UniversalJSONObject {
+    private fun setToken(token: String): UniversalJSONObject {
         val setToken = UniversalJSONObject()
         setToken.identifier = UserData.identifier
         setToken.password = UserData.password
