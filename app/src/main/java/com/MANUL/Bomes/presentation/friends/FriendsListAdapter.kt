@@ -10,6 +10,7 @@ import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.databinding.FriendsItemBinding
+import com.bumptech.glide.Glide
 
 class FriendsListAdapter(
     val userAddList: MutableList<User>,
@@ -32,6 +33,13 @@ class FriendsListAdapter(
                         UserPageActivity::class.java
                     )
                     activity?.startActivity(intent)
+                }
+                if (user.avatar.isEmpty()) activity?.let {
+                    Glide.with(it).load("https://bomes.ru/media/icon.png")
+                        .into(friendsImage)
+                }
+                else activity?.let {
+                    Glide.with(it).load("https://bomes.ru/" + user.avatar).into(friendsImage)
                 }
             }
         }

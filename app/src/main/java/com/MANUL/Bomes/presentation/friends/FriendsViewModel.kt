@@ -8,10 +8,14 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.MANUL.Bomes.Activities.MainActivity
+import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.databinding.AddedUserItemBinding
 import com.MANUL.Bomes.databinding.FragmentFriendsBinding
+import com.MANUL.Bomes.databinding.FriendsItemBinding
+import com.bumptech.glide.Glide
 
 class FriendsViewModel(
     inflater: LayoutInflater,
