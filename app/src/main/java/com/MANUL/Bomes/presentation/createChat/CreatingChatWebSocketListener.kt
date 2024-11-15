@@ -18,7 +18,7 @@ class CreatingChatWebSocketListener(
     private val viewModel: CreatingChatViewModel,
     private val messageListener: (UniversalJSONObject) -> Unit
 ) : WebSocketListener() {
-    private var objectMapper: ObjectMapper = ObjectMapper()
+    private val objectMapper by lazy{ ObjectMapper()}
 
     private var pathImage: String = ""
 

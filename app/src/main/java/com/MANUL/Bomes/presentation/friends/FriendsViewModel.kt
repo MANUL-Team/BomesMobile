@@ -33,7 +33,7 @@ class FriendsViewModel(
         }
     }
 
-    val binding = _binding
+    val binding by lazy { _binding }
 
     fun responseReturnFriends(obj: UniversalJSONObject) {
         users.clear()

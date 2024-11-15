@@ -12,9 +12,7 @@ class FriendsWebSocketListener(
     private val viewModel: FriendsViewModel,
     private val messageListener: (UniversalJSONObject) -> Unit
 ) : WebSocketListener() {
-    private var objectMapper: ObjectMapper = ObjectMapper()
-
-    private var pathImage: String = ""
+    private val objectMapper by lazy{ ObjectMapper()}
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)

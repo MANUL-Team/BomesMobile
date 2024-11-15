@@ -43,7 +43,7 @@ class CreatingChatViewModel(
         }
     }
 
-    val binding = _binding
+    val binding by lazy { _binding }
 
     fun getUserAddedListForCreateChat(): MutableList<CreatingChatUser>? {
         if (binding.createChatEditText.text.isEmpty())
@@ -52,7 +52,7 @@ class CreatingChatViewModel(
                 "Название чата не может быть пустым!",
                 Toast.LENGTH_LONG
             ).show()
-        else if(userAddedList.size < 3)
+        else if (userAddedList.size < 3)
             Toast.makeText(
                 activity,
                 "В чате должно быть по крайней мере 3 пользователя!",
