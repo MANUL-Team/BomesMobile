@@ -29,6 +29,7 @@ import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.FileUtils;
 import com.MANUL.Bomes.Utils.PermissionUtils;
+import com.MANUL.Bomes.Utils.RequestCreationFactory;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -211,16 +212,10 @@ public class ProfileFragment extends Fragment {
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = new UniversalJSONObject();
-                    obj.event = "setIdentifier";
-                    obj.identifier = UserData.identifier;
-                    obj.password = UserData.password;
+                    UniversalJSONObject obj = RequestCreationFactory.create("setIdentifier");
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = new UniversalJSONObject();
-                    loadMe.event = "GetUser";
-                    loadMe.identifier = UserData.identifier;
-                    loadMe.friendId = UserData.identifier;
+                    UniversalJSONObject loadMe = RequestCreationFactory.create("GetUser");
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
                 }
                 catch (JsonProcessingException e) {
