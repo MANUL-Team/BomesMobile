@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 class RequestCreationFactory() {
     companion object {
-        private lateinit var factory: RequestCreationFactory
+        private val factory: RequestCreationFactory by lazy {
+            RequestCreationFactory()
+        }
 
         @JvmStatic
         public fun create(event: String): UniversalJSONObject? {
-            if (!this::factory.isInitialized) factory = RequestCreationFactory()
-
             return when (event) {
                 "setIdentifier" -> factory.setIdentifier()
                 "GetUser" -> factory.getUser()
@@ -33,8 +33,6 @@ class RequestCreationFactory() {
 
         @JvmStatic
         public fun create(event: String, argument: String): UniversalJSONObject? {
-            if (!this::factory.isInitialized) factory = RequestCreationFactory()
-
             return when (event) {
                 "SetToken" -> factory.setToken(argument)
                 "IsUserOnline" -> factory.isUserOnline(argument)
@@ -55,8 +53,6 @@ class RequestCreationFactory() {
             messageText: String,
             replyingMessage: Message?
         ): UniversalJSONObject? {
-            if (!this::factory.isInitialized) factory = RequestCreationFactory()
-
             return when (event) {
                 "message" -> factory.message(type,messageText, replyingMessage)
                 else -> {
