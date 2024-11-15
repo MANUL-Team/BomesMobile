@@ -42,6 +42,7 @@ class FriendsViewModel(
             )
             users.add(user)
         }
+        binding.friendsList.adapter?.notifyDataSetChanged()
     }
 
     fun responseWrongAuthInIdentifier() {
