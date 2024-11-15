@@ -15,6 +15,7 @@ class RequestCreationFactory() {
             return when (event) {
                 "setIdentifier" -> factory.setIdentifier()
                 "GetUser" -> factory.getUser()
+                "GetFriends" -> factory.getFriends()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -34,6 +35,13 @@ class RequestCreationFactory() {
                 }
             }
         }
+    }
+
+    private fun getFriends(): UniversalJSONObject {
+        val getFriends = UniversalJSONObject()
+        getFriends.event = "GetFriends"
+        getFriends.identifier = UserData.identifier
+        return getFriends
     }
 
     private fun setToken(token: String?): UniversalJSONObject {
