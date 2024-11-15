@@ -788,11 +788,7 @@ public class ChatActivity extends AppCompatActivity {
     private void loadMessages(){
         try {
             loadingMessagesNow = true;
-            UniversalJSONObject obj = new UniversalJSONObject();
-            obj.table_name = UserData.table_name;
-            obj.identifier = UserData.identifier;
-            obj.loadedMessages = loadedMessages;
-            obj.event = "GetChatMessages";
+            UniversalJSONObject obj = RequestCreationFactory.create("GetChatMessages",Long.toString(loadedMessages));
             webSocket.send(objectMapper.writeValueAsString(obj));
         }
         catch (JsonProcessingException e) {
@@ -835,28 +831,7 @@ public class ChatActivity extends AppCompatActivity {
     }
     public void sendSticker(String v){
         try {
-            UniversalJSONObject msg = new UniversalJSONObject();
-            msg.sender = UserData.identifier;
-            msg.dataType = "sticker";
-            msg.value = v;
-            if (replyingMessage == null)
-                msg.reply = "";
-            else {
-                UniversalJSONObject replyMsg = new UniversalJSONObject();
-                replyMsg.sender = replyingMessage.sender;
-                replyMsg.value = replyingMessage.value;
-                replyMsg.dataType = replyingMessage.dataType;
-                replyMsg.chat = UserData.table_name;
-                replyMsg.username = replyingMessage.username;
-                replyMsg.isRead = replyingMessage.isRead;
-                replyMsg.id = replyingMessage.id;
-                msg.reply = objectMapper.writeValueAsString(replyMsg);
-            }
-            msg.chat = UserData.table_name;
-            msg.username = UserData.username;
-            msg.isRead = 0;
-            msg.event = "message";
-
+            UniversalJSONObject msg = RequestCreationFactory.create("message","sticker", v, replyingMessage);
             webSocket.send(objectMapper.writeValueAsString(msg));
             endReplying();
         }

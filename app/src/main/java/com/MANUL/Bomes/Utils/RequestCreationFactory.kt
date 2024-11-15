@@ -40,6 +40,7 @@ class RequestCreationFactory() {
                 "IsUserOnline" -> factory.isUserOnline(argument)
                 "ReadMessage" -> factory.readMessage(argument)
                 "Typing" -> factory.typing(argument)
+                "GetChatMessages" -> factory.getChatMessages(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -64,6 +65,15 @@ class RequestCreationFactory() {
                 }
             }
         }
+    }
+
+    private fun getChatMessages(argument: String): UniversalJSONObject {
+        val obj = UniversalJSONObject()
+        obj.table_name = UserData.table_name
+        obj.identifier = UserData.identifier
+        obj.loadedMessages = argument.toLong()
+        obj.event = "GetChatMessages"
+        return obj
     }
 
     private fun message(type: String,messageText: String, replyingMessage: Message?): UniversalJSONObject {
