@@ -1,16 +1,11 @@
 package com.MANUL.Bomes.Fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.MANUL.Bomes.Activities.ChatActivity
 import com.MANUL.Bomes.R
-import com.MANUL.Bomes.databinding.FragmentFriendsBinding
-import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
-import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
 import com.MANUL.Bomes.presentation.friends.FriendsViewModel
 import com.MANUL.Bomes.presentation.friends.FriendsWebSocketListener
 import okhttp3.OkHttpClient

@@ -24,7 +24,7 @@ class FriendsViewModel(
 
     init {
         _binding.apply {
-            friendsList.adapter = FriendsListAdapter(users)
+            friendsList.adapter = FriendsListAdapter(users, activity)
             friendsList.layoutManager = LinearLayoutManager(activity)
         }
     }
