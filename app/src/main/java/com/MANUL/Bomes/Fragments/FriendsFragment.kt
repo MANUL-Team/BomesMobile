@@ -17,7 +17,9 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
     private lateinit var viewModel: FriendsViewModel
 
     private lateinit var webSocketListener: FriendsWebSocketListener
-    private val okHttpClient = OkHttpClient()
+    private val okHttpClient by lazy {
+        OkHttpClient()
+    }
     private var webSocket: WebSocket? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

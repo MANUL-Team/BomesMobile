@@ -8,14 +8,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.MANUL.Bomes.Activities.ChatActivity
 import com.MANUL.Bomes.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
-import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.Utils.FileUtils
 import com.MANUL.Bomes.Utils.PermissionUtils
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
@@ -37,7 +35,9 @@ class CreatingChatFragment : Fragment() {
 
     private lateinit var webSocketListener: CreatingChatWebSocketListener
     private lateinit var viewModel: CreatingChatViewModel
-    private val okHttpClient = OkHttpClient()
+    private val okHttpClient by lazy {
+        OkHttpClient()
+    }
     private var webSocket: WebSocket? = null
 
     val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
