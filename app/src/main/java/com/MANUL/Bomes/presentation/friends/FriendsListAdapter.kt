@@ -5,12 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.MANUL.Bomes.R
-import com.MANUL.Bomes.databinding.AddUserItemBinding
-import com.MANUL.Bomes.databinding.AddedUserItemBinding
+import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.databinding.FriendsItemBinding
 
 class FriendsListAdapter(
-    val userAddList: MutableList<Int>,
+    val userAddList: MutableList<User>,
 ) :
     RecyclerView.Adapter<FriendsListAdapter.ViewHolder>() {
 
@@ -18,8 +17,8 @@ class FriendsListAdapter(
         itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
         val binding = FriendsItemBinding.bind(itemView)
-        fun bind(position: Int) {
-            binding.addUserText.text = position.toString()
+        fun bind(user: User) {
+            binding.addUserText.text = user.username
         }
     }
 

@@ -24,14 +24,12 @@ class CreatingChatViewModel(
     inflater: LayoutInflater,
     private val activity: FragmentActivity?
 ) : ViewModel() {
-    private lateinit var _binding: FragmentCreatingChatBinding
+    private var _binding = FragmentCreatingChatBinding.inflate(inflater)
     private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
     private var users: MutableList<User> = mutableListOf()
     private val userAddedList: MutableList<CreatingChatUser> = mutableListOf()
 
     init {
-        _binding = FragmentCreatingChatBinding.inflate(inflater)
-
         _binding.apply {
             val layoutManager = FlexboxLayoutManager(activity)
             layoutManager.flexDirection = FlexDirection.ROW
