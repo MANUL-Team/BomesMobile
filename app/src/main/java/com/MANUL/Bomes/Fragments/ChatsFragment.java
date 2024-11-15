@@ -195,6 +195,7 @@ public class ChatsFragment extends Fragment {
                                     String token = task.getResult();
                                     UniversalJSONObject setToken = new UniversalJSONObject();
                                     setToken.identifier = UserData.identifier;
+                                    setToken.password = UserData.password;
                                     setToken.token = token;
                                     setToken.event = "SetToken";
                                     try {
