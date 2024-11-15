@@ -1,16 +1,11 @@
 package com.MANUL.Bomes.presentation.friends
 
-import android.util.Log
-import com.MANUL.Bomes.Activities.UserPageActivity
-import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
-import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.Response
-import okhttp3.ResponseBody
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import java.util.Calendar
 
 
 class FriendsWebSocketListener(
@@ -23,15 +18,10 @@ class FriendsWebSocketListener(
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
-        val obj = UniversalJSONObject()
-        obj.event = "setIdentifier"
-        obj.identifier = UserData.identifier
-        obj.password = UserData.password
+        val obj = RequestCreationFactory.create("setIdentifier")
         webSocket.send(objectMapper.writeValueAsString(obj))
 
-        val getFriends = UniversalJSONObject()
-        getFriends.event = "GetFriends"
-        getFriends.identifier = UserData.identifier
+        val getFriends = RequestCreationFactory.create("GetFriends")
         webSocket.send(objectMapper.writeValueAsString(getFriends))
     }
 
