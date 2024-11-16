@@ -211,7 +211,6 @@ public class UserPageActivity extends AppCompatActivity {
                             if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
-                                    UserData.password = obj.user.password;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;

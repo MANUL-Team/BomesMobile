@@ -137,7 +137,6 @@ public class ChatsFragment extends Fragment {
                             if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
-                                    UserData.password = obj.user.password;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
@@ -219,6 +218,7 @@ public class ChatsFragment extends Fragment {
             UniversalJSONObject loadChats = new UniversalJSONObject();
             loadChats.event = "GetUserChats";
             loadChats.identifier = UserData.identifier;
+            loadChats.password = UserData.password;
             webSocket.send(objectMapper.writeValueAsString(loadChats));
         }
         catch (JsonProcessingException e){

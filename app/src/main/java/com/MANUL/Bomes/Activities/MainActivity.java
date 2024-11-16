@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (obj.user.identifier.equals(identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.identifier = obj.user.identifier;
-                                    UserData.password = obj.user.password;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
