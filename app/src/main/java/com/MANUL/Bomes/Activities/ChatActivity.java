@@ -1,5 +1,7 @@
 package com.MANUL.Bomes.Activities;
 
+import static com.MANUL.Bomes.Utils.ServerUtilsKt.NowRequest;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -145,7 +147,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void connectToServer(){
         OkHttpClient client = new OkHttpClient.Builder().build();
-        Request request = new Request.Builder().url("wss://bomes.ru:8000").build();
+        Request request = NowRequest;
 
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
@@ -195,7 +197,6 @@ public class ChatActivity extends AppCompatActivity {
                             if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
-                                    UserData.password = obj.user.password;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;

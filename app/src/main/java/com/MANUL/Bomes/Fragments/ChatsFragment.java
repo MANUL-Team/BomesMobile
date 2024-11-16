@@ -1,5 +1,7 @@
 package com.MANUL.Bomes.Fragments;
 
+import static com.MANUL.Bomes.Utils.ServerUtilsKt.NowRequest;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -86,7 +88,7 @@ public class ChatsFragment extends Fragment {
     }
     private void connectToServer(){
         OkHttpClient client = new OkHttpClient.Builder().build();
-        Request request = new Request.Builder().url("wss://bomes.ru:8000").build();
+        Request request = NowRequest;
 
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
@@ -135,7 +137,6 @@ public class ChatsFragment extends Fragment {
                             if (obj.event.equals("ReturnUser")){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
-                                    UserData.password = obj.user.password;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
@@ -217,6 +218,7 @@ public class ChatsFragment extends Fragment {
             UniversalJSONObject loadChats = new UniversalJSONObject();
             loadChats.event = "GetUserChats";
             loadChats.identifier = UserData.identifier;
+            loadChats.password = UserData.password;
             webSocket.send(objectMapper.writeValueAsString(loadChats));
         }
         catch (JsonProcessingException e){

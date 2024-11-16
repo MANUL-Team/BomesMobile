@@ -63,6 +63,8 @@ public class UniversalJSONObject {
     public long msgId;
     public String version;
     public String owner;
+    public String request_identifier;
+    public String request_password;
 
 
     public long getLastUpdate(){

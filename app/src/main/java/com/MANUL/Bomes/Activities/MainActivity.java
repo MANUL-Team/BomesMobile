@@ -1,5 +1,7 @@
 package com.MANUL.Bomes.Activities;
 
+import static com.MANUL.Bomes.Utils.ServerUtilsKt.NowRequest;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void connectToServer(){
         OkHttpClient client = new OkHttpClient.Builder().build();
-        Request request = new Request.Builder().url("wss://bomes.ru:8000").build();
+        Request request = NowRequest;
 
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
@@ -156,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (obj.user.identifier.equals(identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.identifier = obj.user.identifier;
-                                    UserData.password = obj.user.password;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;

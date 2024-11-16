@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.MANUL.Bomes.R
+import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.presentation.friends.FriendsViewModel
 import com.MANUL.Bomes.presentation.friends.FriendsWebSocketListener
 import okhttp3.OkHttpClient
@@ -42,15 +43,8 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
                 }
             }
         }
-        webSocket = okHttpClient.newWebSocket(createRequest(), webSocketListener)
+        webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
 
         return viewModel.binding.root
-    }
-
-    private fun createRequest(): Request {
-        val webSocketUrl = "wss://bomes.ru:8000"
-        return Request.Builder()
-            .url(webSocketUrl)
-            .build()
     }
 }

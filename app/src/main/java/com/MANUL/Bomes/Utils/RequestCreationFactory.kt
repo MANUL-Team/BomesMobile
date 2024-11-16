@@ -17,7 +17,7 @@ class RequestCreationFactory() {
         @JvmStatic
         public fun create(event: String): UniversalJSONObject? {
             return when (event) {
-                "setIdentifier" -> factory.setIdentifier()
+                "setIdentifier" -> factory.connectUser()
                 "GetUser" -> factory.getUser()
                 "GetFriends" -> factory.getFriends()
                 "GetUsers" -> factory.getUsers()
@@ -76,7 +76,7 @@ class RequestCreationFactory() {
             replyingMessage: Message?
         ): UniversalJSONObject? {
             return when (event) {
-                "message" -> factory.message(argument1, argument2, replyingMessage)
+                "message" -> factory.sendMessage(argument1, argument2, replyingMessage)
                 "login" -> factory.login(argument1, argument2)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
@@ -162,17 +162,18 @@ class RequestCreationFactory() {
         return regUser
     }
 
-    private fun checkPrefsIdentifier(identifier: String): UniversalJSONObject? {
+    private fun checkPrefsIdentifier(identifier: String): UniversalJSONObject {
         val loadMe = UniversalJSONObject()
         loadMe.event = "GetUser"
         loadMe.identifier = identifier
-        loadMe.friendId = identifier
+        loadMe.request_identifier = identifier
+        loadMe.request_password = UserData.password
         return loadMe
     }
 
     private fun login(email: String, password: String): UniversalJSONObject {
         val sendObj = UniversalJSONObject()
-        sendObj.event = "login"
+        sendObj.event = "Login"
         sendObj.email = email
         sendObj.password = password
         return sendObj
@@ -231,12 +232,13 @@ class RequestCreationFactory() {
         val obj = UniversalJSONObject()
         obj.table_name = UserData.table_name
         obj.identifier = UserData.identifier
+        obj.password = UserData.password
         obj.loadedMessages = argument.toLong()
         obj.event = "GetChatMessages"
         return obj
     }
 
-    private fun message(
+    private fun sendMessage(
         type: String,
         messageText: String,
         replyingMessage: Message?
@@ -261,7 +263,7 @@ class RequestCreationFactory() {
         msg.chat = UserData.table_name
         msg.username = UserData.username
         msg.isRead = 0
-        msg.event = "message"
+        msg.event = "SendMessage"
 
         return msg
     }
@@ -294,8 +296,9 @@ class RequestCreationFactory() {
     private fun getPartner(argument: String): UniversalJSONObject {
         val loadOther = UniversalJSONObject()
         loadOther.event = "GetUser"
-        loadOther.identifier = UserData.identifier
-        loadOther.friendId = argument
+        loadOther.identifier = argument
+        loadOther.request_identifier = UserData.identifier
+        loadOther.request_password = UserData.password
         return loadOther
     }
 
@@ -304,6 +307,7 @@ class RequestCreationFactory() {
         getChatUsers.event = "GetChatUsers"
         getChatUsers.table_name = UserData.table_name
         getChatUsers.identifier = UserData.identifier
+        getChatUsers.password = UserData.password
         return getChatUsers
     }
 
@@ -321,7 +325,7 @@ class RequestCreationFactory() {
 
     private fun setChat(): UniversalJSONObject {
         val setChat = UniversalJSONObject()
-        setChat.event = "setChat"
+        setChat.event = "SetChat"
         setChat.chatName = UserData.table_name
         return setChat
     }
@@ -329,6 +333,8 @@ class RequestCreationFactory() {
     private fun getUsers(): UniversalJSONObject {
         val getUsers = UniversalJSONObject()
         getUsers.event = "GetUsers"
+        getUsers.identifier = UserData.identifier
+        getUsers.password = UserData.password
         return getUsers
     }
 
@@ -336,6 +342,8 @@ class RequestCreationFactory() {
         val getFriends = UniversalJSONObject()
         getFriends.event = "GetFriends"
         getFriends.identifier = UserData.identifier
+        getFriends.request_identifier = UserData.identifier
+        getFriends.request_password = UserData.password
         return getFriends
     }
 
@@ -352,13 +360,14 @@ class RequestCreationFactory() {
         val loadMe = UniversalJSONObject()
         loadMe.event = "GetUser"
         loadMe.identifier = UserData.identifier
-        loadMe.friendId = UserData.identifier
+        loadMe.request_identifier = UserData.identifier
+        loadMe.request_password = UserData.password
         return loadMe
     }
 
-    private fun setIdentifier(): UniversalJSONObject {
+    private fun connectUser(): UniversalJSONObject {
         val obj = UniversalJSONObject()
-        obj.event = "setIdentifier"
+        obj.event = "ConnectUser"
         obj.identifier = UserData.identifier
         obj.password = UserData.password
         return obj
