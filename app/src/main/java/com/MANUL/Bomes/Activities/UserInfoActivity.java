@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
+import com.MANUL.Bomes.Utils.RequestCreationFactory;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,9 +76,7 @@ public class UserInfoActivity extends AppCompatActivity {
             @Override
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
-                UniversalJSONObject obj = new UniversalJSONObject();
-                obj.event = "setIdentifier";
-                obj.identifier = UserData.identifier;
+                UniversalJSONObject obj = RequestCreationFactory.create("setIdentifier");
                 try {
                     webSocket.send(objectMapper.writeValueAsString(obj));
                 } catch (JsonProcessingException e) {
