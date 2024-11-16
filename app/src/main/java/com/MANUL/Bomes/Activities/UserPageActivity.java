@@ -18,6 +18,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.User;
 import com.MANUL.Bomes.SimpleObjects.UserData;
+import com.MANUL.Bomes.Utils.RequestCreationFactory;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +53,8 @@ public class UserPageActivity extends AppCompatActivity {
         setValues();
         connectToServer();
     }
-    private void init(){
+
+    private void init() {
         avatar = findViewById(R.id.userpage_avatar);
         username = findViewById(R.id.userpage_username);
         description = findViewById(R.id.userpage_description);
@@ -60,7 +62,8 @@ public class UserPageActivity extends AppCompatActivity {
         addFriend = findViewById(R.id.addFriend_userpage);
         addFriendText = findViewById(R.id.addFriendText_userpage);
     }
-    private void setValues(){
+
+    private void setValues() {
         if (openedUser.avatar.isEmpty()) {
             Glide.with(this).load("https://bomes.ru/media/icon.png").into(avatar);
             avatar.setOnClickListener(new View.OnClickListener() {
@@ -71,8 +74,7 @@ public class UserPageActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-        }
-        else {
+        } else {
             Glide.with(this).load("https://bomes.ru/" + openedUser.avatar).into(avatar);
             avatar.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -89,11 +91,10 @@ public class UserPageActivity extends AppCompatActivity {
         else
             description.setText("Описания пока нет...");
 
-        if (openedUser.identifier.equals(UserData.identifier)){
+        if (openedUser.identifier.equals(UserData.identifier)) {
             addFriend.setVisibility(View.GONE);
-        }
-        else{
-            if (openedUser.whichFriend.equals("friend")){
+        } else {
+            if (openedUser.whichFriend.equals("friend")) {
                 addFriendText.setText("Удалить из друзей");
                 addFriend.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -101,8 +102,7 @@ public class UserPageActivity extends AppCompatActivity {
                         removeFriendMethod();
                     }
                 });
-            }
-            else if (openedUser.whichFriend.equals("incomingRequest")){
+            } else if (openedUser.whichFriend.equals("incomingRequest")) {
                 addFriendText.setText("Ответить на заявку");
                 addFriend.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -110,8 +110,7 @@ public class UserPageActivity extends AppCompatActivity {
                         addFriendMethod();
                     }
                 });
-            }
-            else if (openedUser.whichFriend.equals("sentRequest")){
+            } else if (openedUser.whichFriend.equals("sentRequest")) {
                 addFriendText.setText("Отменить заявку");
                 addFriend.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -119,8 +118,7 @@ public class UserPageActivity extends AppCompatActivity {
                         removeFriendMethod();
                     }
                 });
-            }
-            else{
+            } else {
                 addFriendText.setText("Добавить в друзья");
                 addFriend.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -144,12 +142,7 @@ public class UserPageActivity extends AppCompatActivity {
                 addingUsers[0] = UserData.identifier;
                 addingUsers[1] = openedUser.identifier;
 
-                UniversalJSONObject createChat = new UniversalJSONObject();
-                createChat.table_name = table_name;
-                createChat.usersToAdd = addingUsers;
-                createChat.chat_name = openedUser.identifier;
-                createChat.isLocalChat = 1;
-                createChat.event = "CreateChat";
+                UniversalJSONObject createChat = RequestCreationFactory.create("CreateChat", table_name, addingUsers, openedUser.identifier, 1, "");
                 try {
                     webSocket.send(objectMapper.writeValueAsString(createChat));
                 } catch (JsonProcessingException e) {
@@ -158,7 +151,8 @@ public class UserPageActivity extends AppCompatActivity {
             }
         });
     }
-    private void connectToServer(){
+
+    private void connectToServer() {
         OkHttpClient client = new OkHttpClient.Builder().build();
         Request request = new Request.Builder().url("wss://bomes.ru:8000").build();
 
@@ -180,6 +174,7 @@ public class UserPageActivity extends AppCompatActivity {
                     }
                 });
             }
+
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text) {
                 super.onMessage(ws, text);
@@ -189,7 +184,7 @@ public class UserPageActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("WrongAuthInIdentifier")){
+                            if (obj.event.equals("WrongAuthInIdentifier")) {
                                 Toast.makeText(UserPageActivity.this, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
                                 UserData.avatar = null;
                                 UserData.identifier = null;
@@ -206,21 +201,20 @@ public class UserPageActivity extends AppCompatActivity {
                                 finish();
                                 webSocket.close(1000, null);
                             }
-                            if (obj.event.equals("ReturnUser")){
-                                if (obj.user.identifier.equals(UserData.identifier)){
+                            if (obj.event.equals("ReturnUser")) {
+                                if (obj.user.identifier.equals(UserData.identifier)) {
                                     UserData.username = obj.user.username;
                                     UserData.password = obj.user.password;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
                                 }
-                                if (obj.user.identifier.equals(openedUser.identifier)){
+                                if (obj.user.identifier.equals(openedUser.identifier)) {
                                     openedUser.description = obj.user.description;
                                     openedUser.whichFriend = obj.user.whichFriend;
                                     setValues();
                                 }
-                            }
-                            else if (obj.event.equals("ChatCreated")){
+                            } else if (obj.event.equals("ChatCreated")) {
                                 UserData.table_name = obj.table_name;
                                 UserData.chatId = obj.chat_name;
                                 UserData.isLocalChat = 1;
@@ -237,49 +231,37 @@ public class UserPageActivity extends AppCompatActivity {
                     }
                 });
             }
+
             @Override
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = new UniversalJSONObject();
-                    obj.event = "setIdentifier";
-                    obj.identifier = UserData.identifier;
-                    obj.password = UserData.password;
+                    UniversalJSONObject obj = RequestCreationFactory.create("setIdentifier");
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = new UniversalJSONObject();
-                    loadMe.event = "GetUser";
-                    loadMe.identifier = UserData.identifier;
-                    loadMe.friendId = UserData.identifier;
+                    UniversalJSONObject loadMe = RequestCreationFactory.create("GetUser");
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
 
-                    UniversalJSONObject loadOther = new UniversalJSONObject();
-                    loadOther.event = "GetUser";
-                    loadOther.identifier = UserData.identifier;
-                    loadOther.friendId = openedUser.identifier;
+                    UniversalJSONObject loadOther = RequestCreationFactory.create("GetPartner", openedUser.identifier);
                     webSocket.send(objectMapper.writeValueAsString(loadOther));
-                }
-                catch (JsonProcessingException e) {
+                } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
             }
         });
     }
-    private void addFriendMethod(){
-        UniversalJSONObject addFriendObj = new UniversalJSONObject();
-        addFriendObj.identifier = UserData.identifier;
-        addFriendObj.friendId = openedUser.identifier;
-        addFriendObj.event = "AddFriend";
+
+    private void addFriendMethod() {
+        UniversalJSONObject addFriendObj = RequestCreationFactory.create("AddFriend");
         try {
             webSocket.send(objectMapper.writeValueAsString(addFriendObj));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        if (openedUser.whichFriend.equals("incomingRequest")){
+        if (openedUser.whichFriend.equals("incomingRequest")) {
             addFriendText.setText("Удалить из друзей");
             openedUser.whichFriend = "friend";
-        }
-        else{
+        } else {
             addFriendText.setText("Отменить заявку");
             openedUser.whichFriend = "sentRequest";
         }
@@ -290,21 +272,18 @@ public class UserPageActivity extends AppCompatActivity {
             }
         });
     }
-    private void removeFriendMethod(){
-        UniversalJSONObject removeFriendObj = new UniversalJSONObject();
-        removeFriendObj.identifier = UserData.identifier;
-        removeFriendObj.friendId = openedUser.identifier;
-        removeFriendObj.event = "RemoveFriend";
+
+    private void removeFriendMethod() {
+        UniversalJSONObject removeFriendObj = RequestCreationFactory.create("RemoveFriend");
         try {
             webSocket.send(objectMapper.writeValueAsString(removeFriendObj));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        if (openedUser.whichFriend.equals("friend")){
+        if (openedUser.whichFriend.equals("friend")) {
             addFriendText.setText("Ответить на заявку");
             openedUser.whichFriend = "incomingRequest";
-        }
-        else if (openedUser.whichFriend.equals("sentRequest")){
+        } else if (openedUser.whichFriend.equals("sentRequest")) {
             addFriendText.setText("Добавить в друзья");
             openedUser.whichFriend = "";
         }
@@ -315,6 +294,7 @@ public class UserPageActivity extends AppCompatActivity {
             }
         });
     }
+
     public static String md5(final String s) {
         final String MD5 = "MD5";
         try {

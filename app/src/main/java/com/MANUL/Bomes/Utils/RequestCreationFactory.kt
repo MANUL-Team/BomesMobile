@@ -1,6 +1,7 @@
 package com.MANUL.Bomes.Utils
 
 import android.util.Log
+import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.SimpleObjects.ConfirmationUser
 import com.MANUL.Bomes.SimpleObjects.Message
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
@@ -24,9 +25,10 @@ class RequestCreationFactory() {
                 "GetStickers" -> factory.getStickers()
                 "GetReactions" -> factory.getReactions()
                 "GetChatUsers" -> factory.getChatUsers()
-                "GetPartner" -> factory.getPartner()
                 "SendRegCode" -> factory.sendRegCode()
                 "GetCurrentAndroidVersion" -> factory.getCurrentAndroidVersion()
+                "AddFriend"-> factory.addFriend()
+                "RemoveFriend"-> factory.removeFriend()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -37,6 +39,7 @@ class RequestCreationFactory() {
         @JvmStatic
         public fun create(event: String, argument: String): UniversalJSONObject? {
             return when (event) {
+                "GetPartner" -> factory.getPartner(argument)
                 "SetToken" -> factory.setToken(argument)
                 "IsUserOnline" -> factory.isUserOnline(argument)
                 "ReadMessage" -> factory.readMessage(argument)
@@ -108,6 +111,22 @@ class RequestCreationFactory() {
         }
     }
 
+    private fun removeFriend(): UniversalJSONObject {
+        val removeFriendObj = UniversalJSONObject()
+        removeFriendObj.identifier = UserData.identifier
+        removeFriendObj.friendId = UserPageActivity.openedUser.identifier
+        removeFriendObj.event = "RemoveFriend"
+        return removeFriendObj
+    }
+
+    private fun addFriend(): UniversalJSONObject {
+        val addFriendObj = UniversalJSONObject()
+        addFriendObj.identifier = UserData.identifier
+        addFriendObj.friendId = UserPageActivity.openedUser.identifier
+        addFriendObj.event = "AddFriend"
+        return addFriendObj
+    }
+
     private fun createChat(
         tableName: String,
         usersToAdd: Array<String?>,
@@ -115,15 +134,17 @@ class RequestCreationFactory() {
         isLocalChat: Int,
         pathImage: String
     ): UniversalJSONObject {
-        val creatingChat = UniversalJSONObject()
-        creatingChat.event = "CreateChat"
-        creatingChat.table_name = tableName
-        creatingChat.usersToAdd = usersToAdd
-        creatingChat.chat_name = chatName
-        creatingChat.isLocalChat = isLocalChat
-        creatingChat.avatar = pathImage
-        creatingChat.owner = UserData.identifier
-        return creatingChat
+        val createChat = UniversalJSONObject()
+        createChat.table_name = tableName
+        createChat.event = "CreateChat"
+        createChat.usersToAdd = usersToAdd
+        createChat.chat_name = chatName
+        createChat.isLocalChat = isLocalChat
+        if (isLocalChat != 1) {
+            createChat.avatar = pathImage
+            createChat.owner = UserData.identifier
+        }
+        return createChat
     }
 
     private fun getCurrentAndroidVersion(): UniversalJSONObject {
@@ -270,11 +291,11 @@ class RequestCreationFactory() {
         return isUserOnline
     }
 
-    private fun getPartner(): UniversalJSONObject {
+    private fun getPartner(argument: String): UniversalJSONObject {
         val loadOther = UniversalJSONObject()
         loadOther.event = "GetUser"
         loadOther.identifier = UserData.identifier
-        loadOther.friendId = UserData.chatId
+        loadOther.friendId = argument
         return loadOther
     }
 

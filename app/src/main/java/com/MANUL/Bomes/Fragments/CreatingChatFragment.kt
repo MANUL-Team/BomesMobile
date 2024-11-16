@@ -180,7 +180,14 @@ class CreatingChatFragment : Fragment() {
         tableName = UserPageActivity.md5(tableName)
         //Log.e("requestCreateChatForm", tableName)
 
-        val creatingChat = RequestCreationFactory.create("CreateChat", tableName, addingUsers, viewModel.binding.createChatEditText.text.toString(), 0, webSocketListener.pathImage)
+        val creatingChat = RequestCreationFactory.create(
+            "CreateChat",
+            tableName,
+            addingUsers,
+            viewModel.binding.createChatEditText.text.toString(),
+            0,
+            webSocketListener.pathImage
+        )
         return objectMapper.writeValueAsString(creatingChat)
     }
 

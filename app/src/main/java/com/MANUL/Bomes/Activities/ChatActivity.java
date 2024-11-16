@@ -386,7 +386,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
                                 if (UserData.chatId != null && UserData.isLocalChat == 1) {
-                                    UniversalJSONObject loadOther = RequestCreationFactory.create("GetPartner");
+                                    UniversalJSONObject loadOther = RequestCreationFactory.create("GetPartner", UserData.chatId);
                                     webSocket.send(objectMapper.writeValueAsString(loadOther));
                                 } else if (UserData.isLocalChat == 0) {
                                     if (!UserData.chatAvatar.isEmpty())
