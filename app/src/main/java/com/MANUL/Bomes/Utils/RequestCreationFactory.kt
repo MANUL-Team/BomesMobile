@@ -41,6 +41,7 @@ class RequestCreationFactory() {
                 "Typing" -> factory.typing(argument)
                 "GetChatMessages" -> factory.getChatMessages(argument)
                 "ConfirmingEmail"-> factory.confirmingEmail(argument)
+                "checkPrefsIdentifier"-> factory.checkPrefsIdentifier(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -65,18 +66,36 @@ class RequestCreationFactory() {
         @JvmStatic
         public fun create(
             event: String,
-            type: String,
-            messageText: String,
+            argument1: String,
+            argument2: String,
             replyingMessage: Message?
         ): UniversalJSONObject? {
             return when (event) {
-                "message" -> factory.message(type,messageText, replyingMessage)
+                "message" -> factory.message(argument1,argument2, replyingMessage)
+                "login"-> factory.login(argument1,argument2)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
                 }
             }
         }
+    }
+
+    private fun checkPrefsIdentifier(identifier: String): UniversalJSONObject? {
+        val loadMe = UniversalJSONObject()
+        loadMe.event = "GetUser"
+        loadMe.identifier = identifier
+        loadMe.friendId = identifier
+        return loadMe
+    }
+
+    private fun login(email: String, password: String): UniversalJSONObject {
+        val sendObj = UniversalJSONObject()
+        sendObj.event = "login"
+        sendObj.email = email
+        sendObj.password = password
+        return sendObj
+
     }
 
     private fun confirmingEmail(argument: String): UniversalJSONObject {

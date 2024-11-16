@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
+import com.MANUL.Bomes.Utils.RequestCreationFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -66,20 +67,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (webSocket != null){
-                    UniversalJSONObject sendObj = new UniversalJSONObject();
                     try {
-                        sendObj.event = "login";
-                        sendObj.email = emailField.getText().toString();
-
                         String plaintext = passwordField.getText().toString();
                         MessageDigest m = null;
-
                         m = MessageDigest.getInstance("MD5");
                         m.reset();
                         m.update(plaintext.getBytes());
                         byte[] digest = m.digest();
                         BigInteger bigInt = new BigInteger(1,digest);
-                        sendObj.password = bigInt.toString(16);
+
+                        UniversalJSONObject sendObj = RequestCreationFactory.create("login",emailField.getText().toString(),bigInt.toString(16),null);
 
                         String sendData = objectMapper.writeValueAsString(sendObj);
 
@@ -182,10 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onOpen(webSocket, response);
                 if (!identifier.equals("none")){
                     try {
-                        UniversalJSONObject loadMe = new UniversalJSONObject();
-                        loadMe.event = "GetUser";
-                        loadMe.identifier = identifier;
-                        loadMe.friendId = identifier;
+                        UniversalJSONObject loadMe = RequestCreationFactory.create("checkPrefsIdentifier", identifier);
                         webSocket.send(objectMapper.writeValueAsString(loadMe));
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
