@@ -18,6 +18,7 @@ import androidx.cardview.widget.CardView;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.ConfirmationUser;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.Utils.RequestCreationFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -86,12 +87,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 ConfirmationUser.password = password;
                 ConfirmationUser.username = username;
 
-                UniversalJSONObject regUser = new UniversalJSONObject();
-                regUser.email = email;
-                regUser.password = password;
-                regUser.username = username;
-                regUser.event = "SendRegCode";
-
+                UniversalJSONObject regUser = RequestCreationFactory.create("SendRegCode");
                 try {
                     webSocket.send(objectMapper.writeValueAsString(regUser));
                 } catch (JsonProcessingException e) {

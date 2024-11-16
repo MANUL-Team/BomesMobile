@@ -25,6 +25,7 @@ class RequestCreationFactory() {
                 "GetReactions" -> factory.getReactions()
                 "GetChatUsers" -> factory.getChatUsers()
                 "GetPartner" -> factory.getPartner()
+                "SendRegCode"-> factory.sendRegCode()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -79,6 +80,15 @@ class RequestCreationFactory() {
                 }
             }
         }
+    }
+
+    private fun sendRegCode(): UniversalJSONObject {
+        val regUser = UniversalJSONObject()
+        regUser.email = ConfirmationUser.email
+        regUser.password = ConfirmationUser.password
+        regUser.username = ConfirmationUser.username
+        regUser.event = "SendRegCode"
+        return regUser
     }
 
     private fun checkPrefsIdentifier(identifier: String): UniversalJSONObject? {
