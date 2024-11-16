@@ -12,12 +12,17 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.MANUL.Bomes.Activities.ChatActivity
+import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
+import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
+import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.Utils.FileUtils
 import com.MANUL.Bomes.Utils.PermissionUtils
+import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
 import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
+import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -29,6 +34,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
+import java.util.Calendar
 
 
 class CreatingChatFragment : Fragment() {
@@ -96,7 +102,7 @@ class CreatingChatFragment : Fragment() {
 
             buttonCreatingChat.setOnClickListener {
                 val addedUserList = viewModel.getUserAddedListForCreateChat()
-                val request = addedUserList?.let { it1 -> webSocketListener.requestCreateChatForm(it1) }
+                val request = addedUserList?.let { it1 -> requestCreateChatForm(it1) }
                 if (request != null) {
                     webSocket!!.send(request)
                 }
@@ -159,6 +165,23 @@ class CreatingChatFragment : Fragment() {
                 Log.e("Upload error:", t.message!!)
             }
         })
+    }
+
+    fun requestCreateChatForm(addedUserList: MutableList<CreatingChatUser>): String {
+        val objectMapper by lazy{ ObjectMapper() }
+        val addingUsers: Array<String?> = arrayOfNulls<String>(addedUserList.size+1)
+        var tableName = Calendar.getInstance().time.toString()
+        for (i in 0 until addedUserList.size) {
+            tableName += "-" + addedUserList[i].user.identifier
+            addingUsers[i] = (addedUserList[i].user.identifier)
+        }
+        addingUsers[addedUserList.size] = UserData.identifier
+        tableName += "-" + UserData.identifier
+        tableName = UserPageActivity.md5(tableName)
+        //Log.e("requestCreateChatForm", tableName)
+
+        val creatingChat = RequestCreationFactory.create("CreateChat", tableName, addingUsers, viewModel.binding.createChatEditText.text.toString(), 0, webSocketListener.pathImage)
+        return objectMapper.writeValueAsString(creatingChat)
     }
 
 }

@@ -25,8 +25,8 @@ class RequestCreationFactory() {
                 "GetReactions" -> factory.getReactions()
                 "GetChatUsers" -> factory.getChatUsers()
                 "GetPartner" -> factory.getPartner()
-                "SendRegCode"-> factory.sendRegCode()
-                "GetCurrentAndroidVersion"-> factory.getCurrentAndroidVersion()
+                "SendRegCode" -> factory.sendRegCode()
+                "GetCurrentAndroidVersion" -> factory.getCurrentAndroidVersion()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -42,8 +42,8 @@ class RequestCreationFactory() {
                 "ReadMessage" -> factory.readMessage(argument)
                 "Typing" -> factory.typing(argument)
                 "GetChatMessages" -> factory.getChatMessages(argument)
-                "ConfirmingEmail"-> factory.confirmingEmail(argument)
-                "checkPrefsIdentifier"-> factory.checkPrefsIdentifier(argument)
+                "ConfirmingEmail" -> factory.confirmingEmail(argument)
+                "checkPrefsIdentifier" -> factory.checkPrefsIdentifier(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -54,10 +54,10 @@ class RequestCreationFactory() {
         @JvmStatic
         public fun create(event: String, argument: String, id: Long): UniversalJSONObject? {
             return when (event) {
-                "EditMessage"-> factory.editMessage(argument, id)
-                "DeleteMessage"-> factory.deleteMessage(id)
-                "AddReaction"-> factory.addReaction(argument, id)
-                "RemoveReaction"-> factory.removeReaction(id)
+                "EditMessage" -> factory.editMessage(argument, id)
+                "DeleteMessage" -> factory.deleteMessage(id)
+                "AddReaction" -> factory.addReaction(argument, id)
+                "RemoveReaction" -> factory.removeReaction(id)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -73,14 +73,57 @@ class RequestCreationFactory() {
             replyingMessage: Message?
         ): UniversalJSONObject? {
             return when (event) {
-                "message" -> factory.message(argument1,argument2, replyingMessage)
-                "login"-> factory.login(argument1,argument2)
+                "message" -> factory.message(argument1, argument2, replyingMessage)
+                "login" -> factory.login(argument1, argument2)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
                 }
             }
         }
+
+        @JvmStatic
+        public fun create(
+            event: String,
+            tableName: String,
+            usersToAdd: Array<String?>,
+            chatName: String,
+            isLocalChat: Int,
+            pathImage: String
+        ): UniversalJSONObject? {
+            return when (event) {
+                "CreateChat" -> factory.createChat(
+                    tableName,
+                    usersToAdd,
+                    chatName,
+                    isLocalChat,
+                    pathImage
+                )
+
+                else -> {
+                    Log.e("RequestCreationFactory", "there is no event")
+                    return null
+                }
+            }
+        }
+    }
+
+    private fun createChat(
+        tableName: String,
+        usersToAdd: Array<String?>,
+        chatName: String,
+        isLocalChat: Int,
+        pathImage: String
+    ): UniversalJSONObject {
+        val creatingChat = UniversalJSONObject()
+        creatingChat.event = "CreateChat"
+        creatingChat.table_name = tableName
+        creatingChat.usersToAdd = usersToAdd
+        creatingChat.chat_name = chatName
+        creatingChat.isLocalChat = isLocalChat
+        creatingChat.avatar = pathImage
+        creatingChat.owner = UserData.identifier
+        return creatingChat
     }
 
     private fun getCurrentAndroidVersion(): UniversalJSONObject {
@@ -144,6 +187,8 @@ class RequestCreationFactory() {
 
     private fun deleteMessage(id: Long): UniversalJSONObject {
         val msg = UniversalJSONObject()
+        msg.identifier = UserData.identifier
+        msg.password = UserData.password
         msg.id = id
         msg.chat = UserData.table_name
         msg.event = "DeleteMessage"
@@ -152,6 +197,8 @@ class RequestCreationFactory() {
 
     private fun editMessage(argument: String, id: Long): UniversalJSONObject {
         val msg = UniversalJSONObject()
+        msg.identifier = UserData.identifier
+        msg.password = UserData.password
         msg.value = argument
         msg.id = id
         msg.chat = UserData.table_name
@@ -168,7 +215,11 @@ class RequestCreationFactory() {
         return obj
     }
 
-    private fun message(type: String,messageText: String, replyingMessage: Message?): UniversalJSONObject {
+    private fun message(
+        type: String,
+        messageText: String,
+        replyingMessage: Message?
+    ): UniversalJSONObject {
         val objectMapper = ObjectMapper()
         val msg = UniversalJSONObject()
         msg.sender = UserData.identifier

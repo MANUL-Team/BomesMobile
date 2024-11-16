@@ -20,7 +20,8 @@ class CreatingChatWebSocketListener(
 ) : WebSocketListener() {
     private val objectMapper by lazy{ ObjectMapper()}
 
-    private var pathImage: String = ""
+    private var _pathImage: String = ""
+    public val pathImage by lazy { _pathImage }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
@@ -56,42 +57,15 @@ class CreatingChatWebSocketListener(
             reply,
             UniversalJSONObject::class.java
         )
-        pathImage = obj.filePath
+        _pathImage = obj.filePath
         viewModel.insertingImage(obj)
-    }
-
-    fun requestCreateChatForm(addedUserList: MutableList<CreatingChatUser>): String {
-        val addingUsers: Array<String?> = arrayOfNulls<String>(addedUserList.size+1)
-        var tableName = Calendar.getInstance().time.toString()
-        for (i in 0 until addedUserList.size) {
-            tableName += "-" + addedUserList[i].user.identifier
-            addingUsers[i] = (addedUserList[i].user.identifier)
-        }
-        addingUsers[addedUserList.size] = UserData.identifier
-        tableName += "-" + UserData.identifier
-        tableName = UserPageActivity.md5(tableName)
-        //Log.e("requestCreateChatForm", tableName)
-
-        val creatingChat = UniversalJSONObject()
-        creatingChat.event = "CreateChat"
-        creatingChat.table_name = tableName
-        creatingChat.usersToAdd = addingUsers
-        //Log.e("requestCreateChatForm", creatingChat.usersToAdd.toString())
-        creatingChat.chat_name = viewModel.binding.createChatEditText.text.toString()
-        //Log.e("requestCreateChatForm", creatingChat.chat_name)
-        creatingChat.isLocalChat = 0
-        creatingChat.avatar = pathImage
-        Log.e("requestCreateChatForm", creatingChat.avatar)
-        creatingChat.owner = UserData.identifier
-
-        return objectMapper.writeValueAsString(creatingChat)
     }
 
     fun responseChatCreated(obj: UniversalJSONObject) {
         UserData.table_name = obj.table_name
         UserData.chatId = obj.chat_name
         UserData.isLocalChat = 0
-        UserData.chatAvatar = pathImage
+        UserData.chatAvatar = _pathImage
         UserData.chatName = obj.chat_name
     }
 }
