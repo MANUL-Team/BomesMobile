@@ -17,6 +17,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.ConfirmationUser;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
+import com.MANUL.Bomes.Utils.RequestCreationFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,11 +51,7 @@ public class CodeConfirmActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int code = Integer.parseInt(codeEditText.getText().toString());
 
-                UniversalJSONObject confirmingEmail = new UniversalJSONObject();
-                confirmingEmail.email = ConfirmationUser.email;
-                confirmingEmail.code = code;
-                confirmingEmail.event = "ConfirmingEmail";
-
+                UniversalJSONObject confirmingEmail = RequestCreationFactory.create("ConfirmingEmail", Integer.toString(code));
                 try {
                     webSocket.send(objectMapper.writeValueAsString(confirmingEmail));
                 } catch (JsonProcessingException e) {

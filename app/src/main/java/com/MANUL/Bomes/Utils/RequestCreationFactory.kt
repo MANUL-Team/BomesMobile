@@ -1,6 +1,7 @@
 package com.MANUL.Bomes.Utils
 
 import android.util.Log
+import com.MANUL.Bomes.SimpleObjects.ConfirmationUser
 import com.MANUL.Bomes.SimpleObjects.Message
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
@@ -39,6 +40,7 @@ class RequestCreationFactory() {
                 "ReadMessage" -> factory.readMessage(argument)
                 "Typing" -> factory.typing(argument)
                 "GetChatMessages" -> factory.getChatMessages(argument)
+                "ConfirmingEmail"-> factory.confirmingEmail(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -75,6 +77,14 @@ class RequestCreationFactory() {
                 }
             }
         }
+    }
+
+    private fun confirmingEmail(argument: String): UniversalJSONObject {
+        val confirmingEmail = UniversalJSONObject()
+        confirmingEmail.email = ConfirmationUser.email
+        confirmingEmail.code = argument.toInt()
+        confirmingEmail.event = "ConfirmingEmail"
+        return confirmingEmail
     }
 
     private fun removeReaction(id: Long): UniversalJSONObject {
