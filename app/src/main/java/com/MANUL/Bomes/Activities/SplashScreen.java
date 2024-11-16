@@ -1,5 +1,7 @@
 package com.MANUL.Bomes.Activities;
 
+import static com.MANUL.Bomes.Utils.ServerUtilsKt.NowRequest;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -58,7 +60,7 @@ public class SplashScreen extends AppCompatActivity {
     }
     private void connectToServer(){
         OkHttpClient client = new OkHttpClient.Builder().build();
-        Request request = new Request.Builder().url("wss://bomes.ru:8000").build();
+        Request request = NowRequest;
 
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override

@@ -18,6 +18,7 @@ import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.Utils.FileUtils
+import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.PermissionUtils
 import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
@@ -89,7 +90,7 @@ class CreatingChatFragment : Fragment() {
                 }
             }
         }
-        webSocket = okHttpClient.newWebSocket(createRequest(), webSocketListener)
+        webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
 
         viewModel.binding.apply {
             createChatAvatar.setOnClickListener {
@@ -123,13 +124,6 @@ class CreatingChatFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         webSocket?.close(1000, null)
-    }
-
-    private fun createRequest(): Request {
-        val webSocketUrl = "wss://bomes.ru:8000"
-        return Request.Builder()
-                .url(webSocketUrl)
-                .build()
     }
 
     fun uploadAvatar(fileUri: Uri) {

@@ -1,5 +1,7 @@
 package com.MANUL.Bomes.Fragments;
 
+import static com.MANUL.Bomes.Utils.ServerUtilsKt.NowRequest;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,7 +78,7 @@ public class UsersFragment extends Fragment {
     }
     private void connectToServer(){
         OkHttpClient client = new OkHttpClient.Builder().build();
-        Request request = new Request.Builder().url("wss://bomes.ru:8000").build();
+        Request request = NowRequest;
 
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
