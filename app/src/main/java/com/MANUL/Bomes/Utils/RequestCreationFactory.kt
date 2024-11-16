@@ -1,6 +1,7 @@
 package com.MANUL.Bomes.Utils
 
 import android.util.Log
+import android.widget.Toast
 import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.SimpleObjects.ConfirmationUser
 import com.MANUL.Bomes.SimpleObjects.Message
@@ -46,7 +47,6 @@ class RequestCreationFactory() {
                 "Typing" -> factory.typing(argument)
                 "GetChatMessages" -> factory.getChatMessages(argument)
                 "ConfirmingEmail" -> factory.confirmingEmail(argument)
-                "checkPrefsIdentifier" -> factory.checkPrefsIdentifier(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -78,6 +78,7 @@ class RequestCreationFactory() {
             return when (event) {
                 "message" -> factory.sendMessage(argument1, argument2, replyingMessage)
                 "login" -> factory.login(argument1, argument2)
+                "checkPrefsIdentifier" -> factory.checkPrefsIdentifier(argument1, argument2)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -113,16 +114,18 @@ class RequestCreationFactory() {
 
     private fun removeFriend(): UniversalJSONObject {
         val removeFriendObj = UniversalJSONObject()
-        removeFriendObj.identifier = UserData.identifier
-        removeFriendObj.friendId = UserPageActivity.openedUser.identifier
+        removeFriendObj.identifier = UserPageActivity.openedUser.identifier
+        removeFriendObj.request_identifier = UserData.identifier
+        removeFriendObj.request_password = UserData.password
         removeFriendObj.event = "RemoveFriend"
         return removeFriendObj
     }
 
     private fun addFriend(): UniversalJSONObject {
         val addFriendObj = UniversalJSONObject()
-        addFriendObj.identifier = UserData.identifier
-        addFriendObj.friendId = UserPageActivity.openedUser.identifier
+        addFriendObj.identifier = UserPageActivity.openedUser.identifier
+        addFriendObj.request_identifier = UserData.identifier
+        addFriendObj.request_password = UserData.password
         addFriendObj.event = "AddFriend"
         return addFriendObj
     }
@@ -162,12 +165,13 @@ class RequestCreationFactory() {
         return regUser
     }
 
-    private fun checkPrefsIdentifier(identifier: String): UniversalJSONObject {
+    private fun checkPrefsIdentifier(identifier: String, password: String): UniversalJSONObject {
+        Log.e("checkPrefsIdentifier", identifier+" "+password)
         val loadMe = UniversalJSONObject()
         loadMe.event = "GetUser"
         loadMe.identifier = identifier
         loadMe.request_identifier = identifier
-        loadMe.request_password = UserData.password
+        loadMe.request_password = password
         return loadMe
     }
 

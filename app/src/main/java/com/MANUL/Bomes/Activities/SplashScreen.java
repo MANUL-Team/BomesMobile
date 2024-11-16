@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +39,7 @@ public class SplashScreen extends AppCompatActivity {
     WebSocket webSocket;
     SharedPreferences prefs;
     String identifier;
+    String password;
     Handler handler = new Handler();
 
     Animation splash_in;
@@ -55,6 +57,7 @@ public class SplashScreen extends AppCompatActivity {
 
         prefs = getSharedPreferences("user", Context.MODE_PRIVATE);
         identifier = prefs.getString("identifier", "none");
+        password = prefs.getString("password", "none");
 
         handler.postDelayed(this::connectToServer, 500);
     }
@@ -93,6 +96,7 @@ public class SplashScreen extends AppCompatActivity {
                                 if (obj.user.identifier.equals(identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.identifier = obj.user.identifier;
+                                    UserData.password = password;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
@@ -122,7 +126,7 @@ public class SplashScreen extends AppCompatActivity {
                                         finish();
                                     }
                                     else {
-                                        UniversalJSONObject loadMe = RequestCreationFactory.create("checkPrefsIdentifier", identifier);
+                                        UniversalJSONObject loadMe = RequestCreationFactory.create("checkPrefsIdentifier", identifier, password, null);
                                         webSocket.send(objectMapper.writeValueAsString(loadMe));
                                     }
                                 }

@@ -239,7 +239,7 @@ public class ChatActivity extends AppCompatActivity {
                                 loadingMessagesNow = false;
                                 findViewById(R.id.loadingBar).setVisibility(View.GONE);
                             }
-                            else if (obj.event.equals("message")){
+                            else if (obj.event.equals("SendMessage")){
                                 Message message = new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender, new UniversalJSONObject[0], obj.avatar);
                                 messages.add(message);
                                 loadedMessages++;

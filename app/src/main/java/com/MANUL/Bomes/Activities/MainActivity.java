@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     CardView loginBtn;
     TextView registerBtnLogin;
     String identifier;
+    String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("user", Context.MODE_PRIVATE);
 
         identifier = prefs.getString("identifier", "none");
+        identifier = prefs.getString("password", "none");
 
         connectToServer();
         init();
@@ -144,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                                 UserData.description = obj.description;
 
                                 prefs.edit().putString("identifier", obj.identifier).apply();
+                                prefs.edit().putString("password", obj.password).apply();
 
                                 Intent intent = new Intent(MainActivity.this, ChatsActivity.class);
                                 startActivity(intent);
@@ -180,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onOpen(webSocket, response);
                 if (!identifier.equals("none")){
                     try {
-                        UniversalJSONObject loadMe = RequestCreationFactory.create("checkPrefsIdentifier", identifier);
+                        UniversalJSONObject loadMe = RequestCreationFactory.create("checkPrefsIdentifier", identifier, password, null);
                         webSocket.send(objectMapper.writeValueAsString(loadMe));
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
