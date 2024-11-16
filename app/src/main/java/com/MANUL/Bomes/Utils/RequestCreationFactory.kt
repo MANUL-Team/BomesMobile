@@ -26,6 +26,7 @@ class RequestCreationFactory() {
                 "GetChatUsers" -> factory.getChatUsers()
                 "GetPartner" -> factory.getPartner()
                 "SendRegCode"-> factory.sendRegCode()
+                "GetCurrentAndroidVersion"-> factory.getCurrentAndroidVersion()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -80,6 +81,12 @@ class RequestCreationFactory() {
                 }
             }
         }
+    }
+
+    private fun getCurrentAndroidVersion(): UniversalJSONObject {
+        val loadVersion = UniversalJSONObject()
+        loadVersion.event = "GetCurrentAndroidVersion"
+        return loadVersion
     }
 
     private fun sendRegCode(): UniversalJSONObject {
