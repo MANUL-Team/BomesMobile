@@ -909,11 +909,7 @@ public class ChatActivity extends AppCompatActivity {
         }, 200);
     }
     public void endEditing(){
-        UniversalJSONObject msg = new UniversalJSONObject();
-        msg.value = messageText.getText().toString();
-        msg.id = editingMessage.id;
-        msg.chat = UserData.table_name;
-        msg.event = "EditMessage";
+        UniversalJSONObject msg = RequestCreationFactory.create("EditMessage", messageText.getText().toString(), editingMessage.id);
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
@@ -925,10 +921,7 @@ public class ChatActivity extends AppCompatActivity {
     }
     public void deleteMessage(Message message){
         long id = message.id;
-        UniversalJSONObject msg = new UniversalJSONObject();
-        msg.id = id;
-        msg.chat = UserData.table_name;
-        msg.event = "DeleteMessage";
+        UniversalJSONObject msg = RequestCreationFactory.create("DeleteMessage", "", id);
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
@@ -936,12 +929,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
     public void addReaction(String type, long id){
-        UniversalJSONObject msg = new UniversalJSONObject();
-        msg.msgId = id;
-        msg.type = type;
-        msg.sender = UserData.identifier;
-        msg.chat = UserData.table_name;
-        msg.event = "AddReaction";
+        UniversalJSONObject msg = RequestCreationFactory.create("AddReaction", type, id);
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
@@ -949,11 +937,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
     public void removeReaction(long id){
-        UniversalJSONObject msg = new UniversalJSONObject();
-        msg.msgId = id;
-        msg.sender = UserData.identifier;
-        msg.chat = UserData.table_name;
-        msg.event = "RemoveReaction";
+        UniversalJSONObject msg = RequestCreationFactory.create("RemoveReaction", "", id);
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
@@ -1005,10 +989,7 @@ public class ChatActivity extends AppCompatActivity {
         for (int i = 0; i < waitingMessages.size(); i++) {
             Message message = waitingMessages.get(i);
             if (!message.sender.equals(UserData.identifier) && message.isRead == 0 && !isStop){
-                UniversalJSONObject readMsg = new UniversalJSONObject();
-                readMsg.chat = UserData.table_name;
-                readMsg.id = message.id;
-                readMsg.event = "ReadMessage";
+                UniversalJSONObject readMsg = RequestCreationFactory.create("ReadMessage", Long.toString(message.id));
                 try {
                     webSocket.send(objectMapper.writeValueAsString(readMsg));
                 } catch (JsonProcessingException e) {

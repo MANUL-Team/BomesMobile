@@ -47,6 +47,20 @@ class RequestCreationFactory() {
         }
 
         @JvmStatic
+        public fun create(event: String, argument: String, id: Long): UniversalJSONObject? {
+            return when (event) {
+                "EditMessage"-> factory.editMessage(argument, id)
+                "DeleteMessage"-> factory.deleteMessage(id)
+                "AddReaction"-> factory.addReaction(argument, id)
+                "RemoveReaction"-> factory.removeReaction(id)
+                else -> {
+                    Log.e("RequestCreationFactory", "there is no event")
+                    return null
+                }
+            }
+        }
+
+        @JvmStatic
         public fun create(
             event: String,
             type: String,
@@ -61,6 +75,42 @@ class RequestCreationFactory() {
                 }
             }
         }
+    }
+
+    private fun removeReaction(id: Long): UniversalJSONObject {
+        val msg = UniversalJSONObject()
+        msg.msgId = id
+        msg.sender = UserData.identifier
+        msg.chat = UserData.table_name
+        msg.event = "RemoveReaction"
+        return msg
+    }
+
+    private fun addReaction(argument: String, id: Long): UniversalJSONObject {
+        val msg = UniversalJSONObject()
+        msg.msgId = id
+        msg.type = argument
+        msg.sender = UserData.identifier
+        msg.chat = UserData.table_name
+        msg.event = "AddReaction"
+        return msg
+    }
+
+    private fun deleteMessage(id: Long): UniversalJSONObject {
+        val msg = UniversalJSONObject()
+        msg.id = id
+        msg.chat = UserData.table_name
+        msg.event = "DeleteMessage"
+        return msg
+    }
+
+    private fun editMessage(argument: String, id: Long): UniversalJSONObject {
+        val msg = UniversalJSONObject()
+        msg.value = argument
+        msg.id = id
+        msg.chat = UserData.table_name
+        msg.event = "EditMessage"
+        return msg
     }
 
     private fun getChatMessages(argument: String): UniversalJSONObject {
