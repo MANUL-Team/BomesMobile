@@ -16,10 +16,10 @@ class FriendsWebSocketListener(
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
-        val obj = RequestCreationFactory.create("setIdentifier")
+        val obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser)
         webSocket.send(objectMapper.writeValueAsString(obj))
 
-        val getFriends = RequestCreationFactory.create("GetFriends")
+        val getFriends = RequestCreationFactory.create(RequestCreationFactory.GetFriends)
         webSocket.send(objectMapper.writeValueAsString(getFriends))
     }
 
