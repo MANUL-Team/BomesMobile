@@ -215,10 +215,7 @@ public class ChatsFragment extends Fragment {
     }
     private void getUserChats(){
         try {
-            UniversalJSONObject loadChats = new UniversalJSONObject();
-            loadChats.event = "GetUserChats";
-            loadChats.identifier = UserData.identifier;
-            loadChats.password = UserData.password;
+            UniversalJSONObject loadChats = RequestCreationFactory.create("GetUserChats");
             webSocket.send(objectMapper.writeValueAsString(loadChats));
         }
         catch (JsonProcessingException e){

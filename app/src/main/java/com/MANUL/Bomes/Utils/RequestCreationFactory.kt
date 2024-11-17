@@ -1,7 +1,6 @@
 package com.MANUL.Bomes.Utils
 
 import android.util.Log
-import android.widget.Toast
 import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.SimpleObjects.ConfirmationUser
 import com.MANUL.Bomes.SimpleObjects.Message
@@ -9,14 +8,14 @@ import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
 import com.fasterxml.jackson.databind.ObjectMapper
 
-class RequestCreationFactory() {
+class RequestCreationFactory {
     companion object {
         private val factory: RequestCreationFactory by lazy {
             RequestCreationFactory()
         }
 
         @JvmStatic
-        public fun create(event: String): UniversalJSONObject? {
+        fun create(event: String): UniversalJSONObject? {
             return when (event) {
                 "setIdentifier" -> factory.connectUser()
                 "GetUser" -> factory.getUser()
@@ -30,6 +29,7 @@ class RequestCreationFactory() {
                 "GetCurrentAndroidVersion" -> factory.getCurrentAndroidVersion()
                 "AddFriend"-> factory.addFriend()
                 "RemoveFriend"-> factory.removeFriend()
+                "GetUserChats"-> factory.getUserChats()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -38,7 +38,7 @@ class RequestCreationFactory() {
         }
 
         @JvmStatic
-        public fun create(event: String, argument: String): UniversalJSONObject? {
+        fun create(event: String, argument: String): UniversalJSONObject? {
             return when (event) {
                 "GetPartner" -> factory.getPartner(argument)
                 "SetToken" -> factory.setToken(argument)
@@ -55,7 +55,7 @@ class RequestCreationFactory() {
         }
 
         @JvmStatic
-        public fun create(event: String, argument: String, id: Long): UniversalJSONObject? {
+        fun create(event: String, argument: String, id: Long): UniversalJSONObject? {
             return when (event) {
                 "EditMessage" -> factory.editMessage(argument, id)
                 "DeleteMessage" -> factory.deleteMessage(id)
@@ -69,7 +69,7 @@ class RequestCreationFactory() {
         }
 
         @JvmStatic
-        public fun create(
+        fun create(
             event: String,
             argument1: String,
             argument2: String,
@@ -87,7 +87,7 @@ class RequestCreationFactory() {
         }
 
         @JvmStatic
-        public fun create(
+        fun create(
             event: String,
             tableName: String,
             usersToAdd: Array<String?>,
@@ -110,6 +110,14 @@ class RequestCreationFactory() {
                 }
             }
         }
+    }
+
+    private fun getUserChats(): UniversalJSONObject {
+        val loadChats = UniversalJSONObject()
+        loadChats.event = "GetUserChats"
+        loadChats.identifier = UserData.identifier
+        loadChats.password = UserData.password
+        return loadChats
     }
 
     private fun removeFriend(): UniversalJSONObject {
@@ -166,7 +174,6 @@ class RequestCreationFactory() {
     }
 
     private fun checkPrefsIdentifier(identifier: String, password: String): UniversalJSONObject {
-        Log.e("checkPrefsIdentifier", identifier+" "+password)
         val loadMe = UniversalJSONObject()
         loadMe.event = "GetUser"
         loadMe.identifier = identifier
