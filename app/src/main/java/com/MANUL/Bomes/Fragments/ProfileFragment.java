@@ -108,11 +108,7 @@ public class ProfileFragment extends Fragment {
         saveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UniversalJSONObject saveData = new UniversalJSONObject();
-                saveData.name = username.getText().toString().trim();
-                saveData.description = description.getText().toString().trim();
-                saveData.where = UserData.identifier;
-                saveData.event = "UpdateUserData";
+                UniversalJSONObject saveData = RequestCreationFactory.create("UpdateUserData", username.getText().toString().trim(), description.getText().toString().trim(), null);
 
                 if (!saveData.name.isEmpty()) {
                     try {

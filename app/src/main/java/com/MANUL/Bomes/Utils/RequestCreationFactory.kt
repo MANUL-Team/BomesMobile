@@ -79,6 +79,7 @@ class RequestCreationFactory {
                 "message" -> factory.sendMessage(argument1, argument2, replyingMessage)
                 "login" -> factory.login(argument1, argument2)
                 "checkPrefsIdentifier" -> factory.checkPrefsIdentifier(argument1, argument2)
+                "UpdateUserData"-> factory.updateUserData(argument1, argument2)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -110,6 +111,15 @@ class RequestCreationFactory {
                 }
             }
         }
+    }
+
+    private fun updateUserData(name: String, description: String): UniversalJSONObject {
+        val saveData = UniversalJSONObject()
+        saveData.name = name
+        saveData.description = description
+        saveData.where = UserData.identifier
+        saveData.event = "UpdateUserData"
+        return saveData
     }
 
     private fun getUserChats(): UniversalJSONObject {
