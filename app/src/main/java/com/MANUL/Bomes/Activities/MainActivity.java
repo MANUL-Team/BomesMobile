@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         byte[] digest = m.digest();
                         BigInteger bigInt = new BigInteger(1,digest);
 
-                        UniversalJSONObject sendObj = RequestCreationFactory.create("login",emailField.getText().toString(),bigInt.toString(16),null);
+                        UniversalJSONObject sendObj = RequestCreationFactory.create(RequestCreationFactory.Login,emailField.getText().toString(),bigInt.toString(16),null);
 
                         String sendData = objectMapper.writeValueAsString(sendObj);
 
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onOpen(webSocket, response);
                 if (!identifier.equals("none")){
                     try {
-                        UniversalJSONObject loadMe = RequestCreationFactory.create("checkPrefsIdentifier", identifier, password, null);
+                        UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.CheckPrefsIdentifier, identifier, password, null);
                         webSocket.send(objectMapper.writeValueAsString(loadMe));
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);

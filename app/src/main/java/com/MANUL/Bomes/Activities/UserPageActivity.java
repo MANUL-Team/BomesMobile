@@ -144,7 +144,7 @@ public class UserPageActivity extends AppCompatActivity {
                 addingUsers[0] = UserData.identifier;
                 addingUsers[1] = openedUser.identifier;
 
-                UniversalJSONObject createChat = RequestCreationFactory.create("CreateChat", table_name, addingUsers, openedUser.identifier, 1, "");
+                UniversalJSONObject createChat = RequestCreationFactory.create(RequestCreationFactory.CreateChat, table_name, addingUsers, openedUser.identifier, 1, "");
                 try {
                     webSocket.send(objectMapper.writeValueAsString(createChat));
                 } catch (JsonProcessingException e) {
@@ -237,13 +237,13 @@ public class UserPageActivity extends AppCompatActivity {
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = RequestCreationFactory.create("setIdentifier");
+                    UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser);
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = RequestCreationFactory.create("GetUser");
+                    UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.GetUser);
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
 
-                    UniversalJSONObject loadOther = RequestCreationFactory.create("GetPartner", openedUser.identifier);
+                    UniversalJSONObject loadOther = RequestCreationFactory.create(RequestCreationFactory.GetPartner, openedUser.identifier);
                     webSocket.send(objectMapper.writeValueAsString(loadOther));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
@@ -253,7 +253,7 @@ public class UserPageActivity extends AppCompatActivity {
     }
 
     private void addFriendMethod() {
-        UniversalJSONObject addFriendObj = RequestCreationFactory.create("AddFriend");
+        UniversalJSONObject addFriendObj = RequestCreationFactory.create(RequestCreationFactory.AddFriend);
         try {
             webSocket.send(objectMapper.writeValueAsString(addFriendObj));
         } catch (JsonProcessingException e) {
@@ -275,7 +275,7 @@ public class UserPageActivity extends AppCompatActivity {
     }
 
     private void removeFriendMethod() {
-        UniversalJSONObject removeFriendObj = RequestCreationFactory.create("RemoveFriend");
+        UniversalJSONObject removeFriendObj = RequestCreationFactory.create(RequestCreationFactory.RemoveFriend);
         try {
             webSocket.send(objectMapper.writeValueAsString(removeFriendObj));
         } catch (JsonProcessingException e) {

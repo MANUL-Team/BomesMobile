@@ -10,11 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 class RequestCreationFactory {
     companion object {
-        const val SetIdentifier = "setIdentifier"
+        const val ConnectUser = "ConnectUser"
         const val GetUser = "GetUser"
         const val GetFriends = "GetFriends"
         const val GetUsers = "GetUsers"
-        const val SetChat = "setChat"
+        const val SetChat = "SetChat"
         const val GetStickers = "GetStickers"
         const val GetReactions = "GetReactions"
         const val GetChatUsers = "GetChatUsers"
@@ -35,7 +35,7 @@ class RequestCreationFactory {
         const val DeleteMessage = "DeleteMessage"
         const val AddReaction = "AddReaction"
         const val RemoveReaction = "RemoveReaction"
-        const val Message = "SendMessage"
+        const val SendMessage = "SendMessage"
         const val Login = "Login"
         const val CheckPrefsIdentifier = "CheckPrefsIdentifier"
         const val UpdateUserData = "UpdateUserData"
@@ -48,7 +48,7 @@ class RequestCreationFactory {
         @JvmStatic
         fun create(event: String): UniversalJSONObject? {
             return when (event) {
-                SetIdentifier -> factory.connectUser()
+                ConnectUser -> factory.connectUser()
                 GetUser -> factory.getUser()
                 GetFriends -> factory.getFriends()
                 GetUsers -> factory.getUsers()
@@ -108,7 +108,7 @@ class RequestCreationFactory {
             replyingMessage: Message?
         ): UniversalJSONObject? {
             return when (event) {
-                Message -> factory.sendMessage(argument1, argument2, replyingMessage)
+                SendMessage -> factory.sendMessage(argument1, argument2, replyingMessage)
                 Login -> factory.login(argument1, argument2)
                 CheckPrefsIdentifier -> factory.checkPrefsIdentifier(argument1, argument2)
                 UpdateUserData-> factory.updateUserData(argument1, argument2)

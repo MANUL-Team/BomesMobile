@@ -126,7 +126,7 @@ public class SplashScreen extends AppCompatActivity {
                                         finish();
                                     }
                                     else {
-                                        UniversalJSONObject loadMe = RequestCreationFactory.create("checkPrefsIdentifier", identifier, password, null);
+                                        UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.CheckPrefsIdentifier, identifier, password, null);
                                         webSocket.send(objectMapper.writeValueAsString(loadMe));
                                     }
                                 }
@@ -142,7 +142,7 @@ public class SplashScreen extends AppCompatActivity {
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
                 try {
-                    UniversalJSONObject loadVersion = RequestCreationFactory.create("GetCurrentAndroidVersion");
+                    UniversalJSONObject loadVersion = RequestCreationFactory.create(RequestCreationFactory.GetCurrentAndroidVersion);
                     webSocket.send(objectMapper.writeValueAsString(loadVersion));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);

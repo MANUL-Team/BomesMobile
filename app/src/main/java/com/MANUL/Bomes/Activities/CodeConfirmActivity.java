@@ -53,7 +53,7 @@ public class CodeConfirmActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int code = Integer.parseInt(codeEditText.getText().toString());
 
-                UniversalJSONObject confirmingEmail = RequestCreationFactory.create("ConfirmingEmail", Integer.toString(code));
+                UniversalJSONObject confirmingEmail = RequestCreationFactory.create(RequestCreationFactory.ConfirmingEmail, Integer.toString(code));
                 try {
                     webSocket.send(objectMapper.writeValueAsString(confirmingEmail));
                 } catch (JsonProcessingException e) {

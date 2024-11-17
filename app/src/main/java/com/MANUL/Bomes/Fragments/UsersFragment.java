@@ -151,13 +151,13 @@ public class UsersFragment extends Fragment {
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = RequestCreationFactory.create("setIdentifier");
+                    UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser);
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = RequestCreationFactory.create("GetUser");
+                    UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.GetUser);
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
 
-                    UniversalJSONObject getUsers = RequestCreationFactory.create("GetUsers");
+                    UniversalJSONObject getUsers = RequestCreationFactory.create(RequestCreationFactory.GetUsers);
                     webSocket.send(objectMapper.writeValueAsString(getUsers));
                 }
                 catch (JsonProcessingException e) {

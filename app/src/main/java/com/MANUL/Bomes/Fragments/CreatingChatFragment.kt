@@ -175,7 +175,7 @@ class CreatingChatFragment : Fragment() {
         //Log.e("requestCreateChatForm", tableName)
 
         val creatingChat = RequestCreationFactory.create(
-            "CreateChat",
+            RequestCreationFactory.CreateChat,
             tableName,
             addingUsers,
             viewModel.binding.createChatEditText.text.toString(),

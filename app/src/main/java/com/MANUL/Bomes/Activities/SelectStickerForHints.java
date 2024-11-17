@@ -110,7 +110,7 @@ public class SelectStickerForHints extends AppCompatActivity {
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
                 try {
-                    UniversalJSONObject getStickers = RequestCreationFactory.create("GetStickers");
+                    UniversalJSONObject getStickers = RequestCreationFactory.create(RequestCreationFactory.GetStickers);
                     webSocket.send(objectMapper.writeValueAsString(getStickers));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);

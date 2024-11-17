@@ -78,7 +78,7 @@ public class UserInfoActivity extends AppCompatActivity {
             @Override
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
-                UniversalJSONObject obj = RequestCreationFactory.create("setIdentifier");
+                UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser);
                 try {
                     webSocket.send(objectMapper.writeValueAsString(obj));
                 } catch (JsonProcessingException e) {
