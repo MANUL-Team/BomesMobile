@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.Utils.NowRequest
+import com.MANUL.Bomes.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.friends.FriendsViewModel
 import com.MANUL.Bomes.presentation.friends.FriendsWebSocketListener
 import okhttp3.OkHttpClient
@@ -37,7 +38,7 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         webSocketListener = FriendsWebSocketListener(viewModel) { obj ->
             activity?.runOnUiThread {
                 run {
-                    if (obj.event == "ReturnFriends") {
+                    if (obj.event == RequestEvent.ReturnFriends) {
                         viewModel.responseReturnFriends(obj)
                     }
                 }

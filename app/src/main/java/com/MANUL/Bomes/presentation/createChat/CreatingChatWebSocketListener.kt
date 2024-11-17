@@ -40,7 +40,7 @@ class CreatingChatWebSocketListener(
             UniversalJSONObject::class.java
         )
 
-        if (obj.event == "WrongAuthInIdentifier") {
+        if (obj.event == RequestEvent.WrongAuthInIdentifier) {
             viewModel.responseWrongAuthInIdentifier()
             webSocket.close(1000, null)
         }

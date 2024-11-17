@@ -81,7 +81,7 @@ public class SelectStickerForHints extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("ReturnStickers")){
+                            if (obj.event.equals(RequestEvent.ReturnStickers)){
                                 for (int i = 0; i < obj.stickers.length; i++) {
                                     String sticker = obj.stickers[i];
                                     int stickerId = i;

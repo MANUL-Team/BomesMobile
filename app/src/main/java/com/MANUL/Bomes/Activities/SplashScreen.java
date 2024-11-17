@@ -93,7 +93,7 @@ public class SplashScreen extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("ReturnUser")){
+                            if (obj.event.equals(RequestEvent.ReturnUser)){
                                 if (obj.user.identifier.equals(identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.identifier = obj.user.identifier;
@@ -109,7 +109,7 @@ public class SplashScreen extends AppCompatActivity {
                                     webSocket.close(1000, null);
                                 }
                             }
-                            if (obj.event.equals("ReturnCurrentAndroidVersion")){
+                            if (obj.event.equals(RequestEvent.ReturnCurrentAndroidVersion)){
                                 PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
                                 int versionCode = packageInfo.versionCode;
                                 if (!obj.version.equals(String.valueOf(versionCode))){

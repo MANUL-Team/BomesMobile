@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
 
-                            if (obj.event.equals("TruePassword")){
+                            if (obj.event.equals(RequestEvent.TruePassword)){
                                 //Toast.makeText(MainActivity.this, "Верный пароль!", Toast.LENGTH_SHORT).show();
                                 UserData.email = obj.email;
                                 UserData.identifier = obj.identifier;
@@ -155,10 +155,10 @@ public class MainActivity extends AppCompatActivity {
                                 finish();
                                 webSocket.close(1000, null);
                             }
-                            else if (obj.event.equals("WrongPassword")){
+                            else if (obj.event.equals(RequestEvent.WrongPassword)){
                                 Toast.makeText(MainActivity.this, "Неверный пароль!", Toast.LENGTH_SHORT).show();
                             }
-                            else if (obj.event.equals("ReturnUser")){
+                            else if (obj.event.equals(RequestEvent.ReturnUser)){
                                 if (obj.user.identifier.equals(identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.identifier = obj.user.identifier;

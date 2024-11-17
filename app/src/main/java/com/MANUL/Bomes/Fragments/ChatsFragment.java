@@ -118,7 +118,7 @@ public class ChatsFragment extends Fragment {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("WrongAuthInIdentifier")){
+                            if (obj.event.equals(RequestEvent.WrongAuthInIdentifier)){
                                 Toast.makeText(activity, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
                                 UserData.avatar = null;
                                 UserData.identifier = null;
@@ -135,7 +135,7 @@ public class ChatsFragment extends Fragment {
                                 activity.finish();
                                 webSocket.close(1000, null);
                             }
-                            if (obj.event.equals("ReturnUser")){
+                            if (obj.event.equals(RequestEvent.ReturnUser)){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.email = obj.user.email;
@@ -143,7 +143,7 @@ public class ChatsFragment extends Fragment {
                                     UserData.avatar = obj.user.avatar;
                                 }
                             }
-                            else if (obj.event.equals("ReturnUserChats")){
+                            else if (obj.event.equals(RequestEvent.ReturnUserChats)){
                                 chats.clear();
                                 Arrays.sort(obj.chats, Comparator.comparing(UniversalJSONObject::getLastUpdate));
                                 reverseArray(obj.chats);
@@ -159,7 +159,7 @@ public class ChatsFragment extends Fragment {
                                 }
                                 adapter.notifyDataSetChanged();
                             }
-                            else if (obj.event.equals("Notification")){
+                            else if (obj.event.equals(RequestEvent.Notification)){
                                 getUserChats();
                             }
                         } catch (JsonProcessingException e) {

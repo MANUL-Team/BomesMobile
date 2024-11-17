@@ -178,7 +178,7 @@ public class ChatActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("WrongAuthInIdentifier")){
+                            if (obj.event.equals(RequestEvent.WrongAuthInIdentifier)){
                                 Toast.makeText(ChatActivity.this, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
                                 UserData.avatar = null;
                                 UserData.identifier = null;
@@ -195,7 +195,7 @@ public class ChatActivity extends AppCompatActivity {
                                 finish();
                                 webSocket.close(1000, null);
                             }
-                            if (obj.event.equals("ReturnUser")){
+                            if (obj.event.equals(RequestEvent.ReturnUser)){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.email = obj.user.email;
@@ -214,7 +214,7 @@ public class ChatActivity extends AppCompatActivity {
                                     webSocket.send(objectMapper.writeValueAsString(isUserOnline));
                                 }
                             }
-                            else if (obj.event.equals("ReturnOnline")){
+                            else if (obj.event.equals(RequestEvent.ReturnOnline)){
                                 if (!obj.isOnline){
                                     setLastOnlineText();
                                     onlineText.setTextColor(getResources().getColor(R.color.white,  null));
@@ -224,7 +224,7 @@ public class ChatActivity extends AppCompatActivity {
                                     onlineText.setTextColor(getResources().getColor(R.color.green,  null));
                                 }
                             }
-                            else if (obj.event.equals("ReturnChatMessages")){
+                            else if (obj.event.equals(RequestEvent.ReturnChatMessages)){
                                 for (UniversalJSONObject msg : obj.messages) {
                                     messages.add(0, new Message(msg.username, msg.dataType, msg.value, msg.reply, msg.isRead, msg.time, msg.id, msg.sender, msg.reaction, msg.avatar));
                                     adapter.notifyItemInserted(0);
@@ -240,7 +240,7 @@ public class ChatActivity extends AppCompatActivity {
                                 loadingMessagesNow = false;
                                 findViewById(R.id.loadingBar).setVisibility(View.GONE);
                             }
-                            else if (obj.event.equals("SendMessage")){
+                            else if (obj.event.equals(RequestEvent.SendMessage)){
                                 Message message = new Message(obj.username, obj.dataType, obj.value, obj.reply, obj.isRead, obj.time, obj.id, obj.sender, new UniversalJSONObject[0], obj.avatar);
                                 messages.add(message);
                                 loadedMessages++;
@@ -254,7 +254,7 @@ public class ChatActivity extends AppCompatActivity {
                                 messagesRecycler.scrollToPosition(messages.size()-1);
                                 adapter.notifyItemInserted(messages.size());
                             }
-                            else if (obj.event.equals("MessageIsRead")){
+                            else if (obj.event.equals(RequestEvent.MessageIsRead)){
                                 long id = obj.id;
                                 for (int i = messages.size()-1; i > 0; i--){
                                     if (messages.get(i).id == id){
@@ -264,7 +264,7 @@ public class ChatActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                            else if (obj.event.equals("Typing")){
+                            else if (obj.event.equals(RequestEvent.Typing)){
                                 if (!obj.identifier.equals(UserData.identifier) && !typing) {
                                     typing = true;
                                     typingMsg.setVisibility(View.VISIBLE);
@@ -294,7 +294,7 @@ public class ChatActivity extends AppCompatActivity {
                                     }, 2000);
                                 }
                             }
-                            else if (obj.event.equals("ReturnStickers")){
+                            else if (obj.event.equals(RequestEvent.ReturnStickers)){
                                 for (String l : obj.stickers) {
                                     allStickers.add(new Sticker(l));
                                 }
@@ -313,14 +313,14 @@ public class ChatActivity extends AppCompatActivity {
                                 }
                                 stickersAdapter.notifyDataSetChanged();
                             }
-                            else if (obj.event.equals("ReturnReactions")){
+                            else if (obj.event.equals(RequestEvent.ReturnReactions)){
                                 reactions.addAll(Arrays.asList(obj.reactionsURLs));
                             }
-                            else if (obj.event.equals("ReturnChatUsers")){
+                            else if (obj.event.equals(RequestEvent.ReturnChatUsers)){
                                 users.clear();
                                 users.addAll(Arrays.asList(obj.members));
                             }
-                            else if (obj.event.equals("EditMessageForUsers")){
+                            else if (obj.event.equals(RequestEvent.EditMessageForUsers)){
                                 int index = getMessageIndex(obj.messageId);
                                 if (index != -1) {
                                     messages.get(index).value = obj.value;
@@ -330,7 +330,7 @@ public class ChatActivity extends AppCompatActivity {
                                     Toast.makeText(ChatActivity.this, "Сообщение не прогружено", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            else if (obj.event.equals("DeleteMessageForUsers")){
+                            else if (obj.event.equals(RequestEvent.DeleteMessageForUsers)){
                                 long id = obj.messageId;
                                 int index = getMessageIndex(id);
                                 if (index != -1){
@@ -346,7 +346,7 @@ public class ChatActivity extends AppCompatActivity {
                                     Toast.makeText(ChatActivity.this, "Непрогруженное сообщение удалено", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            else if (obj.event.equals("ReactionForUsers")){
+                            else if (obj.event.equals(RequestEvent.ReactionForUsers)){
                                 int index = getMessageIndex(obj.messageId);
                                 if (index != -1) {
                                     messages.get(index).reactions = obj.reactions;

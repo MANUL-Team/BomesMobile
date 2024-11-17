@@ -166,7 +166,7 @@ public class ProfileFragment extends Fragment {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("WrongAuthInIdentifier")) {
+                            if (obj.event.equals(RequestEvent.WrongAuthInIdentifier)) {
                                 Toast.makeText(activity, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
                                 UserData.avatar = null;
                                 UserData.identifier = null;
@@ -183,16 +183,16 @@ public class ProfileFragment extends Fragment {
                                 activity.finish();
                                 webSocket.close(1000, null);
                             }
-                            if (obj.event.equals("ReturnUser")) {
+                            if (obj.event.equals(RequestEvent.ReturnUser)) {
                                 if (obj.user.identifier.equals(UserData.identifier)) {
                                     UserData.username = obj.user.username;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
                                 }
-                            } else if (obj.event.equals("MatDetected")) {
+                            } else if (obj.event.equals(RequestEvent.MatDetected)) {
                                 Toast.makeText(activity, "Обнаружена нецензурная лексика!", Toast.LENGTH_LONG).show();
-                            } else if (obj.event.equals("WithoutMats")) {
+                            } else if (obj.event.equals(RequestEvent.WithoutMats)) {
                                 UserData.username = obj.name;
                                 UserData.description = obj.description;
                                 Intent intent = new Intent(activity, ChatsActivity.class);

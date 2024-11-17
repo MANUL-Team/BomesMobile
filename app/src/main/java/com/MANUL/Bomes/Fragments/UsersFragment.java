@@ -108,7 +108,7 @@ public class UsersFragment extends Fragment {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("WrongAuthInIdentifier")){
+                            if (obj.event.equals(RequestEvent.WrongAuthInIdentifier)){
                                 Toast.makeText(activity, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
                                 UserData.avatar = null;
                                 UserData.identifier = null;
@@ -125,7 +125,7 @@ public class UsersFragment extends Fragment {
                                 activity.finish();
                                 webSocket.close(1000, null);
                             }
-                            if (obj.event.equals("ReturnUser")){
+                            if (obj.event.equals(RequestEvent.ReturnUser)){
                                 if (obj.user.identifier.equals(UserData.identifier)){
                                     UserData.username = obj.user.username;
                                     UserData.email = obj.user.email;
@@ -133,7 +133,7 @@ public class UsersFragment extends Fragment {
                                     UserData.avatar = obj.user.avatar;
                                 }
                             }
-                            else if(obj.event.equals("ReturnUsers")){
+                            else if(obj.event.equals(RequestEvent.ReturnUsers)){
                                 users.clear();
                                 adapter.notifyDataSetChanged();
                                 for (UniversalJSONObject jsonObject:obj.users) {

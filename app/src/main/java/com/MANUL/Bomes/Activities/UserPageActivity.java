@@ -187,7 +187,7 @@ public class UserPageActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("WrongAuthInIdentifier")) {
+                            if (obj.event.equals(RequestEvent.WrongAuthInIdentifier)) {
                                 Toast.makeText(UserPageActivity.this, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
                                 UserData.avatar = null;
                                 UserData.identifier = null;
@@ -204,7 +204,7 @@ public class UserPageActivity extends AppCompatActivity {
                                 finish();
                                 webSocket.close(1000, null);
                             }
-                            if (obj.event.equals("ReturnUser")) {
+                            if (obj.event.equals(RequestEvent.ReturnUser)) {
                                 if (obj.user.identifier.equals(UserData.identifier)) {
                                     UserData.username = obj.user.username;
                                     UserData.email = obj.user.email;
@@ -216,7 +216,7 @@ public class UserPageActivity extends AppCompatActivity {
                                     openedUser.whichFriend = obj.user.whichFriend;
                                     setValues();
                                 }
-                            } else if (obj.event.equals("ChatCreated")) {
+                            } else if (obj.event.equals(RequestEvent.ChatCreated)) {
                                 UserData.table_name = obj.table_name;
                                 UserData.chatId = obj.chat_name;
                                 UserData.isLocalChat = 1;

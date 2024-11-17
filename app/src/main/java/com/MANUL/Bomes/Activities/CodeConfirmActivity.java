@@ -94,10 +94,10 @@ public class CodeConfirmActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("WrongCode")){
+                            if (obj.event.equals(RequestEvent.WrongCode)){
                                 Toast.makeText(CodeConfirmActivity.this, "Неправильный код!", Toast.LENGTH_SHORT).show();
                             }
-                            else if (obj.event.equals("RightCode")){
+                            else if (obj.event.equals(RequestEvent.RightCode)){
                                 UserData.identifier = obj.userIdentifier;
                                 UserData.email = obj.email;
                                 UserData.password = obj.password;

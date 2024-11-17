@@ -74,10 +74,9 @@ class CreatingChatFragment : Fragment() {
         webSocketListener = CreatingChatWebSocketListener(viewModel) { obj ->
             activity?.runOnUiThread {
                 run {
-                    if (obj.event == "ReturnFriends") {
+                    if (obj.event == RequestEvent.ReturnFriends) {
                         viewModel.responseReturnFriends(obj)
-                    } else if (obj.event == "ChatCreated") {
-                        //Log.e("obj.event", "ChatCreated")
+                    } else if (obj.event == RequestEvent.ChatCreated) {
                         webSocketListener.responseChatCreated(obj)
                         val intent = Intent(
                                 activity,
@@ -98,7 +97,6 @@ class CreatingChatFragment : Fragment() {
                 getStoragePermission()
                 val mediaPickerIntent = Intent(Intent.ACTION_PICK)
                 mediaPickerIntent.setType("image/*")
-                //startActivity(mediaPickerIntent)
                 startForResult.launch(mediaPickerIntent)
             }
 
