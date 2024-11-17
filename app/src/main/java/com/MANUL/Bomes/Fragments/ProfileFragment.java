@@ -63,9 +63,11 @@ public class ProfileFragment extends Fragment {
     ImageView avatar;
     EditText username, description;
     CardView saveChanges;
-    public ProfileFragment(){}
 
-    public ProfileFragment(ChatsActivity activity){
+    public ProfileFragment() {
+    }
+
+    public ProfileFragment(ChatsActivity activity) {
         this.activity = activity;
     }
 
@@ -87,7 +89,8 @@ public class ProfileFragment extends Fragment {
         setValues();
         connectToServer();
     }
-    private void init(View view){
+
+    private void init(View view) {
         avatar = view.findViewById(R.id.profile_avatar);
         username = view.findViewById(R.id.username_profile_edittext);
         description = view.findViewById(R.id.description_profile_edittext);
@@ -109,20 +112,19 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 UniversalJSONObject saveData = RequestCreationFactory.create("UpdateUserData", username.getText().toString().trim(), description.getText().toString().trim(), null);
-
                 if (!saveData.name.isEmpty()) {
                     try {
                         webSocket.send(objectMapper.writeValueAsString(saveData));
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
-                }
-                else
+                } else
                     Toast.makeText(activity, "Поле имени не может быть пустым!", Toast.LENGTH_SHORT).show();
             }
         });
     }
-    private void setValues(){
+
+    private void setValues() {
         if (UserData.avatar.isEmpty())
             Glide.with(activity).load("https://bomes.ru/media/icon.png").into(avatar);
         else
@@ -131,7 +133,7 @@ public class ProfileFragment extends Fragment {
         description.setText(UserData.description);
     }
 
-    private void connectToServer(){
+    private void connectToServer() {
         OkHttpClient client = new OkHttpClient.Builder().build();
         Request request = NowRequest;
 
@@ -153,6 +155,7 @@ public class ProfileFragment extends Fragment {
                     }
                 });
             }
+
             @Override
             public void onMessage(@NonNull WebSocket ws, @NonNull String text) {
                 super.onMessage(ws, text);
@@ -162,7 +165,7 @@ public class ProfileFragment extends Fragment {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
-                            if (obj.event.equals("WrongAuthInIdentifier")){
+                            if (obj.event.equals("WrongAuthInIdentifier")) {
                                 Toast.makeText(activity, "Данные авторизации устарели!", Toast.LENGTH_LONG).show();
                                 UserData.avatar = null;
                                 UserData.identifier = null;
@@ -179,18 +182,16 @@ public class ProfileFragment extends Fragment {
                                 activity.finish();
                                 webSocket.close(1000, null);
                             }
-                            if (obj.event.equals("ReturnUser")){
-                                if (obj.user.identifier.equals(UserData.identifier)){
+                            if (obj.event.equals("ReturnUser")) {
+                                if (obj.user.identifier.equals(UserData.identifier)) {
                                     UserData.username = obj.user.username;
                                     UserData.email = obj.user.email;
                                     UserData.description = obj.user.description;
                                     UserData.avatar = obj.user.avatar;
                                 }
-                            }
-                            else if (obj.event.equals("MatDetected")){
+                            } else if (obj.event.equals("MatDetected")) {
                                 Toast.makeText(activity, "Обнаружена нецензурная лексика!", Toast.LENGTH_LONG).show();
-                            }
-                            else if(obj.event.equals("WithoutMats")){
+                            } else if (obj.event.equals("WithoutMats")) {
                                 UserData.username = obj.name;
                                 UserData.description = obj.description;
                                 Intent intent = new Intent(activity, ChatsActivity.class);
@@ -204,6 +205,7 @@ public class ProfileFragment extends Fragment {
                     }
                 });
             }
+
             @Override
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
@@ -213,17 +215,18 @@ public class ProfileFragment extends Fragment {
 
                     UniversalJSONObject loadMe = RequestCreationFactory.create("GetUser");
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
-                }
-                catch (JsonProcessingException e) {
+                } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
             }
         });
     }
-    private void getStoragePermission(){
+
+    private void getStoragePermission() {
         if (PermissionUtils.hasPermissions(activity)) return;
         PermissionUtils.requestPermissions(activity, PERMISSION_STORAGE);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -234,6 +237,7 @@ public class ProfileFragment extends Fragment {
             uploadAvatar(uri);
         }
     }
+
     private void uploadAvatar(Uri fileUri) {
 
         FileUploadService service = ServiceGenerator.createService(FileUploadService.class);
@@ -257,21 +261,14 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     try {
                         String reply = response.body().string();
                         UniversalJSONObject obj = objectMapper.readValue(reply, UniversalJSONObject.class);
 
                         Glide.with(activity).load("https://bomes.ru/" + obj.filePath).into(avatar);
 
-                        UniversalJSONObject updAvatar = new UniversalJSONObject();
-                        updAvatar.table = "users";
-                        updAvatar.column = "identifier";
-                        updAvatar.where = UserData.identifier;
-                        updAvatar.variable = "avatar";
-                        updAvatar.value = obj.filePath;
-                        updAvatar.event = "UpdateValue";
-
+                        UniversalJSONObject updAvatar = RequestCreationFactory.create("UpdateValue", obj.filePath);
                         webSocket.send(objectMapper.writeValueAsString(updAvatar));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -285,12 +282,14 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+
     @Override
     public void onResume() {
         super.onResume();
         if (webSocket == null)
             connectToServer();
     }
+
     @Override
     public void onStop() {
         super.onStop();

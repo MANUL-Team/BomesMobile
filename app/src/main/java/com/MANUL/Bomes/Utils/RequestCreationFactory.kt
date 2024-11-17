@@ -47,6 +47,7 @@ class RequestCreationFactory {
                 "Typing" -> factory.typing(argument)
                 "GetChatMessages" -> factory.getChatMessages(argument)
                 "ConfirmingEmail" -> factory.confirmingEmail(argument)
+                "UpdateValue"-> factory.updateValue(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -111,6 +112,17 @@ class RequestCreationFactory {
                 }
             }
         }
+    }
+
+    private fun updateValue(argument: String): UniversalJSONObject {
+        val updAvatar = UniversalJSONObject()
+        updAvatar.table = "users"
+        updAvatar.column = "identifier"
+        updAvatar.where = UserData.identifier
+        updAvatar.variable = "avatar"
+        updAvatar.value = argument
+        updAvatar.event = "UpdateValue"
+        return updAvatar
     }
 
     private fun updateUserData(name: String, description: String): UniversalJSONObject {
