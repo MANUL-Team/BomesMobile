@@ -23,6 +23,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
+import com.MANUL.Bomes.Utils.RequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                         byte[] digest = m.digest();
                         BigInteger bigInt = new BigInteger(1,digest);
 
-                        UniversalJSONObject sendObj = RequestCreationFactory.create(RequestCreationFactory.Login,emailField.getText().toString(),bigInt.toString(16),null);
+                        UniversalJSONObject sendObj = RequestCreationFactory.create(RequestEvent.Login,emailField.getText().toString(),bigInt.toString(16),null);
 
                         String sendData = objectMapper.writeValueAsString(sendObj);
 
@@ -183,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onOpen(webSocket, response);
                 if (!identifier.equals("none")){
                     try {
-                        UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.CheckPrefsIdentifier, identifier, password, null);
+                        UniversalJSONObject loadMe = RequestCreationFactory.create(RequestEvent.CheckPrefsIdentifier, identifier, password, null);
                         webSocket.send(objectMapper.writeValueAsString(loadMe));
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);

@@ -23,6 +23,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
+import com.MANUL.Bomes.Utils.RequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -126,7 +127,7 @@ public class SplashScreen extends AppCompatActivity {
                                         finish();
                                     }
                                     else {
-                                        UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.CheckPrefsIdentifier, identifier, password, null);
+                                        UniversalJSONObject loadMe = RequestCreationFactory.create(RequestEvent.CheckPrefsIdentifier, identifier, password, null);
                                         webSocket.send(objectMapper.writeValueAsString(loadMe));
                                     }
                                 }
@@ -142,7 +143,7 @@ public class SplashScreen extends AppCompatActivity {
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
                 try {
-                    UniversalJSONObject loadVersion = RequestCreationFactory.create(RequestCreationFactory.GetCurrentAndroidVersion);
+                    UniversalJSONObject loadVersion = RequestCreationFactory.create(RequestEvent.GetCurrentAndroidVersion);
                     webSocket.send(objectMapper.writeValueAsString(loadVersion));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);

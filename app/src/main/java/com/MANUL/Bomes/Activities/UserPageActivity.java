@@ -21,6 +21,7 @@ import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.User;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
+import com.MANUL.Bomes.Utils.RequestEvent;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -144,7 +145,7 @@ public class UserPageActivity extends AppCompatActivity {
                 addingUsers[0] = UserData.identifier;
                 addingUsers[1] = openedUser.identifier;
 
-                UniversalJSONObject createChat = RequestCreationFactory.create(RequestCreationFactory.CreateChat, table_name, addingUsers, openedUser.identifier, 1, "");
+                UniversalJSONObject createChat = RequestCreationFactory.create(RequestEvent.CreateChat, table_name, addingUsers, openedUser.identifier, 1, "");
                 try {
                     webSocket.send(objectMapper.writeValueAsString(createChat));
                 } catch (JsonProcessingException e) {
@@ -237,13 +238,13 @@ public class UserPageActivity extends AppCompatActivity {
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser);
+                    UniversalJSONObject obj = RequestCreationFactory.create(RequestEvent.ConnectUser);
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.GetUser);
+                    UniversalJSONObject loadMe = RequestCreationFactory.create(RequestEvent.GetUser);
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
 
-                    UniversalJSONObject loadOther = RequestCreationFactory.create(RequestCreationFactory.GetPartner, openedUser.identifier);
+                    UniversalJSONObject loadOther = RequestCreationFactory.create(RequestEvent.GetPartner, openedUser.identifier);
                     webSocket.send(objectMapper.writeValueAsString(loadOther));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
@@ -253,7 +254,7 @@ public class UserPageActivity extends AppCompatActivity {
     }
 
     private void addFriendMethod() {
-        UniversalJSONObject addFriendObj = RequestCreationFactory.create(RequestCreationFactory.AddFriend);
+        UniversalJSONObject addFriendObj = RequestCreationFactory.create(RequestEvent.AddFriend);
         try {
             webSocket.send(objectMapper.writeValueAsString(addFriendObj));
         } catch (JsonProcessingException e) {
@@ -275,7 +276,7 @@ public class UserPageActivity extends AppCompatActivity {
     }
 
     private void removeFriendMethod() {
-        UniversalJSONObject removeFriendObj = RequestCreationFactory.create(RequestCreationFactory.RemoveFriend);
+        UniversalJSONObject removeFriendObj = RequestCreationFactory.create(RequestEvent.RemoveFriend);
         try {
             webSocket.send(objectMapper.writeValueAsString(removeFriendObj));
         } catch (JsonProcessingException e) {

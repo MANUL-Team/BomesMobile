@@ -52,6 +52,7 @@ import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.FileUtils;
 import com.MANUL.Bomes.Utils.PermissionUtils;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
+import com.MANUL.Bomes.Utils.RequestEvent;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -209,7 +210,7 @@ public class ChatActivity extends AppCompatActivity {
                                     openedUser = new User(obj.user.username, obj.user.avatar, obj.user.identifier, obj.user.friendsCount);
                                     username.setText(obj.user.username);
                                     lastOnline = obj.user.lastOnline;
-                                    UniversalJSONObject isUserOnline = RequestCreationFactory.create(RequestCreationFactory.IsUserOnline, obj.user.identifier);
+                                    UniversalJSONObject isUserOnline = RequestCreationFactory.create(RequestEvent.IsUserOnline, obj.user.identifier);
                                     webSocket.send(objectMapper.writeValueAsString(isUserOnline));
                                 }
                             }
@@ -228,7 +229,7 @@ public class ChatActivity extends AppCompatActivity {
                                     messages.add(0, new Message(msg.username, msg.dataType, msg.value, msg.reply, msg.isRead, msg.time, msg.id, msg.sender, msg.reaction, msg.avatar));
                                     adapter.notifyItemInserted(0);
                                     if (!msg.sender.equals(UserData.identifier)){
-                                        UniversalJSONObject readMsg = RequestCreationFactory.create(RequestCreationFactory.ReadMessage, Long.toString(msg.id));
+                                        UniversalJSONObject readMsg = RequestCreationFactory.create(RequestEvent.ReadMessage, Long.toString(msg.id));
                                         webSocket.send(objectMapper.writeValueAsString(readMsg));
                                     }
                                 }
@@ -244,7 +245,7 @@ public class ChatActivity extends AppCompatActivity {
                                 messages.add(message);
                                 loadedMessages++;
                                 if (!obj.sender.equals(UserData.identifier) && obj.isRead == 0 && !isStop){
-                                    UniversalJSONObject readMsg = RequestCreationFactory.create(RequestCreationFactory.ReadMessage, Long.toString(obj.id));
+                                    UniversalJSONObject readMsg = RequestCreationFactory.create(RequestEvent.ReadMessage, Long.toString(obj.id));
                                     webSocket.send(objectMapper.writeValueAsString(readMsg));
                                 }
                                 else if (isStop){
@@ -365,29 +366,29 @@ public class ChatActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try {
-                                UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser);
+                                UniversalJSONObject obj = RequestCreationFactory.create(RequestEvent.ConnectUser);
                                 webSocket.send(objectMapper.writeValueAsString(obj));
 
-                                UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.GetUser);
+                                UniversalJSONObject loadMe = RequestCreationFactory.create(RequestEvent.GetUser);
                                 webSocket.send(objectMapper.writeValueAsString(loadMe));
 
-                                UniversalJSONObject setChat = RequestCreationFactory.create(RequestCreationFactory.SetChat);
+                                UniversalJSONObject setChat = RequestCreationFactory.create(RequestEvent.SetChat);
                                 webSocket.send(objectMapper.writeValueAsString(setChat));
 
-                                UniversalJSONObject getStickers = RequestCreationFactory.create(RequestCreationFactory.GetStickers);
+                                UniversalJSONObject getStickers = RequestCreationFactory.create(RequestEvent.GetStickers);
                                 webSocket.send(objectMapper.writeValueAsString(getStickers));
 
-                                UniversalJSONObject getReactions = RequestCreationFactory.create(RequestCreationFactory.GetReactions);
+                                UniversalJSONObject getReactions = RequestCreationFactory.create(RequestEvent.GetReactions);
                                 webSocket.send(objectMapper.writeValueAsString(getReactions));
 
                                 if (UserData.isLocalChat == 0) {
-                                    UniversalJSONObject getChatUsers = RequestCreationFactory.create(RequestCreationFactory.GetUserChats);
+                                    UniversalJSONObject getChatUsers = RequestCreationFactory.create(RequestEvent.GetUserChats);
                                     webSocket.send(objectMapper.writeValueAsString(getChatUsers));
                                 }
 
 
                                 if (UserData.chatId != null && UserData.isLocalChat == 1) {
-                                    UniversalJSONObject loadOther = RequestCreationFactory.create(RequestCreationFactory.GetPartner, UserData.chatId);
+                                    UniversalJSONObject loadOther = RequestCreationFactory.create(RequestEvent.GetPartner, UserData.chatId);
                                     webSocket.send(objectMapper.writeValueAsString(loadOther));
                                 } else if (UserData.isLocalChat == 0) {
                                     if (!UserData.chatAvatar.isEmpty())
@@ -476,7 +477,7 @@ public class ChatActivity extends AppCompatActivity {
                     sendBtn.setVisibility(View.GONE);
                 }
                 try {
-                    UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.Typing, "text");
+                    UniversalJSONObject obj = RequestCreationFactory.create(RequestEvent.Typing, "text");
                     webSocket.send(objectMapper.writeValueAsString(obj));
                 }
                 catch (JsonProcessingException e) {
@@ -596,7 +597,7 @@ public class ChatActivity extends AppCompatActivity {
                                         strSecs = "0" + strSecs;
                                     recordTimeText.setText(strMins + ":" + strSecs);
 
-                                    UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.Typing, "audio");
+                                    UniversalJSONObject obj = RequestCreationFactory.create(RequestEvent.Typing, "audio");
                                     try {
                                         webSocket.send(objectMapper.writeValueAsString(obj));
                                     } catch (JsonProcessingException e) {
@@ -758,7 +759,7 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage(String messageText) {
         try {
             if (editingMessage == null) {
-                UniversalJSONObject msg = RequestCreationFactory.create(RequestCreationFactory.SendMessage,"text", messageText, replyingMessage);
+                UniversalJSONObject msg = RequestCreationFactory.create(RequestEvent.SendMessage,"text", messageText, replyingMessage);
                 webSocket.send(objectMapper.writeValueAsString(msg));
                 endReplying();
             }
@@ -774,7 +775,7 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMedia(String url, String type){
         try {
             if (editingMessage == null) {
-                UniversalJSONObject msg = RequestCreationFactory.create(RequestCreationFactory.SendMessage,type, url, replyingMessage);
+                UniversalJSONObject msg = RequestCreationFactory.create(RequestEvent.SendMessage,type, url, replyingMessage);
                 webSocket.send(objectMapper.writeValueAsString(msg));
                 endReplying();
             }
@@ -789,7 +790,7 @@ public class ChatActivity extends AppCompatActivity {
     private void loadMessages(){
         try {
             loadingMessagesNow = true;
-            UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.GetChatMessages,Long.toString(loadedMessages));
+            UniversalJSONObject obj = RequestCreationFactory.create(RequestEvent.GetChatMessages,Long.toString(loadedMessages));
             webSocket.send(objectMapper.writeValueAsString(obj));
         }
         catch (JsonProcessingException e) {
@@ -832,7 +833,7 @@ public class ChatActivity extends AppCompatActivity {
     }
     public void sendSticker(String v){
         try {
-            UniversalJSONObject msg = RequestCreationFactory.create(RequestCreationFactory.SendMessage,"sticker", v, replyingMessage);
+            UniversalJSONObject msg = RequestCreationFactory.create(RequestEvent.SendMessage,"sticker", v, replyingMessage);
             webSocket.send(objectMapper.writeValueAsString(msg));
             endReplying();
         }
@@ -910,7 +911,7 @@ public class ChatActivity extends AppCompatActivity {
         }, 200);
     }
     public void endEditing(){
-        UniversalJSONObject msg = RequestCreationFactory.create(RequestCreationFactory.EditMessage, messageText.getText().toString(), editingMessage.id);
+        UniversalJSONObject msg = RequestCreationFactory.create(RequestEvent.EditMessage, messageText.getText().toString(), editingMessage.id);
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
@@ -922,7 +923,7 @@ public class ChatActivity extends AppCompatActivity {
     }
     public void deleteMessage(Message message){
         long id = message.id;
-        UniversalJSONObject msg = RequestCreationFactory.create(RequestCreationFactory.DeleteMessage, "", id);
+        UniversalJSONObject msg = RequestCreationFactory.create(RequestEvent.DeleteMessage, "", id);
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
@@ -930,7 +931,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
     public void addReaction(String type, long id){
-        UniversalJSONObject msg = RequestCreationFactory.create(RequestCreationFactory.AddReaction, type, id);
+        UniversalJSONObject msg = RequestCreationFactory.create(RequestEvent.AddReaction, type, id);
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
@@ -938,7 +939,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
     public void removeReaction(long id){
-        UniversalJSONObject msg = RequestCreationFactory.create(RequestCreationFactory.RemoveReaction, "", id);
+        UniversalJSONObject msg = RequestCreationFactory.create(RequestEvent.RemoveReaction, "", id);
         try {
             webSocket.send(objectMapper.writeValueAsString(msg));
         } catch (JsonProcessingException e) {
@@ -990,7 +991,7 @@ public class ChatActivity extends AppCompatActivity {
         for (int i = 0; i < waitingMessages.size(); i++) {
             Message message = waitingMessages.get(i);
             if (!message.sender.equals(UserData.identifier) && message.isRead == 0 && !isStop){
-                UniversalJSONObject readMsg = RequestCreationFactory.create(RequestCreationFactory.ReadMessage, Long.toString(message.id));
+                UniversalJSONObject readMsg = RequestCreationFactory.create(RequestEvent.ReadMessage, Long.toString(message.id));
                 try {
                     webSocket.send(objectMapper.writeValueAsString(readMsg));
                 } catch (JsonProcessingException e) {

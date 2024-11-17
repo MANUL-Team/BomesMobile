@@ -31,6 +31,7 @@ import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.FileUtils;
 import com.MANUL.Bomes.Utils.PermissionUtils;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
+import com.MANUL.Bomes.Utils.RequestEvent;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,7 +112,7 @@ public class ProfileFragment extends Fragment {
         saveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UniversalJSONObject saveData = RequestCreationFactory.create(RequestCreationFactory.UpdateUserData, username.getText().toString().trim(), description.getText().toString().trim(), null);
+                UniversalJSONObject saveData = RequestCreationFactory.create(RequestEvent.UpdateUserData, username.getText().toString().trim(), description.getText().toString().trim(), null);
                 if (!saveData.name.isEmpty()) {
                     try {
                         webSocket.send(objectMapper.writeValueAsString(saveData));
@@ -210,10 +211,10 @@ public class ProfileFragment extends Fragment {
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser);
+                    UniversalJSONObject obj = RequestCreationFactory.create(RequestEvent.ConnectUser);
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.GetUser);
+                    UniversalJSONObject loadMe = RequestCreationFactory.create(RequestEvent.GetUser);
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
@@ -268,7 +269,7 @@ public class ProfileFragment extends Fragment {
 
                         Glide.with(activity).load("https://bomes.ru/" + obj.filePath).into(avatar);
 
-                        UniversalJSONObject updAvatar = RequestCreationFactory.create( RequestCreationFactory.UpdateValue, obj.filePath);
+                        UniversalJSONObject updAvatar = RequestCreationFactory.create(RequestEvent.UpdateValue, obj.filePath);
                         webSocket.send(objectMapper.writeValueAsString(updAvatar));
                     } catch (IOException e) {
                         throw new RuntimeException(e);

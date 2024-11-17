@@ -20,6 +20,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.Sticker;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
+import com.MANUL.Bomes.Utils.RequestEvent;
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -110,7 +111,7 @@ public class SelectStickerForHints extends AppCompatActivity {
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
                 try {
-                    UniversalJSONObject getStickers = RequestCreationFactory.create(RequestCreationFactory.GetStickers);
+                    UniversalJSONObject getStickers = RequestCreationFactory.create(RequestEvent.GetStickers);
                     webSocket.send(objectMapper.writeValueAsString(getStickers));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);

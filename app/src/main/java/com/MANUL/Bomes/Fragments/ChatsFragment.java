@@ -27,6 +27,7 @@ import com.MANUL.Bomes.SimpleObjects.Chat;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
+import com.MANUL.Bomes.Utils.RequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -172,10 +173,10 @@ public class ChatsFragment extends Fragment {
             public void onOpen(@NonNull WebSocket ws, @NonNull Response response) {
                 super.onOpen(ws, response);
                 try {
-                    UniversalJSONObject obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser);
+                    UniversalJSONObject obj = RequestCreationFactory.create(RequestEvent.ConnectUser);
                     webSocket.send(objectMapper.writeValueAsString(obj));
 
-                    UniversalJSONObject loadMe = RequestCreationFactory.create(RequestCreationFactory.GetUser);
+                    UniversalJSONObject loadMe = RequestCreationFactory.create(RequestEvent.GetUser);
                     webSocket.send(objectMapper.writeValueAsString(loadMe));
 
                     FirebaseMessaging.getInstance().getToken()
@@ -189,7 +190,7 @@ public class ChatsFragment extends Fragment {
 
                                     // Get new FCM registration token
                                     String token = task.getResult();
-                                    UniversalJSONObject setToken = RequestCreationFactory.create(RequestCreationFactory.SetToken, token);
+                                    UniversalJSONObject setToken = RequestCreationFactory.create(RequestEvent.SetToken, token);
                                     try {
                                         webSocket.send(objectMapper.writeValueAsString(setToken));
                                     } catch (JsonProcessingException e) {
@@ -215,7 +216,7 @@ public class ChatsFragment extends Fragment {
     }
     private void getUserChats(){
         try {
-            UniversalJSONObject loadChats = RequestCreationFactory.create(RequestCreationFactory.GetUserChats);
+            UniversalJSONObject loadChats = RequestCreationFactory.create(RequestEvent.GetUserChats);
             webSocket.send(objectMapper.writeValueAsString(loadChats));
         }
         catch (JsonProcessingException e){

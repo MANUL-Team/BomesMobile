@@ -6,6 +6,7 @@ import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.Utils.RequestCreationFactory
+import com.MANUL.Bomes.Utils.RequestEvent
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.Response
 import okhttp3.ResponseBody
@@ -25,10 +26,10 @@ class CreatingChatWebSocketListener(
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
-        val obj = RequestCreationFactory.create(RequestCreationFactory.ConnectUser)
+        val obj = RequestCreationFactory.create(RequestEvent.ConnectUser)
         webSocket.send(objectMapper.writeValueAsString(obj))
 
-        val getFriends = RequestCreationFactory.create(RequestCreationFactory.GetFriends)
+        val getFriends = RequestCreationFactory.create(RequestEvent.GetFriends)
         webSocket.send(objectMapper.writeValueAsString(getFriends))
     }
 

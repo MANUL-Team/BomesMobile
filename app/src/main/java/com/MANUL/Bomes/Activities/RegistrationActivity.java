@@ -21,6 +21,7 @@ import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.ConfirmationUser;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
+import com.MANUL.Bomes.Utils.RequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -89,7 +90,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 ConfirmationUser.password = password;
                 ConfirmationUser.username = username;
 
-                UniversalJSONObject regUser = RequestCreationFactory.create(RequestCreationFactory.SendRegCode);
+                UniversalJSONObject regUser = RequestCreationFactory.create(RequestEvent.SendRegCode);
                 try {
                     webSocket.send(objectMapper.writeValueAsString(regUser));
                 } catch (JsonProcessingException e) {

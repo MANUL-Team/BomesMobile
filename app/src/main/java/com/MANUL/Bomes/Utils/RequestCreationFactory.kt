@@ -10,37 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 class RequestCreationFactory {
     companion object {
-        const val ConnectUser = "ConnectUser"
-        const val GetUser = "GetUser"
-        const val GetFriends = "GetFriends"
-        const val GetUsers = "GetUsers"
-        const val SetChat = "SetChat"
-        const val GetStickers = "GetStickers"
-        const val GetReactions = "GetReactions"
-        const val GetChatUsers = "GetChatUsers"
-        const val SendRegCode = "SendRegCode"
-        const val GetCurrentAndroidVersion = "GetCurrentAndroidVersion"
-        const val AddFriend = "AddFriend"
-        const val RemoveFriend = "RemoveFriend"
-        const val GetUserChats = "GetUserChats"
-        const val GetPartner = "GetPartner"
-        const val SetToken = "SetToken"
-        const val IsUserOnline = "IsUserOnline"
-        const val ReadMessage = "ReadMessage"
-        const val Typing = "Typing"
-        const val GetChatMessages = "GetChatMessages"
-        const val ConfirmingEmail = "ConfirmingEmail"
-        const val UpdateValue = "UpdateValue"
-        const val EditMessage = "EditMessage"
-        const val DeleteMessage = "DeleteMessage"
-        const val AddReaction = "AddReaction"
-        const val RemoveReaction = "RemoveReaction"
-        const val SendMessage = "SendMessage"
-        const val Login = "Login"
-        const val CheckPrefsIdentifier = "CheckPrefsIdentifier"
-        const val UpdateUserData = "UpdateUserData"
-        const val CreateChat = "CreateChat"
-
         private val factory: RequestCreationFactory by lazy {
             RequestCreationFactory()
         }
@@ -48,19 +17,19 @@ class RequestCreationFactory {
         @JvmStatic
         fun create(event: String): UniversalJSONObject? {
             return when (event) {
-                ConnectUser -> factory.connectUser()
-                GetUser -> factory.getUser()
-                GetFriends -> factory.getFriends()
-                GetUsers -> factory.getUsers()
-                SetChat -> factory.setChat()
-                GetStickers -> factory.getStickers()
-                GetReactions -> factory.getReactions()
-                GetChatUsers -> factory.getChatUsers()
-                SendRegCode -> factory.sendRegCode()
-                GetCurrentAndroidVersion -> factory.getCurrentAndroidVersion()
-                AddFriend-> factory.addFriend()
-                RemoveFriend-> factory.removeFriend()
-                GetUserChats-> factory.getUserChats()
+                RequestEvent.ConnectUser -> factory.connectUser()
+                RequestEvent.GetUser -> factory.getUser()
+                RequestEvent.GetFriends -> factory.getFriends()
+                RequestEvent.GetUsers -> factory.getUsers()
+                RequestEvent.SetChat -> factory.setChat()
+                RequestEvent.GetStickers -> factory.getStickers()
+                RequestEvent.GetReactions -> factory.getReactions()
+                RequestEvent.GetChatUsers -> factory.getChatUsers()
+                RequestEvent.SendRegCode -> factory.sendRegCode()
+                RequestEvent.GetCurrentAndroidVersion -> factory.getCurrentAndroidVersion()
+                RequestEvent.AddFriend-> factory.addFriend()
+                RequestEvent.RemoveFriend-> factory.removeFriend()
+                RequestEvent.GetUserChats-> factory.getUserChats()
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -71,14 +40,14 @@ class RequestCreationFactory {
         @JvmStatic
         fun create(event: String, argument: String): UniversalJSONObject? {
             return when (event) {
-                GetPartner -> factory.getPartner(argument)
-                SetToken -> factory.setToken(argument)
-                IsUserOnline -> factory.isUserOnline(argument)
-                ReadMessage -> factory.readMessage(argument)
-                Typing -> factory.typing(argument)
-                GetChatMessages -> factory.getChatMessages(argument)
-                ConfirmingEmail -> factory.confirmingEmail(argument)
-                UpdateValue-> factory.updateValue(argument)
+                RequestEvent.GetPartner -> factory.getPartner(argument)
+                RequestEvent.SetToken -> factory.setToken(argument)
+                RequestEvent.IsUserOnline -> factory.isUserOnline(argument)
+                RequestEvent.ReadMessage -> factory.readMessage(argument)
+                RequestEvent.Typing -> factory.typing(argument)
+                RequestEvent.GetChatMessages -> factory.getChatMessages(argument)
+                RequestEvent.ConfirmingEmail -> factory.confirmingEmail(argument)
+                RequestEvent.UpdateValue-> factory.updateValue(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -89,10 +58,10 @@ class RequestCreationFactory {
         @JvmStatic
         fun create(event: String, argument: String, id: Long): UniversalJSONObject? {
             return when (event) {
-                EditMessage -> factory.editMessage(argument, id)
-                DeleteMessage -> factory.deleteMessage(id)
-                AddReaction -> factory.addReaction(argument, id)
-                RemoveReaction -> factory.removeReaction(id)
+                RequestEvent.EditMessage -> factory.editMessage(argument, id)
+                RequestEvent.DeleteMessage -> factory.deleteMessage(id)
+                RequestEvent.AddReaction -> factory.addReaction(argument, id)
+                RequestEvent.RemoveReaction -> factory.removeReaction(id)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -108,10 +77,10 @@ class RequestCreationFactory {
             replyingMessage: Message?
         ): UniversalJSONObject? {
             return when (event) {
-                SendMessage -> factory.sendMessage(argument1, argument2, replyingMessage)
-                Login -> factory.login(argument1, argument2)
-                CheckPrefsIdentifier -> factory.checkPrefsIdentifier(argument1, argument2)
-                UpdateUserData-> factory.updateUserData(argument1, argument2)
+                RequestEvent.SendMessage -> factory.sendMessage(argument1, argument2, replyingMessage)
+                RequestEvent.Login -> factory.login(argument1, argument2)
+                RequestEvent.CheckPrefsIdentifier -> factory.checkPrefsIdentifier(argument1, argument2)
+                RequestEvent.UpdateUserData-> factory.updateUserData(argument1, argument2)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
                     return null
@@ -129,7 +98,7 @@ class RequestCreationFactory {
             pathImage: String
         ): UniversalJSONObject? {
             return when (event) {
-                CreateChat -> factory.createChat(
+                RequestEvent.CreateChat -> factory.createChat(
                     tableName,
                     usersToAdd,
                     chatName,

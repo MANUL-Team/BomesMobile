@@ -21,6 +21,7 @@ import com.MANUL.Bomes.Utils.FileUtils
 import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.PermissionUtils
 import com.MANUL.Bomes.Utils.RequestCreationFactory
+import com.MANUL.Bomes.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
 import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -175,7 +176,7 @@ class CreatingChatFragment : Fragment() {
         //Log.e("requestCreateChatForm", tableName)
 
         val creatingChat = RequestCreationFactory.create(
-            RequestCreationFactory.CreateChat,
+            RequestEvent.CreateChat,
             tableName,
             addingUsers,
             viewModel.binding.createChatEditText.text.toString(),
