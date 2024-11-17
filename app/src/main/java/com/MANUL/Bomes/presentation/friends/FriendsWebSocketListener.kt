@@ -10,8 +10,7 @@ import okhttp3.WebSocketListener
 
 
 class FriendsWebSocketListener(
-    private val viewModel: FriendsViewModel,
-    private val messageListener: (UniversalJSONObject) -> Unit
+    private val requestHandler: FriendsRequestHandler
 ) : WebSocketListener() {
     private val objectMapper by lazy{ ObjectMapper()}
 
@@ -31,12 +30,7 @@ class FriendsWebSocketListener(
             UniversalJSONObject::class.java
         )
 
-        if (obj.event == RequestEvent.WrongAuthInIdentifier) {
-            viewModel.responseWrongAuthInIdentifier()
-            webSocket.close(1000, null)
-        }
-
-        messageListener.invoke(obj)
+        requestHandler.start(obj)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
