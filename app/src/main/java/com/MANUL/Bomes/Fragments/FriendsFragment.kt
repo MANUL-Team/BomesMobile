@@ -46,4 +46,9 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
 
         return viewModel.binding.root
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.adapterUpdate()
+    }
 }

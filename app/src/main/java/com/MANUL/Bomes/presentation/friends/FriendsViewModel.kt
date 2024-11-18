@@ -33,4 +33,8 @@ class FriendsViewModel(
 
     val binding by lazy { _binding }
 
+    fun adapterUpdate() {
+        binding.friendsList.adapter?.notifyDataSetChanged()
+    }
+
 }
