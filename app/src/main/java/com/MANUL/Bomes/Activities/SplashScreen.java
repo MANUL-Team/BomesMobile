@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -112,7 +111,8 @@ public class SplashScreen extends AppCompatActivity {
                             if (obj.event.equals(RequestEvent.ReturnCurrentAndroidVersion)){
                                 PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
                                 int versionCode = packageInfo.versionCode;
-                                if (!obj.version.equals(String.valueOf(versionCode))){
+                                int dbVersionCode = Integer.parseInt(obj.version);
+                                if (dbVersionCode > versionCode){
                                     Intent intent = new Intent(SplashScreen.this, UpgradeBomesActivity.class);
                                     startActivity(intent);
                                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

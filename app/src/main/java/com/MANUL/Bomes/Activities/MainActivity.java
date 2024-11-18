@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("user", Context.MODE_PRIVATE);
 
         identifier = prefs.getString("identifier", "none");
-        identifier = prefs.getString("password", "none");
+        password = prefs.getString("password", "none");
 
         connectToServer();
         init();
@@ -138,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
 
                             if (obj.event.equals(RequestEvent.TruePassword)){
-                                //Toast.makeText(MainActivity.this, "Верный пароль!", Toast.LENGTH_SHORT).show();
                                 UserData.email = obj.email;
                                 UserData.identifier = obj.identifier;
                                 UserData.password = obj.password;
