@@ -7,6 +7,7 @@ import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 
 class CreatingChatRequestHandler(
@@ -17,7 +18,7 @@ class CreatingChatRequestHandler(
 ) : BaseRequestHandler(activity) {
 
     override fun responseReturnFriends(obj: UniversalJSONObject) {
-        var users: MutableList<User> = mutableListOf()
+        UserDataKt.users.clear()
         for (jsonObject in obj.users) {
             val user = User(
                 jsonObject.username,
@@ -26,16 +27,9 @@ class CreatingChatRequestHandler(
                 jsonObject.friendsCount
             )
 
-            users.add(user)
+            UserDataKt.users.add(user)
         }
-
-        for (i in 0..<users.size) userAddList.add(
-            CreatingChatUser(
-                users[i],
-                false
-            )
-        )
-
+        viewModel.userAddListCompletion()
         viewModel.binding.addUserList.adapter?.notifyDataSetChanged()
     }
 

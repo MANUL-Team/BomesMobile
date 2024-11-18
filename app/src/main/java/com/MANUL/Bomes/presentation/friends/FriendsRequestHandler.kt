@@ -3,12 +3,13 @@ package com.MANUL.Bomes.presentation.friends
 import androidx.fragment.app.FragmentActivity
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.User
+import com.MANUL.Bomes.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 
-class FriendsRequestHandler(activity: FragmentActivity,val viewModel: FriendsViewModel, val users: MutableList<User>) : BaseRequestHandler(activity) {
+class FriendsRequestHandler(activity: FragmentActivity,val viewModel: FriendsViewModel) : BaseRequestHandler(activity) {
 
     override fun responseReturnFriends(obj: UniversalJSONObject) {
-        users.clear()
+        UserDataKt.users.clear()
         for (jsonObject in obj.users) {
             val user = User(
                 jsonObject.username,
@@ -17,7 +18,7 @@ class FriendsRequestHandler(activity: FragmentActivity,val viewModel: FriendsVie
                 jsonObject.friendsCount
             )
 
-            users.add(user)
+            UserDataKt.users.add(user)
         }
         viewModel.binding.friendsList.adapter?.notifyDataSetChanged()
     }

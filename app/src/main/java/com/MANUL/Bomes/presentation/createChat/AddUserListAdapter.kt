@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
+import com.MANUL.Bomes.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.databinding.AddUserItemBinding
 
 class AddUserListAdapter(
@@ -13,6 +14,15 @@ class AddUserListAdapter(
     val creatingChatViewModel: CreatingChatViewModel
 ) :
     RecyclerView.Adapter<AddUserListAdapter.ViewHolder>() {
+
+        init {
+            for (i in 0..<UserDataKt.users.size) userAddList.add(
+                CreatingChatUser(
+                    UserDataKt.users[i],
+                    false
+                )
+            )
+        }
 
     class ViewHolder(
         itemView: View

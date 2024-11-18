@@ -38,9 +38,9 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = FriendsViewModel(inflater, activity, users)
+        viewModel = FriendsViewModel(inflater, activity)
 
-        requestHandler = FriendsRequestHandler(requireActivity(), viewModel,users)
+        requestHandler = FriendsRequestHandler(requireActivity(), viewModel)
         webSocketListener = BoMesWebSocketListener(requestHandler)
         webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
 

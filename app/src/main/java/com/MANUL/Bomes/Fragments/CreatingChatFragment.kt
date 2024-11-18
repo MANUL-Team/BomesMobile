@@ -75,7 +75,7 @@ class CreatingChatFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = CreatingChatViewModel(inflater, activity, userAddList)
+        viewModel = CreatingChatViewModel(inflater, activity)
 
         requestHandler = CreatingChatRequestHandler(requireActivity(), viewModel, userAddList, pathImage)
         webSocketListener = BoMesWebSocketListener(requestHandler)
