@@ -14,16 +14,19 @@ open class BaseRequestHandler(val activity: FragmentActivity) {
         activity.runOnUiThread {
             run {
                 when (obj.event) {
-                    RequestEvent.WrongAuthInIdentifier -> responseWrongAuthInIdentifier()
+                    RequestEvent.WrongAuthInIdentifier -> responseWrongAuthInIdentifier(obj)
                     RequestEvent.ReturnFriends -> responseReturnFriends(obj)
+                    RequestEvent.ChatCreated -> chatCreated(obj)
                 }
             }
         }
     }
 
+    open fun chatCreated(obj: UniversalJSONObject) {}
+
     open fun responseReturnFriends(obj: UniversalJSONObject) {}
 
-    fun responseWrongAuthInIdentifier() {
+    fun responseWrongAuthInIdentifier(obj: UniversalJSONObject) {
         Toast.makeText(activity, "Данные авторизации устарели!", Toast.LENGTH_LONG).show()
         UserData.avatar = null
         UserData.identifier = null

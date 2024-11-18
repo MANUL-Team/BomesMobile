@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.MANUL.Bomes.Activities.MainActivity
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
-import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.databinding.AddUserItemBinding
 import com.MANUL.Bomes.databinding.AddedUserItemBinding
@@ -22,12 +21,12 @@ import com.google.android.flexbox.JustifyContent
 
 class CreatingChatViewModel(
     inflater: LayoutInflater,
-    private val activity: FragmentActivity?
+    private val activity: FragmentActivity?,
+    val userAddList: MutableList<CreatingChatUser>
 ) : ViewModel() {
     private var _binding = FragmentCreatingChatBinding.inflate(inflater)
-    private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
-    private var users: MutableList<User> = mutableListOf()
     private val userAddedList: MutableList<CreatingChatUser> = mutableListOf()
+
 
     init {
         _binding.apply {
@@ -136,28 +135,4 @@ class CreatingChatViewModel(
         activity?.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         activity?.finish()
     }
-
-    fun responseReturnFriends(obj: UniversalJSONObject) {
-        users.clear()
-
-        for (jsonObject in obj.users) {
-            val user = User(
-                jsonObject.username,
-                jsonObject.avatar,
-                jsonObject.identifier,
-                jsonObject.friendsCount
-            )
-            users.add(user)
-        }
-
-        for (i in 0..<users.size) userAddList.add(
-            CreatingChatUser(
-                users[i],
-                false
-            )
-        )
-
-        binding.addUserList.adapter?.notifyDataSetChanged()
-    }
-
 }
