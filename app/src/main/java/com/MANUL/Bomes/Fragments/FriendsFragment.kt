@@ -9,9 +9,11 @@ import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.NowRequest
+import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.MANUL.Bomes.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.friends.FriendsRequestHandler
 import com.MANUL.Bomes.presentation.friends.FriendsViewModel
+import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -49,6 +51,11 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
 
     override fun onResume() {
         super.onResume()
+
+        val objectMapper = ObjectMapper()
+        val obj = RequestCreationFactory.create(RequestEvent.GetFriends)
+        webSocket?.send(objectMapper.writeValueAsString(obj))
+
         viewModel.adapterUpdate()
     }
 }
