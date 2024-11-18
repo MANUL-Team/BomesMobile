@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.User
+import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.friends.FriendsRequestHandler
 import com.MANUL.Bomes.presentation.friends.FriendsViewModel
-import com.MANUL.Bomes.presentation.friends.FriendsWebSocketListener
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -23,7 +23,7 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
     private lateinit var viewModel: FriendsViewModel
 
     private var webSocket: WebSocket? = null
-    private lateinit var webSocketListener: FriendsWebSocketListener
+    private lateinit var webSocketListener: BoMesWebSocketListener
     private val okHttpClient by lazy {
         OkHttpClient()
     }
@@ -41,7 +41,7 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         viewModel = FriendsViewModel(inflater, activity, users)
 
         requestHandler = FriendsRequestHandler(requireActivity(), viewModel,users)
-        webSocketListener = FriendsWebSocketListener(requestHandler) 
+        webSocketListener = BoMesWebSocketListener(requestHandler)
         webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
 
         return viewModel.binding.root

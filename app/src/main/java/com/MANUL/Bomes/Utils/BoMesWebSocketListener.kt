@@ -1,18 +1,16 @@
-package com.MANUL.Bomes.presentation.friends
+package com.MANUL.Bomes.Utils
 
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
-import com.MANUL.Bomes.Utils.RequestCreationFactory
-import com.MANUL.Bomes.Utils.RequestEvent
+import com.MANUL.Bomes.presentation.BaseRequestHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
-
-class FriendsWebSocketListener(
-    private val requestHandler: FriendsRequestHandler
+class BoMesWebSocketListener(
+    private val requestHandler: BaseRequestHandler,
 ) : WebSocketListener() {
-    private val objectMapper by lazy{ ObjectMapper()}
+    private val objectMapper by lazy{ ObjectMapper() }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)

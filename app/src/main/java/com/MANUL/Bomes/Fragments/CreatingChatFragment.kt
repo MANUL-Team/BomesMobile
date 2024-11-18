@@ -17,6 +17,7 @@ import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.FileUtils
 import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.PermissionUtils
@@ -24,7 +25,6 @@ import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.MANUL.Bomes.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.createChat.CreatingChatRequestHandler
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
-import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
 import com.MANUL.Bomes.presentation.friends.FriendsRequestHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -42,7 +42,7 @@ import java.util.Calendar
 
 class CreatingChatFragment : Fragment() {
 
-    private lateinit var webSocketListener: CreatingChatWebSocketListener
+    private lateinit var webSocketListener: BoMesWebSocketListener
     private lateinit var viewModel: CreatingChatViewModel
     private val okHttpClient by lazy {
         OkHttpClient()
@@ -78,7 +78,7 @@ class CreatingChatFragment : Fragment() {
         viewModel = CreatingChatViewModel(inflater, activity, userAddList)
 
         requestHandler = CreatingChatRequestHandler(requireActivity(), viewModel, userAddList, pathImage)
-        webSocketListener = CreatingChatWebSocketListener(requestHandler)
+        webSocketListener = BoMesWebSocketListener(requestHandler)
         webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
 
         viewModel.binding.apply {
