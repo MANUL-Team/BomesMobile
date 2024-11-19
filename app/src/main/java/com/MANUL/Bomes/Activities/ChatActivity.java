@@ -377,9 +377,11 @@ public class ChatActivity extends AppCompatActivity {
 
                                 UniversalJSONObject getStickers = RequestCreationFactory.create(RequestEvent.GetStickers);
                                 webSocket.send(objectMapper.writeValueAsString(getStickers));
+                                allStickers.clear();
 
                                 UniversalJSONObject getReactions = RequestCreationFactory.create(RequestEvent.GetReactions);
                                 webSocket.send(objectMapper.writeValueAsString(getReactions));
+                                reactions.clear();
 
                                 if (UserData.isLocalChat == 0) {
                                     UniversalJSONObject getChatUsers = RequestCreationFactory.create(RequestEvent.GetUserChats);
