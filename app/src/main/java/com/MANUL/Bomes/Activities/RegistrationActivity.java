@@ -96,11 +96,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-                Intent intent = new Intent(RegistrationActivity.this, CodeConfirmActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
-                webSocket.close(1000, null);
             }
         });
     }
@@ -123,6 +118,15 @@ public class RegistrationActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             UniversalJSONObject obj = objectMapper.readValue(text, UniversalJSONObject.class);
+                            if (obj.event.equals(RequestEvent.EmailAlreadyUsed))
+                                Toast.makeText(RegistrationActivity.this, "Пользователь с такой почтой уже зарегистрирован!", Toast.LENGTH_LONG).show();
+                            else if (obj.event.equals(RequestEvent.GreatEmail)){
+                                Intent intent = new Intent(RegistrationActivity.this, CodeConfirmActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                finish();
+                                webSocket.close(1000, null);
+                            }
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException(e);
                         }

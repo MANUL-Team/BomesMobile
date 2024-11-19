@@ -27,7 +27,7 @@
                 android:id="@+id/hint_value_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/anonymous_pro"
+                android:fontFamily="@font/tilda_sans_vf"
                 android:text="HintText"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
