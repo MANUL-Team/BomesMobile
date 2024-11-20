@@ -104,6 +104,7 @@ public class ChatActivity extends AppCompatActivity {
     public RecyclerView messagesRecycler;
     RecyclerView stickersRecycler;
     MessagesAdapter adapter;
+    LinearLayoutManager messageLayoutManager;
     StickersAdapter stickersAdapter;
     EditText messageText;
     ConstraintLayout chatLayout;
@@ -253,7 +254,10 @@ public class ChatActivity extends AppCompatActivity {
                                 else if (isStop){
                                     waitingMessages.add(message);
                                 }
-                                //messagesRecycler.scrollToPosition(messages.size()-1);
+                                int idLast = messageLayoutManager.findLastVisibleItemPosition();
+                                if (idLast < messages.size()-1){
+                                    messagesRecycler.scrollToPosition(messages.size()-1);
+                                }
                                 adapter.notifyItemInserted(messages.size());
                             }
                             else if (obj.event.equals(RequestEvent.MessageIsRead)){
@@ -434,8 +438,8 @@ public class ChatActivity extends AppCompatActivity {
         recordTimeText = findViewById(R.id.recordTimeText);
         userInfoCard = findViewById(R.id.userInfoCard);
         adapter = new MessagesAdapter(this, messages, this);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        messagesRecycler.setLayoutManager(layoutManager);
+        messageLayoutManager = new LinearLayoutManager(this);
+        messagesRecycler.setLayoutManager(messageLayoutManager);
         messagesRecycler.setAdapter(adapter);
 
         messagesRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -448,13 +452,13 @@ public class ChatActivity extends AppCompatActivity {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                int idFirst = layoutManager.findFirstVisibleItemPosition();
+                int idFirst = messageLayoutManager.findFirstVisibleItemPosition();
                 if (idFirst < 5){
                     if (!loadingMessagesNow) {
                         loadMessages();
                     }
                 }
-                int idLast = layoutManager.findLastVisibleItemPosition();
+                int idLast = messageLayoutManager.findLastVisibleItemPosition();
                 if (idLast < messages.size()-5){
                     scrollDownButton.setVisibility(View.VISIBLE);
                 } else scrollDownButton.setVisibility(View.INVISIBLE);
