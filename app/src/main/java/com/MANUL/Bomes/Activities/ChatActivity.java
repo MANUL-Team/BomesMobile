@@ -453,7 +453,7 @@ public class ChatActivity extends AppCompatActivity {
                     scrollDownButton.setVisibility(View.VISIBLE);
                     scrollDownButton.startAnimation(scroll_down_button_in);
                     scrollDownAnimation = true;
-                } else if ((dy < 0) && scrollDownAnimation) {
+                } else if ((idLast >= (messages.size() - 1) || (dy < 0)) && scrollDownAnimation){
                     scrollDownButton.setVisibility(View.GONE);
                     scrollDownButton.startAnimation(scroll_down_button_out);
                     scrollDownAnimation = false;
@@ -659,6 +659,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 messagesRecycler.scrollToPosition(messages.size() - 1);
                 adapter.notifyItemInserted(messages.size());
+                scrollDownButton.setVisibility(View.GONE);
+                scrollDownButton.startAnimation(scroll_down_button_out);
+                scrollDownAnimation = false;
             }
         });
     }
