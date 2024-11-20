@@ -255,7 +255,7 @@ public class ChatActivity extends AppCompatActivity {
                                     waitingMessages.add(message);
                                 }
                                 int idLast = messageLayoutManager.findLastVisibleItemPosition();
-                                if (idLast < messages.size()-1){
+                                if (idLast == messages.size()-2){
                                     messagesRecycler.scrollToPosition(messages.size()-1);
                                 }
                                 adapter.notifyItemInserted(messages.size());
@@ -459,7 +459,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
                 int idLast = messageLayoutManager.findLastVisibleItemPosition();
-                if (idLast < messages.size()-5){
+                if (idLast < messages.size()-1 && dy>0){
                     scrollDownButton.setVisibility(View.VISIBLE);
                 } else scrollDownButton.setVisibility(View.INVISIBLE);
             }
@@ -534,6 +534,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (!messageText.getText().toString().isEmpty()){
                     sendMessage(messageText.getText().toString().trim());
                     messageText.setText("");
+                    messagesRecycler.smoothScrollToPosition(messages.size()-1);
                 }
                 else{
                     Toast.makeText(ChatActivity.this, "Введите текст сообщения!", Toast.LENGTH_SHORT).show();
