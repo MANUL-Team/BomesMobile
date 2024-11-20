@@ -418,6 +418,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/messagesRecycler"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/down_arrow" />

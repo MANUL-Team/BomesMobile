@@ -253,7 +253,7 @@ public class ChatActivity extends AppCompatActivity {
                                 else if (isStop){
                                     waitingMessages.add(message);
                                 }
-                                messagesRecycler.scrollToPosition(messages.size()-1);
+                                //messagesRecycler.scrollToPosition(messages.size()-1);
                                 adapter.notifyItemInserted(messages.size());
                             }
                             else if (obj.event.equals(RequestEvent.MessageIsRead)){
@@ -438,16 +438,26 @@ public class ChatActivity extends AppCompatActivity {
         messagesRecycler.setLayoutManager(layoutManager);
         messagesRecycler.setAdapter(adapter);
 
-        messagesRecycler.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        messagesRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int id = layoutManager.findFirstVisibleItemPosition();
-                if (id < 5){
+
+                int idFirst = layoutManager.findFirstVisibleItemPosition();
+                if (idFirst < 5){
                     if (!loadingMessagesNow) {
                         loadMessages();
                     }
                 }
+                int idLast = layoutManager.findLastVisibleItemPosition();
+                if (idLast < messages.size()-5){
+                    scrollDownButton.setVisibility(View.VISIBLE);
+                } else scrollDownButton.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -651,6 +661,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 messagesRecycler.scrollToPosition(messages.size()-1);
+                adapter.notifyItemInserted(messages.size());
             }
         });
     }
