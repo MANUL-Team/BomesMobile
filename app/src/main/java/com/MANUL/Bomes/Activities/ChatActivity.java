@@ -43,6 +43,7 @@ import com.MANUL.Bomes.Adapters.StickersAdapter;
 import com.MANUL.Bomes.ExplosionField.ExplosionField;
 import com.MANUL.Bomes.ImportantClasses.FileUploadService;
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator;
+import com.MANUL.Bomes.LayoutManager.SpeedyLinearLayoutManager;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.Message;
 import com.MANUL.Bomes.SimpleObjects.Sticker;
@@ -69,6 +70,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -255,7 +257,7 @@ public class ChatActivity extends AppCompatActivity {
                                     waitingMessages.add(message);
                                 }
                                 int idLast = messageLayoutManager.findLastVisibleItemPosition();
-                                if (idLast == messages.size()-2){
+                                if (idLast == messages.size()-2 || Objects.equals(message.sender, UserData.identifier)){
                                     messagesRecycler.scrollToPosition(messages.size()-1);
                                 }
                                 adapter.notifyItemInserted(messages.size());
@@ -534,7 +536,6 @@ public class ChatActivity extends AppCompatActivity {
                 if (!messageText.getText().toString().isEmpty()){
                     sendMessage(messageText.getText().toString().trim());
                     messageText.setText("");
-                    messagesRecycler.smoothScrollToPosition(messages.size()-1);
                 }
                 else{
                     Toast.makeText(ChatActivity.this, "Введите текст сообщения!", Toast.LENGTH_SHORT).show();
