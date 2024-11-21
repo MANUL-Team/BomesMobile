@@ -412,15 +412,47 @@
         app:layout_constraintStart_toStartOf="@+id/messagesRecycler"
         app:layout_constraintTop_toTopOf="@+id/header" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <FrameLayout
         android:id="@+id/scrollDownButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/messagesRecycler"
+        app:layout_constraintEnd_toEndOf="parent">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/scrollDownButtonCardViewImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:clickable="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/messagesRecycler"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/down_arrow" />
+        android:focusable="true"
+        android:layout_gravity="start|bottom"
+        android:visibility="visible"
+        app:cardCornerRadius="50dp"
+        app:cardBackgroundColor="#34418A">
 
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/down_arrow"/>
+
+    </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end|top"
+            app:cardCornerRadius="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:elevation="16dp"
+                android:text="10" />
+
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -97,7 +97,7 @@ public class ChatActivity extends AppCompatActivity {
     MediaRecorder mediaRecorder;
 
 
-    FloatingActionButton scrollDownButton;
+    View scrollDownButton;
     CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio, userInfoCard;
     ImageView inChatAvatar, recordingAudioImage;
     TextView username, onlineText, typingMsg, recordTimeText;
