@@ -413,21 +413,21 @@
         app:layout_constraintTop_toTopOf="@+id/header" />
 
     <FrameLayout
-        android:id="@+id/scrollDownButton"
+        android:id="@+id/scrollDownButtonLayout"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_margin="16dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/messagesRecycler"
         app:layout_constraintEnd_toEndOf="parent">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/scrollDownButtonCardViewImage"
+        android:id="@+id/scrollDownButtonActivityChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
         android:layout_gravity="start|bottom"
-        android:visibility="visible"
         app:cardCornerRadius="50dp"
         app:cardBackgroundColor="#34418A">
 
@@ -440,6 +440,7 @@
     </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/counterMessageActivityChat"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="end|top"

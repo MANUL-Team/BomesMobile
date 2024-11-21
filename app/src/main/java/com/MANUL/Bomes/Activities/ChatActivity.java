@@ -59,7 +59,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.type.LogicalType;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -97,7 +96,7 @@ public class ChatActivity extends AppCompatActivity {
     MediaRecorder mediaRecorder;
 
 
-    View scrollDownButton;
+    View scrollDownButton, scrollDownButtonLayout;
     CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio, userInfoCard;
     ImageView inChatAvatar, recordingAudioImage;
     TextView username, onlineText, typingMsg, recordTimeText;
@@ -450,12 +449,12 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 int idLast = messageLayoutManager.findLastVisibleItemPosition();
                 if ((idLast < (messages.size() - 1)) && (dy > 0) && !scrollDownAnimation) {
-                    scrollDownButton.setVisibility(View.VISIBLE);
-                    scrollDownButton.startAnimation(scroll_down_button_in);
+                    scrollDownButtonLayout.setVisibility(View.VISIBLE);
+                    scrollDownButtonLayout.startAnimation(scroll_down_button_in);
                     scrollDownAnimation = true;
                 } else if ((idLast >= (messages.size() - 1) || (dy < 0)) && scrollDownAnimation){
-                    scrollDownButton.setVisibility(View.GONE);
-                    scrollDownButton.startAnimation(scroll_down_button_out);
+                    scrollDownButtonLayout.setVisibility(View.GONE);
+                    scrollDownButtonLayout.startAnimation(scroll_down_button_out);
                     scrollDownAnimation = false;
                 }
             }
@@ -469,7 +468,8 @@ public class ChatActivity extends AppCompatActivity {
         messageText = findViewById(R.id.messageText);
         sendBtn = findViewById(R.id.sendBtn);
 
-        scrollDownButton = findViewById(R.id.scrollDownButton);
+        scrollDownButton = findViewById(R.id.scrollDownButtonActivityChat);
+        scrollDownButtonLayout = findViewById(R.id.scrollDownButtonLayout);
 
         objectMapper.coercionConfigFor(LogicalType.POJO)
                 .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
@@ -659,8 +659,8 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 messagesRecycler.scrollToPosition(messages.size() - 1);
                 adapter.notifyItemInserted(messages.size());
-                scrollDownButton.setVisibility(View.GONE);
-                scrollDownButton.startAnimation(scroll_down_button_out);
+                scrollDownButtonLayout.setVisibility(View.GONE);
+                scrollDownButtonLayout.startAnimation(scroll_down_button_out);
                 scrollDownAnimation = false;
             }
         });
