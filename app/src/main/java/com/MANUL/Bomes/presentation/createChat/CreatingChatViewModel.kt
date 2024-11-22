@@ -1,17 +1,13 @@
 package com.MANUL.Bomes.presentation.createChat
 
-import android.R
-import android.content.Intent
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.MANUL.Bomes.Activities.MainActivity
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
-import com.MANUL.Bomes.SimpleObjects.User
-import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.databinding.AddUserItemBinding
 import com.MANUL.Bomes.databinding.AddedUserItemBinding
 import com.MANUL.Bomes.databinding.FragmentCreatingChatBinding
@@ -22,12 +18,12 @@ import com.google.android.flexbox.JustifyContent
 
 class CreatingChatViewModel(
     inflater: LayoutInflater,
-    private val activity: FragmentActivity?
+    private val activity: FragmentActivity?,
 ) : ViewModel() {
     private var _binding = FragmentCreatingChatBinding.inflate(inflater)
     private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
-    private var users: MutableList<User> = mutableListOf()
     private val userAddedList: MutableList<CreatingChatUser> = mutableListOf()
+
 
     init {
         _binding.apply {
@@ -120,44 +116,13 @@ class CreatingChatViewModel(
 
         }
 
-    fun responseWrongAuthInIdentifier() {
-        Toast.makeText(activity, "Данные авторизации устарели!", Toast.LENGTH_LONG).show()
-        UserData.avatar = null
-        UserData.identifier = null
-        UserData.email = null
-        UserData.description = null
-        UserData.username = null
-        UserData.table_name = null
-        UserData.chatId = null
-        UserData.chatAvatar = null
-        UserData.isLocalChat = 0
-        val intent = Intent(activity, MainActivity::class.java)
-        activity?.startActivity(intent)
-        activity?.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-        activity?.finish()
-    }
-
-    fun responseReturnFriends(obj: UniversalJSONObject) {
-        users.clear()
-
-        for (jsonObject in obj.users) {
-            val user = User(
-                jsonObject.username,
-                jsonObject.avatar,
-                jsonObject.identifier,
-                jsonObject.friendsCount
-            )
-            users.add(user)
-        }
-
-        for (i in 0..<users.size) userAddList.add(
+    fun userAddListCompletion(){
+        userAddList.clear()
+        for (i in 0..<UserDataKt.users.size) userAddList.add(
             CreatingChatUser(
-                users[i],
+                UserDataKt.users[i],
                 false
             )
         )
-
-        binding.addUserList.adapter?.notifyDataSetChanged()
     }
-
 }

@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.User
+import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.NowRequest
+import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.MANUL.Bomes.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.friends.FriendsRequestHandler
 import com.MANUL.Bomes.presentation.friends.FriendsViewModel
-import com.MANUL.Bomes.presentation.friends.FriendsWebSocketListener
+import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -23,7 +25,7 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
     private lateinit var viewModel: FriendsViewModel
 
     private var webSocket: WebSocket? = null
-    private lateinit var webSocketListener: FriendsWebSocketListener
+    private lateinit var webSocketListener: BoMesWebSocketListener
     private val okHttpClient by lazy {
         OkHttpClient()
     }
@@ -38,12 +40,22 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = FriendsViewModel(inflater, activity, users)
+        viewModel = FriendsViewModel(inflater, activity)
 
-        requestHandler = FriendsRequestHandler(requireActivity(), viewModel,users)
-        webSocketListener = FriendsWebSocketListener(requestHandler) 
+        requestHandler = FriendsRequestHandler(requireActivity(), viewModel)
+        webSocketListener = BoMesWebSocketListener(requestHandler)
         webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
 
         return viewModel.binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val objectMapper = ObjectMapper()
+        val obj = RequestCreationFactory.create(RequestEvent.GetFriends)
+        webSocket?.send(objectMapper.writeValueAsString(obj))
+
+        viewModel.adapterUpdate()
     }
 }

@@ -412,4 +412,14 @@
         app:layout_constraintStart_toStartOf="@+id/messagesRecycler"
         app:layout_constraintTop_toTopOf="@+id/header" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/scrollDownButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/messagesRecycler"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/down_arrow" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

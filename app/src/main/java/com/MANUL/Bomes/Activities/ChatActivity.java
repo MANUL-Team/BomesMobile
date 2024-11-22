@@ -59,6 +59,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.type.LogicalType;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -96,6 +97,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
+    FloatingActionButton scrollDownButton;
     CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio, userInfoCard;
     ImageView inChatAvatar, recordingAudioImage;
     TextView username, onlineText, typingMsg, recordTimeText;
@@ -457,6 +459,8 @@ public class ChatActivity extends AppCompatActivity {
         messageText = findViewById(R.id.messageText);
         sendBtn = findViewById(R.id.sendBtn);
 
+        scrollDownButton = findViewById(R.id.scrollDownButton);
+
         objectMapper.coercionConfigFor(LogicalType.POJO)
                 .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
 
@@ -640,6 +644,13 @@ public class ChatActivity extends AppCompatActivity {
                     Intent intent = new Intent(ChatActivity.this, UserPageActivity.class);
                     startActivity(intent);
                 }
+            }
+        });
+
+        scrollDownButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                messagesRecycler.scrollToPosition(messages.size()-1);
             }
         });
     }

@@ -11,24 +11,25 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import com.MANUL.Bomes.Activities.ChatActivity
 import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
+import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.FileUtils
 import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.PermissionUtils
 import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.MANUL.Bomes.Utils.RequestEvent
+import com.MANUL.Bomes.presentation.createChat.CreatingChatRequestHandler
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
-import com.MANUL.Bomes.presentation.createChat.CreatingChatWebSocketListener
+import com.MANUL.Bomes.presentation.friends.FriendsRequestHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okhttp3.WebSocket
@@ -41,22 +42,27 @@ import java.util.Calendar
 
 class CreatingChatFragment : Fragment() {
 
-    private lateinit var webSocketListener: CreatingChatWebSocketListener
+    private lateinit var webSocketListener: BoMesWebSocketListener
     private lateinit var viewModel: CreatingChatViewModel
     private val okHttpClient by lazy {
         OkHttpClient()
     }
     private var webSocket: WebSocket? = null
+    private lateinit var requestHandler: CreatingChatRequestHandler
 
-    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = result.data?.data
+    private var pathImage: String = ""
+    private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
 
-            if (uri != null) {
-                uploadAvatar(uri)
+    val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri: Uri? = result.data?.data
+
+                if (uri != null) {
+                    uploadAvatar(uri)
+                }
             }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,30 +72,13 @@ class CreatingChatFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         viewModel = CreatingChatViewModel(inflater, activity)
 
-        webSocketListener = CreatingChatWebSocketListener(viewModel) { obj ->
-            activity?.runOnUiThread {
-                run {
-                    if (obj.event == RequestEvent.ReturnFriends) {
-                        viewModel.responseReturnFriends(obj)
-                    } else if (obj.event == RequestEvent.ChatCreated) {
-                        webSocketListener.responseChatCreated(obj)
-                        val intent = Intent(
-                                activity,
-                                ChatActivity::class.java
-                        )
-                        startActivity(intent)
-                        requireActivity().finish()
-                        webSocket!!.close(1000, null)
-
-                    }
-                }
-            }
-        }
+        requestHandler = CreatingChatRequestHandler(requireActivity(), viewModel, userAddList, pathImage)
+        webSocketListener = BoMesWebSocketListener(requestHandler)
         webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
 
         viewModel.binding.apply {
@@ -127,17 +116,18 @@ class CreatingChatFragment : Fragment() {
 
     fun uploadAvatar(fileUri: Uri) {
         val service = ServiceGenerator.createService(
-                FileUploadService::class.java
+            FileUploadService::class.java
         )
 
         val file = FileUtils.getFile(activity, fileUri)
         val type = activity?.contentResolver?.getType(fileUri)
         val requestFile = RequestBody.create(
-                type?.toMediaTypeOrNull(),
-                file
+            type?.toMediaTypeOrNull(),
+            file
         )
 
-        val body: MultipartBody.Part = MultipartBody.Part.createFormData("file", file.name, requestFile)
+        val body: MultipartBody.Part =
+            MultipartBody.Part.createFormData("file", file.name, requestFile)
 
         val descriptionString = "file"
         val description = RequestBody.create(MultipartBody.FORM, descriptionString)
@@ -147,7 +137,7 @@ class CreatingChatFragment : Fragment() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     try {
-                        val text = webSocketListener.processingPhotoUploadRequest(response)
+                        processingPhotoUploadRequest(response)
                     } catch (e: IOException) {
                         throw RuntimeException(e)
                     }
@@ -160,9 +150,20 @@ class CreatingChatFragment : Fragment() {
         })
     }
 
+    private fun processingPhotoUploadRequest(response: Response<ResponseBody>) {
+        val objectMapper = ObjectMapper()
+        val reply = response.body()!!.string()
+        val obj: UniversalJSONObject = objectMapper.readValue<UniversalJSONObject>(
+            reply,
+            UniversalJSONObject::class.java
+        )
+        pathImage = obj.filePath
+        viewModel.insertingImage(obj)
+    }
+
     fun requestCreateChatForm(addedUserList: MutableList<CreatingChatUser>): String {
-        val objectMapper by lazy{ ObjectMapper() }
-        val addingUsers: Array<String?> = arrayOfNulls<String>(addedUserList.size+1)
+        val objectMapper by lazy { ObjectMapper() }
+        val addingUsers: Array<String?> = arrayOfNulls<String>(addedUserList.size + 1)
         var tableName = Calendar.getInstance().time.toString()
         for (i in 0 until addedUserList.size) {
             tableName += "-" + addedUserList[i].user.identifier
@@ -179,7 +180,7 @@ class CreatingChatFragment : Fragment() {
             addingUsers,
             viewModel.binding.createChatEditText.text.toString(),
             0,
-            webSocketListener.pathImage
+            pathImage
         )
         return objectMapper.writeValueAsString(creatingChat)
     }
