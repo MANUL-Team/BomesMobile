@@ -460,11 +460,10 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 int idLast = messageLayoutManager.findLastVisibleItemPosition();
                 if ((idLast < (messages.size() - 1)) && (dy > 0) && !scrollDownAnimation) {
+                    unreadMessageCounterCard.setVisibility(View.GONE);
                     scrollDownButtonLayoutVisible();
-                } else if (((idLast >= (messages.size() - 1)) || (dy < 0) || (unreadMessageCounter == 0)) && scrollDownAnimation) {
-                    scrollDownButtonLayout.setVisibility(View.GONE);
-                    scrollDownButtonLayout.startAnimation(scroll_down_button_out);
-                    scrollDownAnimation = false;
+                } else if (((idLast >= (messages.size() - 1)) || ((dy < 0) && (unreadMessageCounter == 0))) && scrollDownAnimation) {
+                    scrollDownButtonLayoutGone();
                 }
             }
         });
@@ -668,13 +667,16 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 adapter.notifyItemInserted(messages.size());
                 messagesRecycler.scrollToPosition(messages.size() - 1);
-                unreadMessageCounter = 0;
-                unreadMessageCounterCard.setVisibility(View.GONE);
-                scrollDownButtonLayout.setVisibility(View.GONE);
-                scrollDownButtonLayout.startAnimation(scroll_down_button_out);
-                scrollDownAnimation = false;
+                scrollDownButtonLayoutGone();
             }
         });
+    }
+
+    private void scrollDownButtonLayoutGone() {
+        scrollDownButtonLayout.setVisibility(View.GONE);
+        scrollDownButtonLayout.startAnimation(scroll_down_button_out);
+        scrollDownAnimation = false;
+        unreadMessageCounter = 0;
     }
 
     private void scrollDownButtonLayoutVisible() {
