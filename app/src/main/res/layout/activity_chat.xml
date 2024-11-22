@@ -417,7 +417,7 @@
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_margin="16dp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/messagesRecycler"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -445,7 +445,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="end|top"
-            android:visibility="gone"
+            android:visibility="visible"
             app:cardCornerRadius="20dp">
 
             <TextView

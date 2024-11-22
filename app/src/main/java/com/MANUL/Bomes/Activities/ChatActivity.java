@@ -109,7 +109,7 @@ public class ChatActivity extends AppCompatActivity {
     ConstraintLayout chatLayout;
     long lastOnline = 0;
     long loadedMessages = 0;
-    int unreadMessageCounter = 0;
+    int unreadMessageCounter;
 
     boolean loadingMessagesNow = false;
     boolean isStop = false;
@@ -259,7 +259,8 @@ public class ChatActivity extends AppCompatActivity {
                                     if (!scrollDownAnimation) scrollDownButtonLayoutVisible();
                                     unreadMessageCounterCard.setVisibility(View.VISIBLE);
                                     unreadMessageCounter++;
-                                    unreadMessageCounterText.setText(Integer.toString(unreadMessageCounter));
+                                    if(unreadMessageCounter<100) unreadMessageCounterText.setText(Integer.toString(unreadMessageCounter));
+                                    else unreadMessageCounterText.setText("...");
 
                                 }
                                 adapter.notifyItemInserted(messages.size());
