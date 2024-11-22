@@ -461,7 +461,7 @@ public class ChatActivity extends AppCompatActivity {
                 int idLast = messageLayoutManager.findLastVisibleItemPosition();
                 if ((idLast < (messages.size() - 1)) && (dy > 0) && !scrollDownAnimation) {
                     scrollDownButtonLayoutVisible();
-                } else if (((idLast >= (messages.size() - 1)) || (dy < 0)) && scrollDownAnimation && (unreadMessageCounter == 0)) {
+                } else if (((idLast >= (messages.size() - 1)) || (dy < 0) || (unreadMessageCounter == 0)) && scrollDownAnimation) {
                     scrollDownButtonLayout.setVisibility(View.GONE);
                     scrollDownButtonLayout.startAnimation(scroll_down_button_out);
                     scrollDownAnimation = false;
