@@ -65,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:fontFamily="@font/tilda_sans_vf"
+                    android:fontFamily="@font/anonymous_pro"
                     android:text="Ответить"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp" />
@@ -91,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:fontFamily="@font/tilda_sans_vf"
+                    android:fontFamily="@font/anonymous_pro"
                     android:text="Копировать"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp" />
@@ -117,7 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:fontFamily="@font/tilda_sans_vf"
+                    android:fontFamily="@font/anonymous_pro"
                     android:text="Редактировать"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp" />
@@ -145,7 +145,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:fontFamily="@font/tilda_sans_vf"
+                    android:fontFamily="@font/anonymous_pro"
                     android:text="Удалить"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp" />

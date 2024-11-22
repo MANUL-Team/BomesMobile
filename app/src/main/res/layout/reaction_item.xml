@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
                 android:layout_marginEnd="6dp"
-                android:fontFamily="@font/tilda_sans_vf"
+                android:fontFamily="@font/anonymous_pro"
                 android:text="3"
                 android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"

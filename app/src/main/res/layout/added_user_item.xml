@@ -42,9 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:fontFamily="@font/tilda_sans_vf"
-                android:text="USER"
-                android:textSize="18sp" />
+                android:text="EGOR"
+                android:textSize="18sp"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/added_user_cancel"

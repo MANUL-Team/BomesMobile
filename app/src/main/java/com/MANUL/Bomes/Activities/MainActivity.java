@@ -157,9 +157,6 @@ public class MainActivity extends AppCompatActivity {
                             else if (obj.event.equals(RequestEvent.WrongPassword)){
                                 Toast.makeText(MainActivity.this, "Неверный пароль!", Toast.LENGTH_SHORT).show();
                             }
-                            else if(obj.event.equals("UserNotFound")){
-                                Toast.makeText(MainActivity.this, "Пользователь не найден!", Toast.LENGTH_SHORT).show();
-                            }
                             else if (obj.event.equals(RequestEvent.ReturnUser)){
                                 if (obj.user.identifier.equals(identifier)){
                                     UserData.username = obj.user.username;

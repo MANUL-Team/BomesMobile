@@ -93,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:ems="10"
-        android:fontFamily="@font/tilda_sans_vf"
+        android:fontFamily="@font/anonymous_pro"
         android:hint="Введите подсказку..."
         android:inputType="text|textMultiLine"
         android:maxLines="4"
@@ -125,7 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:fontFamily="@font/tilda_sans_vf"
+            android:fontFamily="@font/anonymous_pro"
             android:text="Добавить"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
