@@ -96,10 +96,10 @@ public class ChatActivity extends AppCompatActivity {
     MediaRecorder mediaRecorder;
 
 
-    View scrollDownButton, scrollDownButtonLayout;
+    View scrollDownButton, scrollDownButtonLayout, unreadMessageCounterCard;
     CardView backBtn, sendBtn, stickersHolder, openStickersBtn, sendMediaBtn, replyHolder, closeReplyHolder, recordAudio, userInfoCard;
     ImageView inChatAvatar, recordingAudioImage;
-    TextView username, onlineText, typingMsg, recordTimeText;
+    TextView username, onlineText, typingMsg, recordTimeText, unreadMessageCounterText;
     public RecyclerView messagesRecycler;
     RecyclerView stickersRecycler;
     MessagesAdapter adapter;
@@ -109,6 +109,7 @@ public class ChatActivity extends AppCompatActivity {
     ConstraintLayout chatLayout;
     long lastOnline = 0;
     long loadedMessages = 0;
+    int unreadMessageCounter = 0;
 
     boolean loadingMessagesNow = false;
     boolean isStop = false;
@@ -254,6 +255,12 @@ public class ChatActivity extends AppCompatActivity {
                                 int idLast = messageLayoutManager.findLastVisibleItemPosition();
                                 if (idLast == messages.size() - 2 || Objects.equals(message.sender, UserData.identifier)) {
                                     messagesRecycler.scrollToPosition(messages.size() - 1);
+                                } else {
+                                    if (!scrollDownAnimation) scrollDownButtonLayoutVisible();
+                                    unreadMessageCounterCard.setVisibility(View.VISIBLE);
+                                    unreadMessageCounter++;
+                                    unreadMessageCounterText.setText(Integer.toString(unreadMessageCounter));
+
                                 }
                                 adapter.notifyItemInserted(messages.size());
                             } else if (obj.event.equals(RequestEvent.MessageIsRead)) {
@@ -425,6 +432,8 @@ public class ChatActivity extends AppCompatActivity {
         messagesRecycler = findViewById(R.id.messagesRecycler);
         recordingAudioImage = findViewById(R.id.recordingAudioImage);
         recordTimeText = findViewById(R.id.recordTimeText);
+        unreadMessageCounterText = findViewById(R.id.unread_message_counter_text);
+        unreadMessageCounterCard = findViewById(R.id.unread_message_counter_card);
         userInfoCard = findViewById(R.id.userInfoCard);
         adapter = new MessagesAdapter(this, messages, this);
         messageLayoutManager = new LinearLayoutManager(this);
@@ -450,10 +459,8 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 int idLast = messageLayoutManager.findLastVisibleItemPosition();
                 if ((idLast < (messages.size() - 1)) && (dy > 0) && !scrollDownAnimation) {
-                    scrollDownButtonLayout.setVisibility(View.VISIBLE);
-                    scrollDownButtonLayout.startAnimation(scroll_down_button_in);
-                    scrollDownAnimation = true;
-                } else if ((idLast >= (messages.size() - 1) || (dy < 0)) && scrollDownAnimation){
+                    scrollDownButtonLayoutVisible();
+                } else if (((idLast >= (messages.size() - 1)) || (dy < 0)) && scrollDownAnimation && (unreadMessageCounter == 0)) {
                     scrollDownButtonLayout.setVisibility(View.GONE);
                     scrollDownButtonLayout.startAnimation(scroll_down_button_out);
                     scrollDownAnimation = false;
@@ -660,11 +667,19 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 adapter.notifyItemInserted(messages.size());
                 messagesRecycler.scrollToPosition(messages.size() - 1);
+                unreadMessageCounter = 0;
+                unreadMessageCounterCard.setVisibility(View.GONE);
                 scrollDownButtonLayout.setVisibility(View.GONE);
                 scrollDownButtonLayout.startAnimation(scroll_down_button_out);
                 scrollDownAnimation = false;
             }
         });
+    }
+
+    private void scrollDownButtonLayoutVisible() {
+        scrollDownButtonLayout.setVisibility(View.VISIBLE);
+        scrollDownButtonLayout.startAnimation(scroll_down_button_in);
+        scrollDownAnimation = true;
     }
 
     @Override

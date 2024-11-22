@@ -414,8 +414,8 @@
 
     <FrameLayout
         android:id="@+id/scrollDownButtonLayout"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_margin="16dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/messagesRecycler"
@@ -428,6 +428,7 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_gravity="start|bottom"
+        android:layout_margin="5dp"
         app:cardCornerRadius="50dp"
         app:cardBackgroundColor="#34418A">
 
@@ -440,13 +441,15 @@
     </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/counterMessageActivityChat"
+            android:id="@+id/unread_message_counter_card"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="end|top"
+            android:visibility="gone"
             app:cardCornerRadius="20dp">
 
             <TextView
+                android:id="@+id/unread_message_counter_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
