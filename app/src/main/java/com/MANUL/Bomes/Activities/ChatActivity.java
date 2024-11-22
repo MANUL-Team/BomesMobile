@@ -428,6 +428,7 @@ public class ChatActivity extends AppCompatActivity {
         userInfoCard = findViewById(R.id.userInfoCard);
         adapter = new MessagesAdapter(this, messages, this);
         messageLayoutManager = new LinearLayoutManager(this);
+        messageLayoutManager.setStackFromEnd(true);
         messagesRecycler.setLayoutManager(messageLayoutManager);
         messagesRecycler.setAdapter(adapter);
 
@@ -657,8 +658,8 @@ public class ChatActivity extends AppCompatActivity {
         scrollDownButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                messagesRecycler.scrollToPosition(messages.size() - 1);
                 adapter.notifyItemInserted(messages.size());
+                messagesRecycler.scrollToPosition(messages.size() - 1);
                 scrollDownButtonLayout.setVisibility(View.GONE);
                 scrollDownButtonLayout.startAnimation(scroll_down_button_out);
                 scrollDownAnimation = false;
