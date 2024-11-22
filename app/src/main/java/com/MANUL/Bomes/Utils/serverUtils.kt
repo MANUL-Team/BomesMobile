@@ -64,4 +64,6 @@ object RequestEvent{
     const val TruePassword = "TruePassword"
     const val WrongPassword = "WrongPassword"
     const val ReturnCurrentAndroidVersion = "ReturnCurrentAndroidVersion"
+    const val EmailAlreadyUsed = "EmailAlreadyUsed"
+    const val GreatEmail = "GreatEmail"
 }
