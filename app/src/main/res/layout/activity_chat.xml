@@ -416,30 +416,30 @@
         android:id="@+id/scrollDownButtonLayout"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
-        android:visibility="visible"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/messagesRecycler"
         app:layout_constraintEnd_toEndOf="parent">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/scrollDownButtonActivityChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_gravity="start|bottom"
-        android:layout_margin="5dp"
-        app:cardCornerRadius="50dp"
-        app:cardBackgroundColor="#34418A">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/scrollDownButtonActivityChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="#34418A"
+            app:cardCornerRadius="50dp">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/down_arrow"/>
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/down_arrow" />
 
-    </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/unread_message_counter_card"
