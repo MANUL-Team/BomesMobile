@@ -10,8 +10,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -107,6 +109,25 @@ public class SplashScreen extends AppCompatActivity {
                                     finish();
                                     webSocket.close(1000, null);
                                 }
+                            }
+                            if (obj.event.equals("UserNotFound")){
+                                Toast.makeText(SplashScreen.this, "Пользователь не найден!", Toast.LENGTH_LONG).show();
+                                SharedPreferences prefs = getSharedPreferences("user", Context.MODE_PRIVATE);
+                                UserData.identifier = null;
+                                UserData.avatar = null;
+                                UserData.email = null;
+                                UserData.chatId = null;
+                                UserData.password = null;
+                                UserData.description = null;
+                                UserData.isLocalChat = 0;
+                                UserData.chatAvatar = null;
+                                UserData.table_name = null;
+                                UserData.chatName = null;
+                                prefs.edit().putString("identifier", "none").apply();
+                                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                finish();
                             }
                             if (obj.event.equals(RequestEvent.ReturnCurrentAndroidVersion)){
                                 PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
