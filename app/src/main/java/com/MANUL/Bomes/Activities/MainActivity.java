@@ -27,10 +27,6 @@ import com.MANUL.Bomes.Utils.RequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -74,20 +70,15 @@ public class MainActivity extends AppCompatActivity {
                 if (webSocket != null){
                     try {
                         String plaintext = passwordField.getText().toString();
-                        MessageDigest m = null;
-                        m = MessageDigest.getInstance("MD5");
-                        m.reset();
-                        m.update(plaintext.getBytes());
-                        byte[] digest = m.digest();
-                        BigInteger bigInt = new BigInteger(1,digest);
+                        String passwordHash = UserPageActivity.md5(plaintext);
 
-                        UniversalJSONObject sendObj = RequestCreationFactory.create(RequestEvent.Login,emailField.getText().toString(),bigInt.toString(16),null);
+                        UniversalJSONObject sendObj = RequestCreationFactory.create(RequestEvent.Login,emailField.getText().toString(), passwordHash,null);
 
                         String sendData = objectMapper.writeValueAsString(sendObj);
 
                         webSocket.send(sendData);
 
-                    } catch (NoSuchAlgorithmException | JsonProcessingException e) {
+                    } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
 
