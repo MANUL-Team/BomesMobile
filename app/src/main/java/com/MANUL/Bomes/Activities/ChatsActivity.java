@@ -111,16 +111,16 @@ public class ChatsActivity extends AppCompatActivity {
                                 }),
                         new PrimaryDrawerItem()
                                 .withIconTintingEnabled(true)
-                                .withName("Все пользователи")
-                                .withSelectable(true)
+                                .withName("Найти друзей")
+                                .withSelectable(false)
                                 .withIcon(R.drawable.people)
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        UsersFragment usersFragment = new UsersFragment(ChatsActivity.this);
-                                        switchFragment(usersFragment);
-                                        mainToolbar.setTitle("Все пользователи");
-                                        return false;
+                                        Intent intent = new Intent(ChatsActivity.this, FindFriendsActivity.class);
+                                        startActivity(intent);
+                                        overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
+                                        return true;
                                     }
                                 }),
                         new PrimaryDrawerItem()
