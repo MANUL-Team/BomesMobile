@@ -119,7 +119,7 @@ public class ChatsActivity extends AppCompatActivity {
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                                         Intent intent = new Intent(ChatsActivity.this, FindFriendsActivity.class);
                                         startActivity(intent);
-                                        overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
+                                        overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.activity_switch_animation_second);
                                         return true;
                                     }
                                 }),
