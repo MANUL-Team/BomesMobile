@@ -56,6 +56,17 @@ class RequestCreationFactory {
         }
 
         @JvmStatic
+        fun create(event: String, argument1: Long, argument2: String): UniversalJSONObject? {
+            return when (event) {
+                RequestEvent.GetUsers -> factory.getUsers(argument1, argument2)
+                else -> {
+                    Log.e("RequestCreationFactory", "there is no event")
+                    return null
+                }
+            }
+        }
+
+        @JvmStatic
         fun create(event: String, argument: String, id: Long): UniversalJSONObject? {
             return when (event) {
                 RequestEvent.EditMessage -> factory.editMessage(argument, id)
@@ -368,6 +379,16 @@ class RequestCreationFactory {
         getUsers.event = "GetUsers"
         getUsers.identifier = UserData.identifier
         getUsers.password = UserData.password
+        return getUsers
+    }
+
+    private fun getUsers(skip: Long, search: String): UniversalJSONObject{
+        val getUsers = UniversalJSONObject()
+        getUsers.event = "GetUsers"
+        getUsers.identifier = UserData.identifier
+        getUsers.password = UserData.password
+        getUsers.skip = skip
+        getUsers.search = search
         return getUsers
     }
 

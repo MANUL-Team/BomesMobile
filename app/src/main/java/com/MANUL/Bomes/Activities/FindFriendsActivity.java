@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,9 +40,14 @@ public class FindFriendsActivity extends AppCompatActivity {
     ObjectMapper objectMapper = new ObjectMapper();
     WebSocket webSocket;
 
-    CardView backBtn;
+    CardView backBtn, search_btn;
     RecyclerView searched_users_recycler;
+    LinearLayoutManager layoutManager;
     FindFriendsAdapter adapter;
+    EditText search_edit_text;
+
+    String nowSearching = "";
+    boolean nowLoading = false;
 
     private ArrayList<User> users = new ArrayList<>();
     @Override
@@ -58,14 +64,63 @@ public class FindFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-                overridePendingTransition(R.anim.activity_switch_reverse_second, R.anim.activity_switch_reverse_first);
+                overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first);
             }
         });
 
         searched_users_recycler = findViewById(R.id.searched_users_recycler);
         adapter = new FindFriendsAdapter(FindFriendsActivity.this, users);
-        searched_users_recycler.setLayoutManager(new LinearLayoutManager(this));
+        layoutManager = new LinearLayoutManager(this);
+        searched_users_recycler.setLayoutManager(layoutManager);
         searched_users_recycler.setAdapter(adapter);
+
+        search_btn = findViewById(R.id.search_btn);
+        search_edit_text = findViewById(R.id.search_edit_text);
+
+        search_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (nowLoading) return;
+
+                nowLoading = true;
+                users.clear();
+                adapter.notifyDataSetChanged();
+                nowSearching = search_edit_text.getText().toString();
+                UniversalJSONObject getUsers = RequestCreationFactory.create(
+                        RequestEvent.GetUsers, 0, nowSearching);
+                try {
+                    webSocket.send(objectMapper.writeValueAsString(getUsers));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        searched_users_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (users.size() % 20 != 0){
+                    return;
+                }
+                int id_last = layoutManager.findLastVisibleItemPosition();
+                if (id_last >= users.size() - 5 && !nowLoading){
+                    nowLoading = true;
+                    UniversalJSONObject getUsers = RequestCreationFactory.create(
+                            RequestEvent.GetUsers, users.size(), nowSearching);
+                    try {
+                        webSocket.send(objectMapper.writeValueAsString(getUsers));
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
     }
 
     private void connectToServer(){
@@ -125,7 +180,10 @@ public class FindFriendsActivity extends AppCompatActivity {
                                 }
                             }
                             else if(obj.event.equals(RequestEvent.ReturnUsers)){
-                                users.clear();
+                                nowLoading = false;
+                                if (obj.searchingName != null && !obj.searchingName.equals(nowSearching)) {
+                                    users.clear();
+                                }
                                 adapter.notifyDataSetChanged();
                                 for (UniversalJSONObject jsonObject:obj.users) {
                                     User user = new User(jsonObject.username, jsonObject.avatar, jsonObject.identifier, jsonObject.friendsCount);

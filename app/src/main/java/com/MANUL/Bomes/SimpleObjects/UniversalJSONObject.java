@@ -65,6 +65,9 @@ public class UniversalJSONObject {
     public String owner;
     public String request_identifier;
     public String request_password;
+    public long skip;
+    public String search;
+    public String searchingName;
 
 
     public long getLastUpdate(){

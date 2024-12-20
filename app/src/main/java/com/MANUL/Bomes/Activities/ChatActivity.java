@@ -451,7 +451,6 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 int idFirst = messageLayoutManager.findFirstVisibleItemPosition();
                 if (idFirst < 5) {
                     if (!loadingMessagesNow) {
