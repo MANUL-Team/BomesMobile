@@ -1,16 +1,18 @@
 package com.MANUL.Bomes.presentation.createChat
 
+import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.databinding.AddUserItemBinding
 import com.MANUL.Bomes.databinding.AddedUserItemBinding
-import com.MANUL.Bomes.databinding.FragmentCreatingChatBinding
+import com.MANUL.Bomes.databinding.ActivityCreatingChatBinding
 import com.bumptech.glide.Glide
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -18,9 +20,9 @@ import com.google.android.flexbox.JustifyContent
 
 class CreatingChatViewModel(
     inflater: LayoutInflater,
-    private val activity: FragmentActivity?,
+    private val activity: FragmentActivity,
 ) : ViewModel() {
-    private var _binding = FragmentCreatingChatBinding.inflate(inflater)
+    private var _binding = ActivityCreatingChatBinding.inflate(inflater)
     private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
     private val userAddedList: MutableList<CreatingChatUser> = mutableListOf()
 
@@ -35,8 +37,22 @@ class CreatingChatViewModel(
 
             addUserList.adapter =
                 AddUserListAdapter(userAddList, this@CreatingChatViewModel)
-            addUserList.layoutManager = LinearLayoutManager(activity)
+            changeConfigurations()
+            activity.addOnConfigurationChangedListener{
+                changeConfigurations()
+            }
+
+            backBtn.setOnClickListener {
+                activity.finish()
+            }
         }
+    }
+
+    fun changeConfigurations() = with(_binding){
+        if(activity.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+            addUserList.layoutManager = LinearLayoutManager(activity)
+        else
+            addUserList.layoutManager = GridLayoutManager(activity, 2)
     }
 
     val binding by lazy { _binding }

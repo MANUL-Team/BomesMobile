@@ -15,7 +15,7 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="#33000000"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="32dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,8 +39,8 @@
 
                 <ImageView
                     android:id="@+id/add_user_image"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     android:scaleType="centerCrop"
                     app:srcCompat="@drawable/icon" />
             </androidx.cardview.widget.CardView>

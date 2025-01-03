@@ -21,11 +21,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.MANUL.Bomes.Fragments.ChatsFragment;
-import com.MANUL.Bomes.Fragments.CreatingChatFragment;
+import com.MANUL.Bomes.Fragments.CreatingChatActivity;
 import com.MANUL.Bomes.Fragments.FriendsFragment;
 import com.MANUL.Bomes.Fragments.ProfileFragment;
 import com.MANUL.Bomes.Fragments.SettingsFragment;
-import com.MANUL.Bomes.Fragments.UsersFragment;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;
@@ -117,10 +116,10 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        CreatingChatFragment creatingChatFragment = new CreatingChatFragment();
-                                        switchFragment(creatingChatFragment);
-                                        mainToolbar.setTitle("Создание чата");
-                                        return false;
+                                        Intent intent = new Intent(ChatsActivity.this, CreatingChatActivity.class);
+                                        startActivity(intent);
+                                        overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
+                                        return true;
                                     }
                                 }),
                         new PrimaryDrawerItem()

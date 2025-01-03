@@ -5,12 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
@@ -25,7 +22,6 @@ import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.MANUL.Bomes.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.createChat.CreatingChatRequestHandler
 import com.MANUL.Bomes.presentation.createChat.CreatingChatViewModel
-import com.MANUL.Bomes.presentation.friends.FriendsRequestHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -40,7 +36,7 @@ import java.io.IOException
 import java.util.Calendar
 
 
-class CreatingChatFragment : Fragment() {
+class CreatingChatActivity : AppCompatActivity() {
 
     private lateinit var webSocketListener: BoMesWebSocketListener
     private lateinit var viewModel: CreatingChatViewModel
@@ -66,18 +62,10 @@ class CreatingChatFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = CreatingChatViewModel(layoutInflater, this)
+        setContentView(viewModel.binding.root)
 
-//        viewModel = ViewModelProvider(this)[CreatingChatViewModel::class.java]
-
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        viewModel = CreatingChatViewModel(inflater, activity)
-
-        requestHandler = CreatingChatRequestHandler(requireActivity(), viewModel, userAddList, pathImage)
+        requestHandler = CreatingChatRequestHandler(this, viewModel, userAddList, pathImage)
         webSocketListener = BoMesWebSocketListener(requestHandler)
         webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
 
@@ -96,16 +84,12 @@ class CreatingChatFragment : Fragment() {
                     webSocket!!.send(request)
                 }
             }
-
-
         }
-
-        return viewModel.binding.root
     }
 
     private fun getStoragePermission() {
-        if (PermissionUtils.hasPermissions(activity)) return
-        PermissionUtils.requestPermissions(activity, 101)
+        if (PermissionUtils.hasPermissions(this)) return
+        PermissionUtils.requestPermissions(this, 101)
     }
 
 
@@ -119,8 +103,8 @@ class CreatingChatFragment : Fragment() {
             FileUploadService::class.java
         )
 
-        val file = FileUtils.getFile(activity, fileUri)
-        val type = activity?.contentResolver?.getType(fileUri)
+        val file = FileUtils.getFile(this, fileUri)
+        val type = contentResolver?.getType(fileUri)
         val requestFile = RequestBody.create(
             type?.toMediaTypeOrNull(),
             file

@@ -28,6 +28,9 @@
             android:name=".Activities.FindFriendsActivity"
             android:exported="false" />
         <activity
+            android:name=".Fragments.CreatingChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.CustomizeStickerHints"
             android:exported="false" />
         <activity
