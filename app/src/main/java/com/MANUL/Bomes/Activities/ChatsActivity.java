@@ -97,20 +97,6 @@ public class ChatsActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem()
                                 .withIconTintingEnabled(true)
-                                .withName("Чаты")
-                                .withSelectable(true)
-                                .withIcon(R.drawable.chats)
-                                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                    @Override
-                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        ChatsFragment chatsFragment = new ChatsFragment(ChatsActivity.this);
-                                        switchFragment(chatsFragment);
-                                        mainToolbar.setTitle("Чаты");
-                                        return false;
-                                    }
-                                }),
-                        new PrimaryDrawerItem()
-                                .withIconTintingEnabled(true)
                                 .withName("Найти друзей")
                                 .withSelectable(false)
                                 .withIcon(R.drawable.people)
