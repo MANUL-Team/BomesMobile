@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserDataKt
-import com.MANUL.Bomes.databinding.AddUserItemBinding
-import com.MANUL.Bomes.databinding.AddedUserItemBinding
+import com.MANUL.Bomes.databinding.ItemAddUserBinding
+import com.MANUL.Bomes.databinding.ItemAddedUserBinding
 import com.MANUL.Bomes.databinding.ActivityCreatingChatBinding
 import com.bumptech.glide.Glide
 import com.google.android.flexbox.FlexDirection
@@ -80,7 +80,7 @@ class CreatingChatViewModel(
             .into(binding.createChatAvatar)
     }
 
-    fun addUserViewHolderBind(addUserItemBinding: AddUserItemBinding, user: CreatingChatUser) =
+    fun addUserViewHolderBind(addUserItemBinding: ItemAddUserBinding, user: CreatingChatUser) =
         with(addUserItemBinding) {
             addUserText.text = user.user.username
 
@@ -109,7 +109,7 @@ class CreatingChatViewModel(
         }
 
     fun addedUserViewHolderBind(
-        addedUserItemBinding: AddedUserItemBinding,
+        addedUserItemBinding: ItemAddedUserBinding,
         user: CreatingChatUser
     ) =
         with(addedUserItemBinding) {

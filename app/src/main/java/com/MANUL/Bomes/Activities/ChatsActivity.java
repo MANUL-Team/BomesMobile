@@ -21,8 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.MANUL.Bomes.Fragments.ChatsFragment;
-import com.MANUL.Bomes.Fragments.CreatingChatActivity;
-import com.MANUL.Bomes.Fragments.FriendsFragment;
+import com.MANUL.Bomes.Fragments.FriendsActivity;
 import com.MANUL.Bomes.Fragments.ProfileFragment;
 import com.MANUL.Bomes.Fragments.SettingsFragment;
 import com.MANUL.Bomes.R;
@@ -105,7 +104,7 @@ public class ChatsActivity extends AppCompatActivity {
                                         Intent intent = new Intent(ChatsActivity.this, FindFriendsActivity.class);
                                         startActivity(intent);
                                         overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
-                                        return true;
+                                        return false;
                                     }
                                 }),
                         new PrimaryDrawerItem()
@@ -119,7 +118,7 @@ public class ChatsActivity extends AppCompatActivity {
                                         Intent intent = new Intent(ChatsActivity.this, CreatingChatActivity.class);
                                         startActivity(intent);
                                         overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
-                                        return true;
+                                        return false;
                                     }
                                 }),
                         new PrimaryDrawerItem()
@@ -144,9 +143,9 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        FriendsFragment profileFragment = new FriendsFragment();
-                                        switchFragment(profileFragment);
-                                        mainToolbar.setTitle("Друзья");
+                                        Intent intent = new Intent(ChatsActivity.this, FriendsActivity.class);
+                                        startActivity(intent);
+                                        overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                                         return false;
                                     }
                                 }),

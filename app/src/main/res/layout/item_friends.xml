@@ -15,7 +15,7 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="#33000000"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="40dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,8 +39,8 @@
 
                 <ImageView
                     android:id="@+id/friends_image"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     android:scaleType="centerCrop"
                     app:srcCompat="@drawable/icon" />
             </androidx.cardview.widget.CardView>
@@ -63,6 +63,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
+                android:layout_marginEnd="8dp"
                 app:cardBackgroundColor="#33FFFFFF"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"

@@ -1,10 +1,7 @@
 package com.MANUL.Bomes.Fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.Utils.BoMesWebSocketListener
@@ -15,10 +12,9 @@ import com.MANUL.Bomes.presentation.friends.FriendsRequestHandler
 import com.MANUL.Bomes.presentation.friends.FriendsViewModel
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.WebSocket
 
-class FriendsFragment : Fragment(R.layout.fragment_friends) {
+class FriendsActivity : AppCompatActivity(R.layout.activity_friends) {
 
     private val users: MutableList<User> = mutableListOf()
 
@@ -33,20 +29,12 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-    }
+        viewModel = FriendsViewModel(layoutInflater, this)
+        setContentView(viewModel.binding.root)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        viewModel = FriendsViewModel(inflater, activity)
-
-        requestHandler = FriendsRequestHandler(requireActivity(), viewModel)
+        requestHandler = FriendsRequestHandler(this, viewModel)
         webSocketListener = BoMesWebSocketListener(requestHandler)
         webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
-
-        return viewModel.binding.root
     }
 
     override fun onResume() {

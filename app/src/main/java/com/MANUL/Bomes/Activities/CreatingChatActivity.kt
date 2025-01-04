@@ -1,4 +1,4 @@
-package com.MANUL.Bomes.Fragments
+package com.MANUL.Bomes.Activities
 
 import android.app.Activity
 import android.content.Intent
@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser

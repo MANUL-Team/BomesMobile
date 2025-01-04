@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.MANUL.Bomes.Activities.UserPageActivity
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.User
-import com.MANUL.Bomes.databinding.FriendsItemBinding
+import com.MANUL.Bomes.databinding.ItemFriendsBinding
 import com.bumptech.glide.Glide
 
 class FriendsListAdapter(
@@ -21,7 +21,7 @@ class FriendsListAdapter(
     class ViewHolder(
         itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
-        val binding = FriendsItemBinding.bind(itemView)
+        val binding = ItemFriendsBinding.bind(itemView)
         fun bind(user: User, activity: FragmentActivity?) {
             binding.apply {
                 addUserText.text = user.username
@@ -47,7 +47,7 @@ class FriendsListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.friends_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_friends, parent, false)
         return ViewHolder(view)
     }
 

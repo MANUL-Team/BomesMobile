@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/gradient"
-    tools:context=".Fragments.CreatingChatActivity">
+    tools:context=".Activities.CreatingChatActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView9"

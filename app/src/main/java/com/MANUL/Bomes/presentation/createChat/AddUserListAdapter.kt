@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UserDataKt
-import com.MANUL.Bomes.databinding.AddUserItemBinding
+import com.MANUL.Bomes.databinding.ItemAddUserBinding
 
 class AddUserListAdapter(
     val userAddList: MutableList<CreatingChatUser>,
@@ -27,7 +27,7 @@ class AddUserListAdapter(
     class ViewHolder(
         itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
-        val binding = AddUserItemBinding.bind(itemView)
+        val binding = ItemAddUserBinding.bind(itemView)
         fun bind(position: CreatingChatUser, creatingChatViewModel: CreatingChatViewModel) {
             creatingChatViewModel.addUserViewHolderBind(binding, position)
         }
@@ -35,7 +35,7 @@ class AddUserListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.add_user_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_add_user, parent, false)
         return ViewHolder(view)
     }
 

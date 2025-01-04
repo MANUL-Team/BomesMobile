@@ -6,20 +6,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
-import com.MANUL.Bomes.databinding.AddedUserItemBinding
+import com.MANUL.Bomes.databinding.ItemAddedUserBinding
 
 class AddedUserListAdapter(
     val userAddedList: MutableList<CreatingChatUser>,
     val creatingChatViewModel: CreatingChatViewModel
 ) : RecyclerView.Adapter<AddedUserListAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding = AddedUserItemBinding.bind(itemView)
+        val binding = ItemAddedUserBinding.bind(itemView)
         fun bind(user: CreatingChatUser, creatingChatViewModel: CreatingChatViewModel) = with(binding){
             creatingChatViewModel.addedUserViewHolderBind(binding, user)
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.added_user_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_added_user, parent, false)
         return ViewHolder(view)
     }
 
