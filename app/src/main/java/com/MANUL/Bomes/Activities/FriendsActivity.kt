@@ -1,4 +1,4 @@
-package com.MANUL.Bomes.Fragments
+package com.MANUL.Bomes.Activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

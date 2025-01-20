@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.MANUL.Bomes.Fragments.ChatsFragment;
-import com.MANUL.Bomes.Fragments.FriendsActivity;
 import com.MANUL.Bomes.Fragments.ProfileFragment;
 import com.MANUL.Bomes.Fragments.SettingsFragment;
 import com.MANUL.Bomes.R;
@@ -92,12 +91,14 @@ public class ChatsActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withToolbar(mainToolbar)
                 .withAccountHeader(header)
+                .withSelectedItem(-1)
                 .addDrawerItems(
                         new PrimaryDrawerItem()
                                 .withIconTintingEnabled(true)
                                 .withName("Найти друзей")
                                 .withSelectable(false)
                                 .withIcon(R.drawable.people)
+                                .withSelectable(false)
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -112,6 +113,7 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withName("Создать чат")
                                 .withSelectable(true)
                                 .withIcon(R.drawable.new_chat)
+                                .withSelectable(false)
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -126,6 +128,7 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withName("Профиль")
                                 .withSelectable(true)
                                 .withIcon(R.drawable.human)
+                                .withSelectable(false)
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -140,6 +143,7 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withName("Друзья")
                                 .withSelectable(true)
                                 .withIcon(R.drawable.friends)
+                                .withSelectable(false)
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -154,6 +158,7 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withName("Настройки")
                                 .withSelectable(true)
                                 .withIcon(R.drawable.settings_icon)
+                                .withSelectable(false)
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -217,6 +222,7 @@ public class ChatsActivity extends AppCompatActivity {
     private void switchFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameMainMenu, fragment);
+        fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.commit();
     }
     private void toSplash(){

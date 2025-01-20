@@ -31,7 +31,7 @@
             android:name=".Activities.CreatingChatActivity"
             android:exported="false" />
         <activity
-            android:name=".Fragments.FriendsActivity"
+            android:name=".Activities.FriendsActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.CustomizeStickerHints"
