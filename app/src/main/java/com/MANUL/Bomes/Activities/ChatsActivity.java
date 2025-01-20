@@ -220,7 +220,6 @@ public class ChatsActivity extends AppCompatActivity {
     private void switchFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameMainMenu, fragment);
-        fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.commit();
     }
     private void toSplash(){

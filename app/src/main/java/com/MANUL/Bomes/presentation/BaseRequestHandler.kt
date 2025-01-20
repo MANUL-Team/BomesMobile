@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import com.MANUL.Bomes.Activities.MainActivity
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.Utils.BoMesWebSocket
 import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.RequestEvent
 import okhttp3.OkHttpClient
@@ -16,8 +17,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
 open class BaseRequestHandler(
-    protected val activity: FragmentActivity,
-    private var webSocket: WebSocket
+    protected val activity: FragmentActivity
     ) {
     fun start(obj: UniversalJSONObject) {
         activity.runOnUiThread {
@@ -55,14 +55,5 @@ open class BaseRequestHandler(
         activity.startActivity(intent)
         activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         activity.finish()
-    }
-
-    fun onFailure(listener: WebSocketListener) {
-        activity.runOnUiThread {
-            val client: OkHttpClient = OkHttpClient.Builder().build()
-            val request: Request = NowRequest
-            val handler = Handler()
-            handler.postDelayed({ webSocket = client.newWebSocket(request, listener) }, 1000)
-        }
     }
 }

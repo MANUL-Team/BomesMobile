@@ -13,11 +13,10 @@ import okhttp3.WebSocket
 
 class CreatingChatRequestHandler(
     activity: FragmentActivity,
-    websocket: WebSocket,
     val viewModel: CreatingChatViewModel,
     val userAddList: MutableList<CreatingChatUser>,
     val pathImage: String
-) : BaseRequestHandler(activity, websocket) {
+) : BaseRequestHandler(activity) {
 
     override fun responseReturnFriends(obj: UniversalJSONObject) {
         UserDataKt.users.clear()

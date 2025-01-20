@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.MANUL.Bomes.R
+import com.MANUL.Bomes.Utils.BoMesWebSocket
 import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.RequestCreationFactory
@@ -19,10 +20,6 @@ class FriendsActivity : AppCompatActivity(R.layout.activity_friends) {
     private lateinit var viewModel: FriendsViewModel
 
     private var webSocket: WebSocket? = null
-    private lateinit var webSocketListener: BoMesWebSocketListener
-    private val okHttpClient by lazy {
-        OkHttpClient()
-    }
     private lateinit var requestHandler: FriendsRequestHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,10 +27,9 @@ class FriendsActivity : AppCompatActivity(R.layout.activity_friends) {
         viewModel = FriendsViewModel(layoutInflater, this)
         setContentView(viewModel.binding.root)
 
-        webSocketListener = BoMesWebSocketListener()
-        webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
-        requestHandler = FriendsRequestHandler(this, webSocket!!, viewModel)
-        webSocketListener.setRequestHandler(requestHandler)
+        webSocket = BoMesWebSocket.get()
+        requestHandler = FriendsRequestHandler(this, viewModel)
+        BoMesWebSocketListener.get().setRequestHandler(requestHandler)
     }
 
     override fun onResume() {

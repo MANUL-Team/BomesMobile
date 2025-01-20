@@ -4,11 +4,12 @@ import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.Utils.RequestCreationFactory.Companion.create
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 import com.fasterxml.jackson.databind.ObjectMapper
+import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
-class BoMesWebSocketListener() : WebSocketListener() {
+class BoMesWebSocketListener : WebSocketListener() {
     private val objectMapper by lazy{ ObjectMapper() }
     private var requestHandler: BaseRequestHandler? = null
 
@@ -40,10 +41,18 @@ class BoMesWebSocketListener() : WebSocketListener() {
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
-        requestHandler?.onFailure(this)
+        BoMesWebSocket.reconnect()
     }
 
-    fun getFriends(){
+    fun getFriends(){    }
 
+    companion object{
+        private var webSocketListener: BoMesWebSocketListener? = null
+        fun get(): BoMesWebSocketListener {
+            if (webSocketListener == null) {
+                webSocketListener = BoMesWebSocketListener()
+            }
+            return webSocketListener!!
+        }
     }
 }

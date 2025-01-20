@@ -15,9 +15,9 @@ import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
 import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.Utils.BoMesWebSocket
 import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.FileUtils
-import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.PermissionUtils
 import com.MANUL.Bomes.Utils.RequestCreationFactory.Companion.create
 import com.MANUL.Bomes.Utils.RequestEvent
@@ -27,10 +27,8 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import okhttp3.WebSocket
 import retrofit2.Call
 import retrofit2.Callback
 import java.io.IOException
@@ -39,14 +37,9 @@ class ProfileActivity : AppCompatActivity() {
     private val objectMapper by lazy {
         ObjectMapper()
     }
-
-    private val okHttpClient by lazy {
-        OkHttpClient()
+    private val webSocket by lazy {
+        BoMesWebSocket.get()
     }
-    private val webSocketListener by lazy {
-        BoMesWebSocketListener()
-    }
-    private var webSocket: WebSocket? = null
     private var requestHandler: ProfileRequestHandler? = null
 
     private var avatar: ImageView? = null
@@ -112,11 +105,8 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun connectToServer() {
-        webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
-        if(webSocket != null) {
-            requestHandler = ProfileRequestHandler(this, webSocket!!)
-            webSocketListener.setRequestHandler(requestHandler)
-        }
+            requestHandler = ProfileRequestHandler(this)
+            BoMesWebSocketListener.get().setRequestHandler(requestHandler)
     }
 
     private fun getStoragePermission() {
@@ -181,17 +171,6 @@ class ProfileActivity : AppCompatActivity() {
                 Log.e("Upload error:", t.message!!)
             }
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (webSocket == null) connectToServer()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        webSocket!!.close(1000, null)
-        webSocket = null
     }
 
     override fun finish() {

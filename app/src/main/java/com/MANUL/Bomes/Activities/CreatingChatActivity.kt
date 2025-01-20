@@ -15,6 +15,7 @@ import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.Utils.BoMesWebSocket
 import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.FileUtils
 import com.MANUL.Bomes.Utils.NowRequest
@@ -38,12 +39,7 @@ import java.util.Calendar
 
 
 class CreatingChatActivity : AppCompatActivity() {
-
-    private var webSocketListener: BoMesWebSocketListener? = null
     private var viewModel: CreatingChatViewModel? = null
-    private val okHttpClient by lazy {
-        OkHttpClient()
-    }
     private var webSocket: WebSocket? = null
     private lateinit var requestHandler: CreatingChatRequestHandler
 
@@ -66,11 +62,10 @@ class CreatingChatActivity : AppCompatActivity() {
         viewModel = CreatingChatViewModel(layoutInflater, this)
         setContentView(viewModel?.binding?.root)
 
-        webSocketListener = BoMesWebSocketListener()
-        webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener!!)
+        webSocket = BoMesWebSocket.get()
         requestHandler =
-            CreatingChatRequestHandler(this, webSocket!!, viewModel!!, userAddList, pathImage)
-        webSocketListener?.setRequestHandler(requestHandler)
+            CreatingChatRequestHandler(this, viewModel!!, userAddList, pathImage)
+        BoMesWebSocketListener.get().setRequestHandler(requestHandler)
 
         viewModel?.binding?.apply {
             createChatAvatar.setOnClickListener {
@@ -93,12 +88,6 @@ class CreatingChatActivity : AppCompatActivity() {
     private fun getStoragePermission() {
         if (PermissionUtils.hasPermissions(this)) return
         PermissionUtils.requestPermissions(this, 101)
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        webSocket?.close(1000, null)
     }
 
     private fun uploadAvatar(fileUri: Uri) {

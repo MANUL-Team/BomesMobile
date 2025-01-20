@@ -12,9 +12,8 @@ import com.MANUL.Bomes.presentation.BaseRequestHandler
 import okhttp3.WebSocket
 
 class ProfileRequestHandler(
-    activity: FragmentActivity,
-    webSocket: WebSocket
-) : BaseRequestHandler(activity, webSocket) {
+    activity: FragmentActivity
+) : BaseRequestHandler(activity) {
 
     override fun responseReturnUser(obj: UniversalJSONObject) {
         if (obj.user.identifier == UserData.identifier) {
