@@ -1,5 +1,6 @@
 package com.MANUL.Bomes.Activities
 
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.MANUL.Bomes.R
@@ -45,5 +46,16 @@ class FriendsActivity : AppCompatActivity(R.layout.activity_friends) {
         webSocket?.send(objectMapper.writeValueAsString(obj))
 
         viewModel.adapterUpdate()
+    }
+    override fun finish() {
+        super.finish()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(
+                OVERRIDE_TRANSITION_CLOSE,
+                R.anim.nothing,
+                R.anim.activity_switch_reverse_first
+            )
+        } else
+            overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first)
     }
 }

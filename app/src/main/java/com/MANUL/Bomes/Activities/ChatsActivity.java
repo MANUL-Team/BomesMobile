@@ -22,7 +22,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.MANUL.Bomes.Fragments.ChatsFragment;
 import com.MANUL.Bomes.Fragments.ProfileFragment;
-import com.MANUL.Bomes.Fragments.SettingsFragment;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;
@@ -162,9 +161,9 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        SettingsFragment settingsFragment = new SettingsFragment(ChatsActivity.this);
-                                        switchFragment(settingsFragment);
-                                        mainToolbar.setTitle("Настройки");
+                                        Intent intent = new Intent(ChatsActivity.this, SettingsActivity.class);
+                                        startActivity(intent);
+                                        overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                                         return false;
                                     }
                                 })

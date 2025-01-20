@@ -3,6 +3,7 @@ package com.MANUL.Bomes.Activities
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResult
@@ -10,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.MANUL.Bomes.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.ImportantClasses.ServiceGenerator
+import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.SimpleObjects.UserData
@@ -166,6 +168,18 @@ class CreatingChatActivity : AppCompatActivity() {
             pathImage
         )
         return objectMapper.writeValueAsString(creatingChat)
+    }
+
+    override fun finish() {
+        super.finish()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(
+                OVERRIDE_TRANSITION_CLOSE,
+                R.anim.nothing,
+                R.anim.activity_switch_reverse_first
+            )
+        } else
+            overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first)
     }
 
 }
