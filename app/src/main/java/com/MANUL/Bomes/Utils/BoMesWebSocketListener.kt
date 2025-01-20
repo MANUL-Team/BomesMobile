@@ -1,16 +1,20 @@
 package com.MANUL.Bomes.Utils
 
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.Utils.RequestCreationFactory.Companion.create
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
-class BoMesWebSocketListener(
-    private val requestHandler: BaseRequestHandler,
-) : WebSocketListener() {
+class BoMesWebSocketListener() : WebSocketListener() {
     private val objectMapper by lazy{ ObjectMapper() }
+    private var requestHandler: BaseRequestHandler? = null
+
+    fun setRequestHandler(newRequestHandler: BaseRequestHandler?){
+        requestHandler = newRequestHandler
+    }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
@@ -19,6 +23,9 @@ class BoMesWebSocketListener(
 
         val getFriends = RequestCreationFactory.create(RequestEvent.GetFriends)
         webSocket.send(objectMapper.writeValueAsString(getFriends))
+
+        val loadMe = create(RequestEvent.GetUser)
+        webSocket.send(objectMapper.writeValueAsString(loadMe))
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
@@ -28,10 +35,15 @@ class BoMesWebSocketListener(
             UniversalJSONObject::class.java
         )
 
-        requestHandler.start(obj)
+        requestHandler?.start(obj)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
+        requestHandler?.onFailure(this)
+    }
+
+    fun getFriends(){
+
     }
 }

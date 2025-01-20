@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.MANUL.Bomes.Fragments.ChatsFragment;
-import com.MANUL.Bomes.Fragments.ProfileFragment;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;
@@ -131,9 +130,9 @@ public class ChatsActivity extends AppCompatActivity {
                                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                                     @Override
                                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        ProfileFragment profileFragment = new ProfileFragment(ChatsActivity.this);
-                                        switchFragment(profileFragment);
-                                        mainToolbar.setTitle("Профиль");
+                                        Intent intent = new Intent(ChatsActivity.this, ProfileActivity.class);
+                                        startActivity(intent);
+                                        overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                                         return false;
                                     }
                                 }),
@@ -182,9 +181,9 @@ public class ChatsActivity extends AppCompatActivity {
         profileDrawerItem.withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
             @Override
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                ProfileFragment profileFragment = new ProfileFragment(ChatsActivity.this);
-                switchFragment(profileFragment);
-                mainToolbar.setTitle("Профиль");
+                Intent intent = new Intent(ChatsActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                 return false;
             }
         });

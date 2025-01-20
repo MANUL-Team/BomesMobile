@@ -1,12 +1,9 @@
 package com.MANUL.Bomes.presentation.friends
 
-import android.os.Build
 import android.view.LayoutInflater
-import androidx.appcompat.app.AppCompatActivity.OVERRIDE_TRANSITION_CLOSE
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.MANUL.Bomes.R
 import com.MANUL.Bomes.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.databinding.ActivityFriendsBinding
 

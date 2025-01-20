@@ -9,13 +9,15 @@ import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.SimpleObjects.UserData
 import com.MANUL.Bomes.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.presentation.BaseRequestHandler
+import okhttp3.WebSocket
 
 class CreatingChatRequestHandler(
     activity: FragmentActivity,
+    websocket: WebSocket,
     val viewModel: CreatingChatViewModel,
     val userAddList: MutableList<CreatingChatUser>,
     val pathImage: String
-) : BaseRequestHandler(activity) {
+) : BaseRequestHandler(activity, websocket) {
 
     override fun responseReturnFriends(obj: UniversalJSONObject) {
         UserDataKt.users.clear()

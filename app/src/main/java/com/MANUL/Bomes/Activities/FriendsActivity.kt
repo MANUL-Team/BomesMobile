@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.MANUL.Bomes.R
-import com.MANUL.Bomes.SimpleObjects.User
 import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.NowRequest
 import com.MANUL.Bomes.Utils.RequestCreationFactory
@@ -16,8 +15,6 @@ import okhttp3.OkHttpClient
 import okhttp3.WebSocket
 
 class FriendsActivity : AppCompatActivity(R.layout.activity_friends) {
-
-    private val users: MutableList<User> = mutableListOf()
 
     private lateinit var viewModel: FriendsViewModel
 
@@ -33,9 +30,10 @@ class FriendsActivity : AppCompatActivity(R.layout.activity_friends) {
         viewModel = FriendsViewModel(layoutInflater, this)
         setContentView(viewModel.binding.root)
 
-        requestHandler = FriendsRequestHandler(this, viewModel)
-        webSocketListener = BoMesWebSocketListener(requestHandler)
+        webSocketListener = BoMesWebSocketListener()
         webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
+        requestHandler = FriendsRequestHandler(this, webSocket!!, viewModel)
+        webSocketListener.setRequestHandler(requestHandler)
     }
 
     override fun onResume() {
@@ -47,6 +45,7 @@ class FriendsActivity : AppCompatActivity(R.layout.activity_friends) {
 
         viewModel.adapterUpdate()
     }
+
     override fun finish() {
         super.finish()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

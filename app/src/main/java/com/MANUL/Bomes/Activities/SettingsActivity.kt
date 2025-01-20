@@ -53,13 +53,14 @@ class SettingsActivity : AppCompatActivity() {
                 )
             } else
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-            finish()
+            super.finish()
         }
         backBtn = findViewById(R.id.backBtn)
         backBtn?.setOnClickListener {
             finish()
         }
     }
+
     override fun finish() {
         super.finish()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

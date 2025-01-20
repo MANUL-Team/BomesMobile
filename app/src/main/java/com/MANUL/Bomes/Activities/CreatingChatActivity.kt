@@ -39,8 +39,8 @@ import java.util.Calendar
 
 class CreatingChatActivity : AppCompatActivity() {
 
-    private lateinit var webSocketListener: BoMesWebSocketListener
-    private lateinit var viewModel: CreatingChatViewModel
+    private var webSocketListener: BoMesWebSocketListener? = null
+    private var viewModel: CreatingChatViewModel? = null
     private val okHttpClient by lazy {
         OkHttpClient()
     }
@@ -50,7 +50,7 @@ class CreatingChatActivity : AppCompatActivity() {
     private var pathImage: String = ""
     private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
 
-    val startForResult =
+    private val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri: Uri? = result.data?.data
@@ -64,13 +64,15 @@ class CreatingChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = CreatingChatViewModel(layoutInflater, this)
-        setContentView(viewModel.binding.root)
+        setContentView(viewModel?.binding?.root)
 
-        requestHandler = CreatingChatRequestHandler(this, viewModel, userAddList, pathImage)
-        webSocketListener = BoMesWebSocketListener(requestHandler)
-        webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener)
+        webSocketListener = BoMesWebSocketListener()
+        webSocket = okHttpClient.newWebSocket(NowRequest, webSocketListener!!)
+        requestHandler =
+            CreatingChatRequestHandler(this, webSocket!!, viewModel!!, userAddList, pathImage)
+        webSocketListener?.setRequestHandler(requestHandler)
 
-        viewModel.binding.apply {
+        viewModel?.binding?.apply {
             createChatAvatar.setOnClickListener {
                 getStoragePermission()
                 val mediaPickerIntent = Intent(Intent.ACTION_PICK)
@@ -79,7 +81,7 @@ class CreatingChatActivity : AppCompatActivity() {
             }
 
             buttonCreatingChat.setOnClickListener {
-                val addedUserList = viewModel.getUserAddedListForCreateChat()
+                val addedUserList = viewModel?.getUserAddedListForCreateChat()
                 val request = addedUserList?.let { it1 -> requestCreateChatForm(it1) }
                 if (request != null) {
                     webSocket!!.send(request)
@@ -99,7 +101,7 @@ class CreatingChatActivity : AppCompatActivity() {
         webSocket?.close(1000, null)
     }
 
-    fun uploadAvatar(fileUri: Uri) {
+    private fun uploadAvatar(fileUri: Uri) {
         val service = ServiceGenerator.createService(
             FileUploadService::class.java
         )
@@ -138,17 +140,17 @@ class CreatingChatActivity : AppCompatActivity() {
     private fun processingPhotoUploadRequest(response: Response<ResponseBody>) {
         val objectMapper = ObjectMapper()
         val reply = response.body()!!.string()
-        val obj: UniversalJSONObject = objectMapper.readValue<UniversalJSONObject>(
+        val obj: UniversalJSONObject = objectMapper.readValue(
             reply,
             UniversalJSONObject::class.java
         )
         pathImage = obj.filePath
-        viewModel.insertingImage(obj)
+        viewModel?.insertingImage(obj)
     }
 
-    fun requestCreateChatForm(addedUserList: MutableList<CreatingChatUser>): String {
+    private fun requestCreateChatForm(addedUserList: MutableList<CreatingChatUser>): String {
         val objectMapper by lazy { ObjectMapper() }
-        val addingUsers: Array<String?> = arrayOfNulls<String>(addedUserList.size + 1)
+        val addingUsers: Array<String?> = arrayOfNulls(addedUserList.size + 1)
         var tableName = Calendar.getInstance().time.toString()
         for (i in 0 until addedUserList.size) {
             tableName += "-" + addedUserList[i].user.identifier
@@ -157,13 +159,12 @@ class CreatingChatActivity : AppCompatActivity() {
         addingUsers[addedUserList.size] = UserData.identifier
         tableName += "-" + UserData.identifier
         tableName = UserPageActivity.md5(tableName)
-        //Log.e("requestCreateChatForm", tableName)
 
         val creatingChat = RequestCreationFactory.create(
             RequestEvent.CreateChat,
             tableName,
             addingUsers,
-            viewModel.binding.createChatEditText.text.toString(),
+            viewModel?.binding?.createChatEditText?.text.toString(),
             0,
             pathImage
         )
