@@ -19,6 +19,7 @@ import com.MANUL.Bomes.Utils.BoMesWebSocket
 import com.MANUL.Bomes.Utils.BoMesWebSocketListener
 import com.MANUL.Bomes.Utils.FileUtils
 import com.MANUL.Bomes.Utils.PermissionUtils
+import com.MANUL.Bomes.Utils.RequestCreationFactory
 import com.MANUL.Bomes.Utils.RequestCreationFactory.Companion.create
 import com.MANUL.Bomes.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.profile.ProfileRequestHandler
@@ -105,8 +106,11 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun connectToServer() {
-            requestHandler = ProfileRequestHandler(this)
-            BoMesWebSocketListener.get().setRequestHandler(requestHandler)
+        val loadMe = RequestCreationFactory.create(RequestEvent.GetUser)
+        webSocket.send(objectMapper.writeValueAsString(loadMe))
+
+        requestHandler = ProfileRequestHandler(this)
+        BoMesWebSocketListener.get().setRequestHandler(requestHandler)
     }
 
     private fun getStoragePermission() {
