@@ -228,4 +228,11 @@ public class ChatsActivity extends AppCompatActivity {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
     }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setHeader();
+        setDrawer();
+    }
 }

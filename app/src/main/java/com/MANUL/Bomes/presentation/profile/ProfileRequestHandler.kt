@@ -30,10 +30,8 @@ class ProfileRequestHandler(
         } else if (obj.event == RequestEvent.WithoutMats) {
             UserData.username = obj.name
             UserData.description = obj.description
-            val intent = Intent(activity, ChatsActivity::class.java)
-            activity.startActivity(intent)
-            activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
             activity.finish()
+            activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
     }
 }
