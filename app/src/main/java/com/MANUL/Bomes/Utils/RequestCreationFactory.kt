@@ -21,7 +21,8 @@ class RequestCreationFactory {
                 RequestEvent.GetUser -> factory.getUser()
                 RequestEvent.GetFriends -> factory.getFriends()
                 RequestEvent.GetUsers -> factory.getUsers()
-                RequestEvent.SetChat -> factory.setChat()
+                RequestEvent.OpenChat -> factory.openChat()
+                RequestEvent.CloseChat -> factory.closeChat()
                 RequestEvent.GetStickers -> factory.getStickers()
                 RequestEvent.GetReactions -> factory.getReactions()
                 RequestEvent.GetChatUsers -> factory.getChatUsers()
@@ -132,7 +133,7 @@ class RequestCreationFactory {
         updAvatar.where = UserData.identifier
         updAvatar.variable = "avatar"
         updAvatar.value = argument
-        updAvatar.event = "UpdateValue"
+        updAvatar.event = RequestEvent.UpdateValue
         return updAvatar
     }
 
@@ -141,13 +142,13 @@ class RequestCreationFactory {
         saveData.name = name
         saveData.description = description
         saveData.where = UserData.identifier
-        saveData.event = "UpdateUserData"
+        saveData.event = RequestEvent.UpdateUserData
         return saveData
     }
 
     private fun getUserChats(): UniversalJSONObject {
         val loadChats = UniversalJSONObject()
-        loadChats.event = "GetUserChats"
+        loadChats.event = RequestEvent.GetUserChats
         loadChats.identifier = UserData.identifier
         loadChats.password = UserData.password
         return loadChats
@@ -158,7 +159,7 @@ class RequestCreationFactory {
         removeFriendObj.identifier = UserPageActivity.openedUser.identifier
         removeFriendObj.request_identifier = UserData.identifier
         removeFriendObj.request_password = UserData.password
-        removeFriendObj.event = "RemoveFriend"
+        removeFriendObj.event = RequestEvent.RemoveFriend
         return removeFriendObj
     }
 
@@ -167,7 +168,7 @@ class RequestCreationFactory {
         addFriendObj.identifier = UserPageActivity.openedUser.identifier
         addFriendObj.request_identifier = UserData.identifier
         addFriendObj.request_password = UserData.password
-        addFriendObj.event = "AddFriend"
+        addFriendObj.event = RequestEvent.AddFriend
         return addFriendObj
     }
 
@@ -180,7 +181,7 @@ class RequestCreationFactory {
     ): UniversalJSONObject {
         val createChat = UniversalJSONObject()
         createChat.table_name = tableName
-        createChat.event = "CreateChat"
+        createChat.event = RequestEvent.CreateChat
         createChat.usersToAdd = usersToAdd
         createChat.chat_name = chatName
         createChat.isLocalChat = isLocalChat
@@ -193,7 +194,7 @@ class RequestCreationFactory {
 
     private fun getCurrentAndroidVersion(): UniversalJSONObject {
         val loadVersion = UniversalJSONObject()
-        loadVersion.event = "GetCurrentAndroidVersion"
+        loadVersion.event = RequestEvent.GetCurrentAndroidVersion
         return loadVersion
     }
 
@@ -202,13 +203,13 @@ class RequestCreationFactory {
         regUser.email = ConfirmationUser.email
         regUser.password = ConfirmationUser.password
         regUser.username = ConfirmationUser.username
-        regUser.event = "SendRegCode"
+        regUser.event = RequestEvent.SendRegCode
         return regUser
     }
 
     private fun checkPrefsIdentifier(identifier: String, password: String): UniversalJSONObject {
         val loadMe = UniversalJSONObject()
-        loadMe.event = "GetUser"
+        loadMe.event = RequestEvent.GetUser
         loadMe.identifier = identifier
         loadMe.request_identifier = identifier
         loadMe.request_password = password
@@ -217,7 +218,7 @@ class RequestCreationFactory {
 
     private fun login(email: String, password: String): UniversalJSONObject {
         val sendObj = UniversalJSONObject()
-        sendObj.event = "Login"
+        sendObj.event = RequestEvent.Login
         sendObj.email = email
         sendObj.password = password
         return sendObj
@@ -228,7 +229,7 @@ class RequestCreationFactory {
         val confirmingEmail = UniversalJSONObject()
         confirmingEmail.email = ConfirmationUser.email
         confirmingEmail.code = argument.toInt()
-        confirmingEmail.event = "ConfirmingEmail"
+        confirmingEmail.event = RequestEvent.ConfirmingEmail
         return confirmingEmail
     }
 
@@ -237,7 +238,7 @@ class RequestCreationFactory {
         msg.msgId = id
         msg.sender = UserData.identifier
         msg.chat = UserData.table_name
-        msg.event = "RemoveReaction"
+        msg.event = RequestEvent.RemoveReaction
         return msg
     }
 
@@ -247,7 +248,7 @@ class RequestCreationFactory {
         msg.type = argument
         msg.sender = UserData.identifier
         msg.chat = UserData.table_name
-        msg.event = "AddReaction"
+        msg.event = RequestEvent.AddReaction
         return msg
     }
 
@@ -257,7 +258,7 @@ class RequestCreationFactory {
         msg.password = UserData.password
         msg.id = id
         msg.chat = UserData.table_name
-        msg.event = "DeleteMessage"
+        msg.event = RequestEvent.DeleteMessage
         return msg
     }
 
@@ -268,7 +269,7 @@ class RequestCreationFactory {
         msg.value = argument
         msg.id = id
         msg.chat = UserData.table_name
-        msg.event = "EditMessage"
+        msg.event = RequestEvent.EditMessage
         return msg
     }
 
@@ -278,7 +279,7 @@ class RequestCreationFactory {
         obj.identifier = UserData.identifier
         obj.password = UserData.password
         obj.loadedMessages = argument.toLong()
-        obj.event = "GetChatMessages"
+        obj.event = RequestEvent.GetChatMessages
         return obj
     }
 
@@ -307,7 +308,7 @@ class RequestCreationFactory {
         msg.chat = UserData.table_name
         msg.username = UserData.username
         msg.isRead = 0
-        msg.event = "SendMessage"
+        msg.event = RequestEvent.SendMessage
 
         return msg
     }
@@ -318,7 +319,7 @@ class RequestCreationFactory {
         obj.username = UserData.username
         obj.identifier = UserData.identifier
         obj.typingType = argument
-        obj.event = "Typing"
+        obj.event = RequestEvent.Typing
         return obj
     }
 
@@ -326,20 +327,20 @@ class RequestCreationFactory {
         val readMsg = UniversalJSONObject()
         readMsg.chat = UserData.table_name
         readMsg.id = argument.toLong()
-        readMsg.event = "ReadMessage"
+        readMsg.event = RequestEvent.ReadMessage
         return readMsg
     }
 
     private fun isUserOnline(argument: String): UniversalJSONObject {
         val isUserOnline = UniversalJSONObject()
-        isUserOnline.event = "IsUserOnline"
+        isUserOnline.event = RequestEvent.IsUserOnline
         isUserOnline.identifier = argument
         return isUserOnline
     }
 
     private fun getPartner(argument: String): UniversalJSONObject {
         val loadOther = UniversalJSONObject()
-        loadOther.event = "GetUser"
+        loadOther.event = RequestEvent.GetUser
         loadOther.identifier = argument
         loadOther.request_identifier = UserData.identifier
         loadOther.request_password = UserData.password
@@ -348,7 +349,7 @@ class RequestCreationFactory {
 
     private fun getChatUsers(): UniversalJSONObject {
         val getChatUsers = UniversalJSONObject()
-        getChatUsers.event = "GetChatUsers"
+        getChatUsers.event = RequestEvent.GetChatUsers
         getChatUsers.table_name = UserData.table_name
         getChatUsers.identifier = UserData.identifier
         getChatUsers.password = UserData.password
@@ -357,26 +358,31 @@ class RequestCreationFactory {
 
     private fun getReactions(): UniversalJSONObject {
         val getReactions = UniversalJSONObject()
-        getReactions.event = "GetReactions"
+        getReactions.event = RequestEvent.GetReactions
         return getReactions
     }
 
     private fun getStickers(): UniversalJSONObject {
         val getStickers = UniversalJSONObject()
-        getStickers.event = "GetStickers"
+        getStickers.event = RequestEvent.GetStickers
         return getStickers
     }
 
-    private fun setChat(): UniversalJSONObject {
+    private fun openChat(): UniversalJSONObject {
         val setChat = UniversalJSONObject()
-        setChat.event = "SetChat"
+        setChat.event = RequestEvent.OpenChat
         setChat.chatName = UserData.table_name
+        return setChat
+    }
+    private fun closeChat(): UniversalJSONObject {
+        val setChat = UniversalJSONObject()
+        setChat.event = RequestEvent.CloseChat
         return setChat
     }
 
     private fun getUsers(): UniversalJSONObject {
         val getUsers = UniversalJSONObject()
-        getUsers.event = "GetUsers"
+        getUsers.event = RequestEvent.GetUsers
         getUsers.identifier = UserData.identifier
         getUsers.password = UserData.password
         return getUsers
@@ -384,7 +390,7 @@ class RequestCreationFactory {
 
     private fun getUsers(skip: Long, search: String): UniversalJSONObject{
         val getUsers = UniversalJSONObject()
-        getUsers.event = "GetUsers"
+        getUsers.event = RequestEvent.GetUsers
         getUsers.identifier = UserData.identifier
         getUsers.password = UserData.password
         getUsers.skip = skip
@@ -394,7 +400,7 @@ class RequestCreationFactory {
 
     private fun getFriends(): UniversalJSONObject {
         val getFriends = UniversalJSONObject()
-        getFriends.event = "GetFriends"
+        getFriends.event = RequestEvent.GetFriends
         getFriends.identifier = UserData.identifier
         getFriends.request_identifier = UserData.identifier
         getFriends.request_password = UserData.password
@@ -406,13 +412,13 @@ class RequestCreationFactory {
         setToken.identifier = UserData.identifier
         setToken.password = UserData.password
         setToken.token = token
-        setToken.event = "SetToken"
+        setToken.event = RequestEvent.SetToken
         return setToken
     }
 
     private fun getUser(): UniversalJSONObject {
         val loadMe = UniversalJSONObject()
-        loadMe.event = "GetUser"
+        loadMe.event = RequestEvent.GetUser
         loadMe.identifier = UserData.identifier
         loadMe.request_identifier = UserData.identifier
         loadMe.request_password = UserData.password
@@ -421,7 +427,7 @@ class RequestCreationFactory {
 
     private fun connectUser(): UniversalJSONObject {
         val obj = UniversalJSONObject()
-        obj.event = "ConnectUser"
+        obj.event = RequestEvent.ConnectUser
         obj.identifier = UserData.identifier
         obj.password = UserData.password
         return obj

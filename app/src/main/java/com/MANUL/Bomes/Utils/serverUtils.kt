@@ -1,20 +1,20 @@
 package com.MANUL.Bomes.Utils
 
-import com.MANUL.Bomes.SimpleObjects.User
 import okhttp3.Request
 
 private val BomesRequest = Request.Builder().url("wss://bomes.ru:8000").build()
 private val TestServerRequest = Request.Builder().url("ws://192.168.31.55:8000").build()
 
 @JvmField
-val NowRequest = BomesRequest
+val NowRequest = TestServerRequest
 
 object RequestEvent{
     const val ConnectUser = "ConnectUser"
     const val GetUser = "GetUser"
     const val GetFriends = "GetFriends"
     const val GetUsers = "GetUsers"
-    const val SetChat = "SetChat"
+    const val OpenChat = "OpenChat"
+    const val CloseChat = "CloseChat"
     const val GetStickers = "GetStickers"
     const val GetReactions = "GetReactions"
     const val GetChatUsers = "GetChatUsers"

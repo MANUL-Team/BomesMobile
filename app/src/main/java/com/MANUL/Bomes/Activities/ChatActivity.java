@@ -373,8 +373,8 @@ public class ChatActivity extends AppCompatActivity {
                             UniversalJSONObject loadMe = RequestCreationFactory.create(RequestEvent.GetUser);
                             webSocket.send(objectMapper.writeValueAsString(loadMe));
 
-                            UniversalJSONObject setChat = RequestCreationFactory.create(RequestEvent.SetChat);
-                            webSocket.send(objectMapper.writeValueAsString(setChat));
+                            UniversalJSONObject openChat = RequestCreationFactory.create(RequestEvent.OpenChat);
+                            webSocket.send(objectMapper.writeValueAsString(openChat));
 
                             UniversalJSONObject getStickers = RequestCreationFactory.create(RequestEvent.GetStickers);
                             webSocket.send(objectMapper.writeValueAsString(getStickers));
@@ -1051,5 +1051,16 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            UniversalJSONObject closeChat = RequestCreationFactory.create(RequestEvent.CloseChat);
+            webSocket.send(objectMapper.writeValueAsString(closeChat));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        super.onDestroy();
     }
 }
