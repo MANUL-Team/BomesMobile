@@ -227,8 +227,11 @@ public class ChatsFragment extends Fragment {
     @Override
     public void onResume() {
         pause = false;
-        if (webSocket == null)
-            connectToServer();
+        if (webSocket != null) {
+            webSocket.close(1000, null);
+            webSocket = null;
+        }
+        connectToServer();
         if (UserData.identifier == null){
             Intent intent = new Intent(activity, SplashScreen.class);
             activity.startActivity(intent);

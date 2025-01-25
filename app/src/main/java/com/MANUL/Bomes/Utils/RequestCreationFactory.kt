@@ -371,7 +371,7 @@ class RequestCreationFactory {
     private fun openChat(): UniversalJSONObject {
         val setChat = UniversalJSONObject()
         setChat.event = RequestEvent.OpenChat
-        setChat.chatName = UserData.table_name
+        setChat.chat_name = UserData.table_name
         return setChat
     }
     private fun closeChat(): UniversalJSONObject {

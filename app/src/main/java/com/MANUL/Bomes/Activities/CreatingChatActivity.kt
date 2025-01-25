@@ -64,7 +64,7 @@ class CreatingChatActivity : AppCompatActivity() {
 
         webSocket = BoMesWebSocket.get()
         requestHandler =
-            CreatingChatRequestHandler(this, viewModel!!, userAddList, pathImage)
+            CreatingChatRequestHandler(this, viewModel!!, pathImage)
         BoMesWebSocketListener.get().setRequestHandler(requestHandler)
 
         viewModel?.binding?.apply {
