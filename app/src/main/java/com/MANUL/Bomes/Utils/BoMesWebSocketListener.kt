@@ -20,9 +20,6 @@ class BoMesWebSocketListener : WebSocketListener() {
         super.onOpen(webSocket, response)
         val obj = RequestCreationFactory.create(RequestEvent.ConnectUser)
         webSocket.send(objectMapper.writeValueAsString(obj))
-
-        val getFriends = RequestCreationFactory.create(RequestEvent.GetFriends)
-        webSocket.send(objectMapper.writeValueAsString(getFriends))
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {

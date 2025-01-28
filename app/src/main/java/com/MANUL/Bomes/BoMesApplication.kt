@@ -6,6 +6,6 @@ import com.MANUL.Bomes.Utils.BoMesWebSocket
 class BoMesApplication: Application() {
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        BoMesWebSocket.close()
+//        BoMesWebSocket.close()
     }
 }

@@ -40,11 +40,12 @@ import java.util.Calendar
 
 class CreatingChatActivity : AppCompatActivity() {
     private var viewModel: CreatingChatViewModel? = null
-    private var webSocket: WebSocket? = null
+    private val webSocket by lazy{
+        BoMesWebSocket.get()
+    }
     private lateinit var requestHandler: CreatingChatRequestHandler
 
     private var pathImage: String = ""
-    private val userAddList: MutableList<CreatingChatUser> = mutableListOf()
 
     private val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -59,13 +60,16 @@ class CreatingChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val objectMapper = ObjectMapper()
         viewModel = CreatingChatViewModel(layoutInflater, this)
         setContentView(viewModel?.binding?.root)
 
-        webSocket = BoMesWebSocket.get()
         requestHandler =
             CreatingChatRequestHandler(this, viewModel!!, pathImage)
         BoMesWebSocketListener.get().setRequestHandler(requestHandler)
+
+        val obj = RequestCreationFactory.create(RequestEvent.GetFriends)
+        webSocket?.send(objectMapper.writeValueAsString(obj))
 
         viewModel?.binding?.apply {
             createChatAvatar.setOnClickListener {
@@ -79,7 +83,10 @@ class CreatingChatActivity : AppCompatActivity() {
                 val addedUserList = viewModel?.getUserAddedListForCreateChat()
                 val request = addedUserList?.let { it1 -> requestCreateChatForm(it1) }
                 if (request != null) {
-                    webSocket!!.send(request)
+                    webSocket.send(request)
+                }
+                else{
+                    Log.e("WEBSOCKET ERROR!", "WEBSOCKET ERROR!");
                 }
             }
         }
