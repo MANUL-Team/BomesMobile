@@ -71,15 +71,15 @@ class ProfileActivity : AppCompatActivity() {
             startActivityForResult(mediaPickerIntent, GALLERY_REQUEST)
         }
         saveChanges?.setOnClickListener {
-            val saveData = create(
+            val saveData = RequestCreationFactory.create(
                 RequestEvent.UpdateUserData,
-                username?.getText().toString().trim { it <= ' ' },
-                description?.getText().toString().trim { it <= ' ' },
+                username?.text.toString(),
+                description?.text.toString(),
                 null
             )
-            if (!saveData!!.name.isEmpty()) {
+            if (saveData != null) {
                 try {
-                    webSocket!!.send(objectMapper.writeValueAsString(saveData))
+                    webSocket.send(objectMapper.writeValueAsString(saveData))
                 } catch (e: JsonProcessingException) {
                     throw RuntimeException(e)
                 }
@@ -164,7 +164,7 @@ class ProfileActivity : AppCompatActivity() {
                             .into(avatar!!)
 
                         val updAvatar = create(RequestEvent.UpdateValue, obj.filePath)
-                        webSocket!!.send(objectMapper.writeValueAsString(updAvatar))
+                        webSocket.send(objectMapper.writeValueAsString(updAvatar))
                     } catch (e: IOException) {
                         throw RuntimeException(e)
                     }

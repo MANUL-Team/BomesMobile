@@ -141,7 +141,7 @@ class RequestCreationFactory {
         val saveData = UniversalJSONObject()
         saveData.name = name
         saveData.description = description
-        saveData.where = UserData.identifier
+        saveData.identifier = UserData.identifier
         saveData.event = RequestEvent.UpdateUserData
         return saveData
     }
