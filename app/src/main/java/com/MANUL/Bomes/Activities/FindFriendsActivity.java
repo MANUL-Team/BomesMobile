@@ -216,4 +216,11 @@ public class FindFriendsActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        webSocket.close(1000, null);
+        webSocket = null;
+    }
 }

@@ -50,7 +50,6 @@ public class ChatsFragment extends Fragment {
     WebSocket webSocket;
     ChatsActivity activity;
 
-
     RecyclerView chatsRecycler;
     ChatsAdapter adapter;
     ArrayList<Chat> chats = new ArrayList<>();
@@ -78,7 +77,6 @@ public class ChatsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
-        connectToServer();
     }
 
     public void init(View view){
@@ -248,11 +246,17 @@ public class ChatsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         pause = true;
+        if (webSocket != null) {
+            webSocket.close(1000, null);
+            webSocket = null;
+        }
     }
     @Override
     public void onStop() {
         super.onStop();
-        webSocket.close(1000, null);
-        webSocket = null;
+        if (webSocket != null) {
+            webSocket.close(1000, null);
+            webSocket = null;
+        }
     }
 }
