@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.MANUL.Bomes.R;
-import com.MANUL.Bomes.SimpleObjects.ConfirmationUser;
 import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject;
 import com.MANUL.Bomes.SimpleObjects.UserData;
 import com.MANUL.Bomes.Utils.RequestCreationFactory;
@@ -54,7 +53,7 @@ public class CodeConfirmActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int code = Integer.parseInt(codeEditText.getText().toString());
 
-                UniversalJSONObject confirmingEmail = RequestCreationFactory.create(RequestEvent.ConfirmingEmail, Integer.toString(code));
+                UniversalJSONObject confirmingEmail = RequestCreationFactory.create(RequestEvent.ConfirmEmail, Integer.toString(code));
                 try {
                     webSocket.send(objectMapper.writeValueAsString(confirmingEmail));
                 } catch (JsonProcessingException e) {

@@ -68,7 +68,7 @@ public class UniversalJSONObject {
     public long skip;
     public String search;
     public String searchingName;
-
+    public String data;
 
     public long getLastUpdate(){
         return lastUpdate;

@@ -64,12 +64,11 @@ public class FindFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-                overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first);
             }
         });
 
         searched_users_recycler = findViewById(R.id.searched_users_recycler);
-        adapter = new FindFriendsAdapter(FindFriendsActivity.this, users);
+        adapter = new FindFriendsAdapter(FindFriendsActivity.this, FindFriendsActivity.this, users);
         layoutManager = new LinearLayoutManager(this);
         searched_users_recycler.setLayoutManager(layoutManager);
         searched_users_recycler.setAdapter(adapter);
@@ -222,5 +221,11 @@ public class FindFriendsActivity extends AppCompatActivity {
         super.onDestroy();
         webSocket.close(1000, null);
         webSocket = null;
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first);
     }
 }

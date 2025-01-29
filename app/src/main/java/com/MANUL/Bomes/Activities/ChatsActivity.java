@@ -39,6 +39,7 @@ public class ChatsActivity extends AppCompatActivity {
     AccountHeader header;
     Drawer drawer;
     SharedPreferences prefs;
+    public static ChatsActivity Instance;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -51,6 +52,7 @@ public class ChatsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Instance = this;
         setContentView(R.layout.activity_chats);
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.blue));
 
@@ -198,6 +200,7 @@ public class ChatsActivity extends AppCompatActivity {
     public void openChat(){
         Intent intent = new Intent(ChatsActivity.this, ChatActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
     }
     private void askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)
@@ -234,5 +237,6 @@ public class ChatsActivity extends AppCompatActivity {
         super.onRestart();
         setHeader();
         setDrawer();
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.blue));
     }
 }

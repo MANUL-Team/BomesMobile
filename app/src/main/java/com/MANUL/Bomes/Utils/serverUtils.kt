@@ -6,7 +6,7 @@ private val BomesRequest = Request.Builder().url("wss://bomes.ru:8000").build()
 private val TestServerRequest = Request.Builder().url("ws://192.168.31.55:8000").build()
 
 @JvmField
-val NowRequest = TestServerRequest
+val NowRequest = BomesRequest
 
 object RequestEvent{
     const val ConnectUser = "ConnectUser"
@@ -18,7 +18,7 @@ object RequestEvent{
     const val GetStickers = "GetStickers"
     const val GetReactions = "GetReactions"
     const val GetChatUsers = "GetChatUsers"
-    const val SendRegCode = "SendRegCode"
+    const val RegisterUser = "RegisterUser"
     const val GetCurrentAndroidVersion = "GetCurrentAndroidVersion"
     const val AddFriend = "AddFriend"
     const val RemoveFriend = "RemoveFriend"
@@ -29,7 +29,7 @@ object RequestEvent{
     const val ReadMessage = "ReadMessage"
     const val Typing = "Typing"
     const val GetChatMessages = "GetChatMessages"
-    const val ConfirmingEmail = "ConfirmingEmail"
+    const val ConfirmEmail = "ConfirmEmail"
     const val UpdateValue = "UpdateValue"
     const val EditMessage = "EditMessage"
     const val DeleteMessage = "DeleteMessage"

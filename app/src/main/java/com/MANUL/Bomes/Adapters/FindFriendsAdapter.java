@@ -1,5 +1,6 @@
 package com.MANUL.Bomes.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -23,8 +24,10 @@ public class FindFriendsAdapter extends RecyclerView.Adapter<FindFriendsViewHold
     private ArrayList<User> users;
     private Context context;
     private LayoutInflater inflater;
+    private Activity activity;
 
-    public FindFriendsAdapter(Context context, ArrayList<User> users){
+    public FindFriendsAdapter(Activity activity, Context context, ArrayList<User> users){
+        this.activity = activity;
         this.context = context;
         this.users = users;
         inflater = LayoutInflater.from(context);
@@ -54,6 +57,7 @@ public class FindFriendsAdapter extends RecyclerView.Adapter<FindFriendsViewHold
                 UserPageActivity.openedUser = user;
                 Intent intent = new Intent(context, UserPageActivity.class);
                 context.startActivity(intent);
+                activity.overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
             }
         });
     }

@@ -26,7 +26,7 @@ class RequestCreationFactory {
                 RequestEvent.GetStickers -> factory.getStickers()
                 RequestEvent.GetReactions -> factory.getReactions()
                 RequestEvent.GetChatUsers -> factory.getChatUsers()
-                RequestEvent.SendRegCode -> factory.sendRegCode()
+                RequestEvent.RegisterUser -> factory.sendRegCode()
                 RequestEvent.GetCurrentAndroidVersion -> factory.getCurrentAndroidVersion()
                 RequestEvent.AddFriend-> factory.addFriend()
                 RequestEvent.RemoveFriend-> factory.removeFriend()
@@ -47,7 +47,7 @@ class RequestCreationFactory {
                 RequestEvent.ReadMessage -> factory.readMessage(argument)
                 RequestEvent.Typing -> factory.typing(argument)
                 RequestEvent.GetChatMessages -> factory.getChatMessages(argument)
-                RequestEvent.ConfirmingEmail -> factory.confirmingEmail(argument)
+                RequestEvent.ConfirmEmail -> factory.confirmingEmail(argument)
                 RequestEvent.UpdateValue-> factory.updateValue(argument)
                 else -> {
                     Log.e("RequestCreationFactory", "there is no event")
@@ -203,7 +203,7 @@ class RequestCreationFactory {
         regUser.email = ConfirmationUser.email
         regUser.password = ConfirmationUser.password
         regUser.username = ConfirmationUser.username
-        regUser.event = RequestEvent.SendRegCode
+        regUser.event = RequestEvent.RegisterUser
         return regUser
     }
 
@@ -229,7 +229,7 @@ class RequestCreationFactory {
         val confirmingEmail = UniversalJSONObject()
         confirmingEmail.email = ConfirmationUser.email
         confirmingEmail.code = argument.toInt()
-        confirmingEmail.event = RequestEvent.ConfirmingEmail
+        confirmingEmail.event = RequestEvent.ConfirmEmail
         return confirmingEmail
     }
 

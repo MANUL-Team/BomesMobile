@@ -90,7 +90,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 ConfirmationUser.password = password;
                 ConfirmationUser.username = username;
 
-                UniversalJSONObject regUser = RequestCreationFactory.create(RequestEvent.SendRegCode);
+                UniversalJSONObject regUser = RequestCreationFactory.create(RequestEvent.RegisterUser);
                 try {
                     webSocket.send(objectMapper.writeValueAsString(regUser));
                 } catch (JsonProcessingException e) {

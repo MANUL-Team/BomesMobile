@@ -83,7 +83,7 @@ class ProfileActivity : AppCompatActivity() {
                 } catch (e: JsonProcessingException) {
                     throw RuntimeException(e)
                 }
-            } else Toast.makeText(this, "Поле имени не может быть пустым!", Toast.LENGTH_SHORT)
+            } else Toast.makeText(this, "Поля не могут быть пустыми!", Toast.LENGTH_SHORT)
                 .show()
         }
 

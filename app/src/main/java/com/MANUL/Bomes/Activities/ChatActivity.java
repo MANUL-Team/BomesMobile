@@ -385,7 +385,7 @@ public class ChatActivity extends AppCompatActivity {
                             reactions.clear();
 
                             if (UserData.isLocalChat == 0) {
-                                UniversalJSONObject getChatUsers = RequestCreationFactory.create(RequestEvent.GetUserChats);
+                                UniversalJSONObject getChatUsers = RequestCreationFactory.create(RequestEvent.GetChatUsers);
                                 webSocket.send(objectMapper.writeValueAsString(getChatUsers));
                             }
 
@@ -657,6 +657,7 @@ public class ChatActivity extends AppCompatActivity {
                     UserPageActivity.openedUser = openedUser;
                     Intent intent = new Intent(ChatActivity.this, UserPageActivity.class);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                 }
             }
         });
@@ -1062,5 +1063,10 @@ public class ChatActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
         super.onDestroy();
+    }
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first);
     }
 }

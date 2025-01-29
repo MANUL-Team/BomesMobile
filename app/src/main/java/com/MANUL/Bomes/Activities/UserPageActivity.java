@@ -75,6 +75,7 @@ public class UserPageActivity extends AppCompatActivity {
                     PhotoPlayer.PHOTO_URL = "media/icon.png";
                     Intent intent = new Intent(UserPageActivity.this, PhotoPlayer.class);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                 }
             });
         } else {
@@ -85,6 +86,7 @@ public class UserPageActivity extends AppCompatActivity {
                     PhotoPlayer.PHOTO_URL = openedUser.avatar;
                     Intent intent = new Intent(UserPageActivity.this, PhotoPlayer.class);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                 }
             });
         }
@@ -225,6 +227,7 @@ public class UserPageActivity extends AppCompatActivity {
                                 Intent intent = new Intent(UserPageActivity.this, ChatActivity.class);
                                 startActivity(intent);
                                 finish();
+                                overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                                 webSocket.close(1000, null);
                             }
                         } catch (JsonProcessingException e) {
@@ -324,5 +327,10 @@ public class UserPageActivity extends AppCompatActivity {
     protected void onDestroy() {
         webSocket.close(1000, null);
         super.onDestroy();
+    }
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first);
     }
 }

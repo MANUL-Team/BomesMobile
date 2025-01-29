@@ -28,6 +28,7 @@ class SettingsActivity : AppCompatActivity() {
                 SelectStickerForHints::class.java
             )
             startActivity(intent)
+            overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing)
         }
         exitFromAccountSettings = findViewById(R.id.exit_from_account_settings)
         exitFromAccountSettings?.setOnClickListener {
@@ -45,15 +46,11 @@ class SettingsActivity : AppCompatActivity() {
             prefs.edit().putString("identifier", "none").apply()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(
-                    OVERRIDE_TRANSITION_CLOSE,
-                    android.R.anim.fade_in,
-                    android.R.anim.fade_out
-                )
-            } else
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             super.finish()
+            if (ChatsActivity.Instance != null){
+                ChatsActivity.Instance.finish()
+            }
         }
         backBtn = findViewById(R.id.backBtn)
         backBtn?.setOnClickListener {

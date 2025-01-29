@@ -38,4 +38,9 @@ public class VideoPlayer extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first);
+    }
 }

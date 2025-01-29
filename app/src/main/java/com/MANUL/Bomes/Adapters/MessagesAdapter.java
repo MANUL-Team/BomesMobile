@@ -329,6 +329,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         PhotoPlayer.PHOTO_URL = message.value;
                         Intent intent = new Intent(context, PhotoPlayer.class);
                         activity.startActivity(intent);
+                        activity.overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                     }
                 });
                 break;
@@ -344,6 +345,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         VideoPlayer.Video_URL = message.value;
                         Intent intent = new Intent(context, VideoPlayer.class);
                         activity.startActivity(intent);
+                        activity.overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                     }
                 });
                 break;
