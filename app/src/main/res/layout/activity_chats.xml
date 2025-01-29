@@ -14,11 +14,12 @@
         android:layout_height="60dp"
         android:background="#33000000"
         android:elevation="4dp"
+        android:theme="@style/Theme.Bomes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@color/white"
         app:subtitleTextColor="@color/white"
+        app:titleTextColor="@color/white"
         tools:ignore="MissingConstraints" />
 
     <FrameLayout
