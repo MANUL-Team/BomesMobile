@@ -1,0 +1,45 @@
+package com.MANUL.Bomes.domain.SimpleObjects;
+
+import android.view.View;
+
+import com.MANUL.Bomes.presentation.adapters.MessageViewHolder;
+
+public class Message {
+    public String username;
+    public String dataType;
+    public String value;
+    public String reply;
+    public String avatar;
+    public int isRead;
+    public long time;
+    public long id;
+    public String sender;
+    public UniversalJSONObject[] reactions;
+    public View holder;
+    public MessageViewHolder viewHolder;
+
+    public Message(String username, String dataType, String value, String reply, int isRead, long time, long id, String sender, UniversalJSONObject[] reactions){
+        this.username = username;
+        this.dataType = dataType;
+        this.value = value;
+        this.reply = reply;
+        this.isRead = isRead;
+        this.time = time;
+        this.id = id;
+        this.sender = sender;
+        this.reactions = reactions;
+        this.avatar = "";
+    }
+    public Message(String username, String dataType, String value, String reply, int isRead, long time, long id, String sender, UniversalJSONObject[] reactions, String avatar){
+        this.username = username;
+        this.dataType = dataType;
+        this.value = value;
+        this.reply = reply;
+        this.isRead = isRead;
+        this.time = time;
+        this.id = id;
+        this.sender = sender;
+        this.reactions = reactions;
+        this.avatar = avatar;
+    }
+}

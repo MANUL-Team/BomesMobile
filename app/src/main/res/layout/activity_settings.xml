@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/gradient"
-    tools:context=".Activities.SettingsActivity">
+    tools:context=".presentation.view.activities.SettingsActivity">
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView9"
         android:layout_width="match_parent"

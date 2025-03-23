@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#252525"
-    tools:context=".Activities.PhotoPlayer">
+    tools:context=".presentation.view.activities.PhotoPlayer">
 
     <com.ortiz.touchview.TouchImageView
         android:id="@+id/scaling_image"

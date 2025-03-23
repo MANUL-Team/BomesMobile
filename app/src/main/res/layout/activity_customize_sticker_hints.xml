@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
-    tools:context=".Activities.CustomizeStickerHints">
+    tools:context=".presentation.view.activities.CustomizeStickerHints">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"

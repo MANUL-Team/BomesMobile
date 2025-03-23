@@ -1,0 +1,57 @@
+package com.MANUL.Bomes.presentation.adapters;
+
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.MANUL.Bomes.domain.SimpleObjects.Message;
+import com.MANUL.Bomes.R;
+
+public class MessageViewHolder extends RecyclerView.ViewHolder {
+    TextView usernameMsg, textValueMsg, timeMsg, replyText, audioTimeText, date_text;
+    ConstraintLayout messageLayout, messageInnerLayout;
+    ImageView imageMsg, stickerMsg, isReadMsg, audio_display_controls, avatarImageMessage;
+    CardView messageCard, replyCard, imageCard, videoCard, audioPlayerCard, playAudioCard, touchEventer, moveCard, reactionsHolder, avatarCardMessage;
+    LinearLayout reactionsLayout;
+    public Message message;
+    public boolean drag, move, isScroll;
+    public float dragX, dragY, startPosX;
+    public float diffX;
+    public boolean isMyMessage;
+    public boolean replyBack = false;
+    public long touchTime;
+
+    public MessageViewHolder(@NonNull View itemView) {
+        super(itemView);
+        usernameMsg = itemView.findViewById(R.id.usernameMsg);
+        textValueMsg = itemView.findViewById(R.id.textValueMsg);
+        timeMsg = itemView.findViewById(R.id.timeMsg);
+        messageLayout = itemView.findViewById(R.id.messageLayout);
+        imageMsg = itemView.findViewById(R.id.imageMsg);
+        stickerMsg = itemView.findViewById(R.id.stickerMsg);
+        isReadMsg = itemView.findViewById(R.id.isReadMsg);
+        messageCard = itemView.findViewById(R.id.messageCard);
+        replyCard = itemView.findViewById(R.id.replyCard);
+        replyText = itemView.findViewById(R.id.replyText);
+        imageCard = itemView.findViewById(R.id.imageCard);
+        videoCard = itemView.findViewById(R.id.videoCard);
+        audioPlayerCard = itemView.findViewById(R.id.audioPlayerCard);
+        playAudioCard = itemView.findViewById(R.id.playAudioCard);
+        audioTimeText = itemView.findViewById(R.id.audioTimeText);
+        audio_display_controls = itemView.findViewById(R.id.audio_display_controls);
+        touchEventer = itemView.findViewById(R.id.touchEventer);
+        moveCard = itemView.findViewById(R.id.moveCard);
+        messageInnerLayout = itemView.findViewById(R.id.messageInnerLayout);
+        reactionsHolder = itemView.findViewById(R.id.reactionsHolder);
+        reactionsLayout = itemView.findViewById(R.id.reactionsLayout);
+        date_text = itemView.findViewById(R.id.date_text);
+        avatarCardMessage = itemView.findViewById(R.id.avatarCardMessage);
+        avatarImageMessage = itemView.findViewById(R.id.avatarImageMessage);
+    }
+}

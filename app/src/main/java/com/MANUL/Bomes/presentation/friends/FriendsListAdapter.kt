@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.MANUL.Bomes.Activities.UserPageActivity
+import com.MANUL.Bomes.presentation.view.activities.UserPageActivity
 import com.MANUL.Bomes.R
-import com.MANUL.Bomes.SimpleObjects.User
+import com.MANUL.Bomes.domain.SimpleObjects.User
 import com.MANUL.Bomes.databinding.ItemFriendsBinding
 import com.bumptech.glide.Glide
 

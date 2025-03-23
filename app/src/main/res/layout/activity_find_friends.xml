@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
-    tools:context=".Activities.FindFriendsActivity">
+    tools:context=".presentation.view.activities.FindFriendsActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView9"

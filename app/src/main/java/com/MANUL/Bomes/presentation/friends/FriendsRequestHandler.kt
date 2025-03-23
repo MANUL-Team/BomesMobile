@@ -1,7 +1,7 @@
 package com.MANUL.Bomes.presentation.friends
 
 import androidx.fragment.app.FragmentActivity
-import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 
 class FriendsRequestHandler(

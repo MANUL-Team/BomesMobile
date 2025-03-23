@@ -4,12 +4,12 @@ import android.R
 import android.content.Intent
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
-import com.MANUL.Bomes.Activities.MainActivity
-import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
-import com.MANUL.Bomes.SimpleObjects.User
-import com.MANUL.Bomes.SimpleObjects.UserData
-import com.MANUL.Bomes.SimpleObjects.UserDataKt
-import com.MANUL.Bomes.Utils.RequestEvent
+import com.MANUL.Bomes.presentation.view.activities.MainActivity
+import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.domain.SimpleObjects.User
+import com.MANUL.Bomes.domain.SimpleObjects.UserData
+import com.MANUL.Bomes.domain.SimpleObjects.UserDataKt
+import com.MANUL.Bomes.domain.Utils.RequestEvent
 
 open class BaseRequestHandler(
     protected val activity: FragmentActivity

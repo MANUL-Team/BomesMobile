@@ -26,35 +26,35 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Activities.ProfileActivity"
+            android:name=".presentation.view.activities.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.SettingsActivity"
+            android:name=".presentation.view.activities.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.FindFriendsActivity"
+            android:name=".presentation.view.activities.FindFriendsActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.CreatingChatActivity"
+            android:name=".presentation.view.activities.CreatingChatActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.FriendsActivity"
+            android:name=".presentation.view.activities.FriendsActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.CustomizeStickerHints"
+            android:name=".presentation.view.activities.CustomizeStickerHints"
             android:exported="false" />
         <activity
-            android:name=".Activities.SelectStickerForHints"
+            android:name=".presentation.view.activities.SelectStickerForHints"
             android:exported="false" />
         <activity
-            android:name=".Activities.UpgradeBomesActivity"
+            android:name=".presentation.view.activities.UpgradeBomesActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.PhotoPlayer"
+            android:name=".presentation.view.activities.PhotoPlayer"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".Activities.SplashScreen"
+            android:name=".presentation.view.activities.SplashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -63,21 +63,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.CodeConfirmActivity"
+            android:name=".presentation.view.activities.CodeConfirmActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.RegistrationActivity"
+            android:name=".presentation.view.activities.RegistrationActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.UserPageActivity"
+            android:name=".presentation.view.activities.UserPageActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.VideoPlayer"
+            android:name=".presentation.view.activities.VideoPlayer"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
 
         <service
-            android:name=".ImportantClasses.NotificationService"
+            android:name=".domain.ImportantClasses.ImportantClasses.NotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -85,19 +85,19 @@
         </service>
 
         <activity
-            android:name=".Activities.ChatActivity"
+            android:name=".presentation.view.activities.ChatActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".Activities.ChatsActivity"
+            android:name=".presentation.view.activities.ChatsActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".Activities.UserInfoActivity"
+            android:name=".presentation.view.activities.UserInfoActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".presentation.view.activities.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity

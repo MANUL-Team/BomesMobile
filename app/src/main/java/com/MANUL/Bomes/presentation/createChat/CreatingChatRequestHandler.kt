@@ -2,9 +2,9 @@ package com.MANUL.Bomes.presentation.createChat
 
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
-import com.MANUL.Bomes.Activities.ChatActivity
-import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
-import com.MANUL.Bomes.SimpleObjects.UserData
+import com.MANUL.Bomes.presentation.view.activities.ChatActivity
+import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.domain.SimpleObjects.UserData
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 
 class CreatingChatRequestHandler(

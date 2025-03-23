@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.MANUL.Bomes.R
-import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
+import com.MANUL.Bomes.domain.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.databinding.ItemAddedUserBinding
 
 class AddedUserListAdapter(

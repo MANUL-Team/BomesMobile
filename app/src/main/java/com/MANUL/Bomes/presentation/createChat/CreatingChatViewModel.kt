@@ -1,18 +1,15 @@
 package com.MANUL.Bomes.presentation.createChat
 
 import android.content.res.Configuration
-import android.os.Build
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity.OVERRIDE_TRANSITION_CLOSE
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.MANUL.Bomes.R
-import com.MANUL.Bomes.SimpleObjects.CreatingChatUser
-import com.MANUL.Bomes.SimpleObjects.UniversalJSONObject
-import com.MANUL.Bomes.SimpleObjects.UserDataKt
+import com.MANUL.Bomes.domain.SimpleObjects.CreatingChatUser
+import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.domain.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.databinding.ItemAddUserBinding
 import com.MANUL.Bomes.databinding.ItemAddedUserBinding
 import com.MANUL.Bomes.databinding.ActivityCreatingChatBinding
