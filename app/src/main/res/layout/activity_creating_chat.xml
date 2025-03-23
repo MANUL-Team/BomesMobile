@@ -107,8 +107,9 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/tilda_sans_vf"
                 android:hint="Введите название чата..."
-                android:textColorHint="@color/gray"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="@color/gray" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView

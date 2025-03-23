@@ -124,4 +124,9 @@ public class CustomizeStickerHints extends AppCompatActivity {
     private void saveData(){
         preferences.edit().putString(String.valueOf(stickerId), constructData()).apply();
     }
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.nothing, R.anim.activity_switch_reverse_first);
+    }
 }

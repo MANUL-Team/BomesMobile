@@ -95,6 +95,7 @@ public class SelectStickerForHints extends AppCompatActivity {
                                             CustomizeStickerHints.stickerId = stickerId;
                                             Intent intent = new Intent(SelectStickerForHints.this, CustomizeStickerHints.class);
                                             startActivity(intent);
+                                            overridePendingTransition(R.anim.activity_switch_animation_first, R.anim.nothing);
                                         }
                                     });
                                     stickers_flexbox.addView(view);
