@@ -15,8 +15,8 @@ import com.MANUL.Bomes.R
 import com.MANUL.Bomes.domain.SimpleObjects.CreatingChatUser
 import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.domain.SimpleObjects.UserData
-import com.MANUL.Bomes.domain.Utils.BoMesWebSocket
-import com.MANUL.Bomes.domain.Utils.BoMesWebSocketListener
+import com.MANUL.Bomes.data.webSocket.BoMesWebSocket
+import com.MANUL.Bomes.data.webSocket.BoMesWebSocketListener
 import com.MANUL.Bomes.domain.Utils.FileUtils
 import com.MANUL.Bomes.domain.Utils.PermissionUtils
 import com.MANUL.Bomes.domain.Utils.RequestCreationFactory

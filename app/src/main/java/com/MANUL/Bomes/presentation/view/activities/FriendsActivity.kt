@@ -4,8 +4,8 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.MANUL.Bomes.R
-import com.MANUL.Bomes.domain.Utils.BoMesWebSocket
-import com.MANUL.Bomes.domain.Utils.BoMesWebSocketListener
+import com.MANUL.Bomes.data.webSocket.BoMesWebSocket
+import com.MANUL.Bomes.data.webSocket.BoMesWebSocketListener
 import com.MANUL.Bomes.domain.Utils.RequestCreationFactory
 import com.MANUL.Bomes.domain.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.friends.FriendsRequestHandler

@@ -1,6 +1,8 @@
-package com.MANUL.Bomes.domain.Utils
+package com.MANUL.Bomes.data.webSocket
 
 import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.domain.Utils.RequestCreationFactory
+import com.MANUL.Bomes.domain.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.Response

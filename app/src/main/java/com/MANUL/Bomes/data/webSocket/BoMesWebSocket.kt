@@ -1,5 +1,6 @@
-package com.MANUL.Bomes.domain.Utils
+package com.MANUL.Bomes.data.webSocket
 
+import com.MANUL.Bomes.domain.Utils.NowRequest
 import okhttp3.OkHttpClient
 import okhttp3.WebSocket
 
