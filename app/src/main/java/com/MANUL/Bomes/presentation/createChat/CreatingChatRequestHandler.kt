@@ -3,7 +3,7 @@ package com.MANUL.Bomes.presentation.createChat
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import com.MANUL.Bomes.presentation.view.activities.ChatActivity
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.data.model.UniversalJSONObject
 import com.MANUL.Bomes.domain.SimpleObjects.UserData
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 
@@ -13,7 +13,7 @@ class CreatingChatRequestHandler(
     val pathImage: String
 ) : BaseRequestHandler(activity) {
 
-    override fun responseReturnFriends(obj: UniversalJSONObject) {
+    override fun responseReturnFriends(obj: Map<String, Any?>) {
         super.responseReturnFriends(obj)
         viewModel.userAddListCompletion()
         viewModel.binding.addUserList.adapter?.notifyDataSetChanged()

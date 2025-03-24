@@ -2,6 +2,7 @@ package com.MANUL.Bomes.domain.SimpleObjects;
 
 import android.view.View;
 
+import com.MANUL.Bomes.data.model.UniversalJSONObject;
 import com.MANUL.Bomes.presentation.adapters.MessageViewHolder;
 
 public class Message {

@@ -20,7 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.MANUL.Bomes.R;
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.data.model.UniversalJSONObject;
 import com.MANUL.Bomes.domain.SimpleObjects.UserData;
 import com.MANUL.Bomes.domain.Utils.RequestCreationFactory;
 import com.MANUL.Bomes.domain.Utils.RequestEvent;

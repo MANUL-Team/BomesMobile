@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.domain.SimpleObjects.Sticker;
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.data.model.UniversalJSONObject;
 import com.MANUL.Bomes.domain.Utils.RequestCreationFactory;
 import com.MANUL.Bomes.domain.Utils.RequestEvent;
 import com.bumptech.glide.Glide;

@@ -3,7 +3,7 @@ package com.MANUL.Bomes.presentation.profile
 import android.R
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.data.model.UniversalJSONObject
 import com.MANUL.Bomes.domain.SimpleObjects.UserData
 import com.MANUL.Bomes.domain.Utils.RequestEvent
 import com.MANUL.Bomes.presentation.BaseRequestHandler

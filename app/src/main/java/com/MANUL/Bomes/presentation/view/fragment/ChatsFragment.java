@@ -24,7 +24,7 @@ import com.MANUL.Bomes.presentation.view.activities.SplashScreen;
 import com.MANUL.Bomes.presentation.adapters.ChatsAdapter;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.domain.SimpleObjects.Chat;
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.data.model.UniversalJSONObject;
 import com.MANUL.Bomes.domain.SimpleObjects.UserData;
 import com.MANUL.Bomes.domain.Utils.RequestCreationFactory;
 import com.MANUL.Bomes.domain.Utils.RequestEvent;

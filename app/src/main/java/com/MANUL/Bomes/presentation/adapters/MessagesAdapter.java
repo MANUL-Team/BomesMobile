@@ -31,7 +31,7 @@ import com.MANUL.Bomes.presentation.view.activities.UserPageActivity;
 import com.MANUL.Bomes.presentation.view.activities.VideoPlayer;
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.domain.SimpleObjects.Message;
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.data.model.UniversalJSONObject;
 import com.MANUL.Bomes.domain.SimpleObjects.User;
 import com.MANUL.Bomes.domain.SimpleObjects.UserData;
 import com.bumptech.glide.Glide;

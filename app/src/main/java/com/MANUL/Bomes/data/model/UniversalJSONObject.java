@@ -1,4 +1,4 @@
-package com.MANUL.Bomes.domain.SimpleObjects;
+package com.MANUL.Bomes.data.model;
 
 public class UniversalJSONObject {
     public String event;

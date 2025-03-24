@@ -13,7 +13,7 @@ import androidx.cardview.widget.CardView
 import com.MANUL.Bomes.domain.ImportantClasses.ImportantClasses.FileUploadService
 import com.MANUL.Bomes.domain.ImportantClasses.ImportantClasses.ServiceGenerator
 import com.MANUL.Bomes.R
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.data.model.UniversalJSONObject
 import com.MANUL.Bomes.domain.SimpleObjects.UserData
 import com.MANUL.Bomes.data.webSocket.BoMesWebSocket
 import com.MANUL.Bomes.data.webSocket.BoMesWebSocketListener

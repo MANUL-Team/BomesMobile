@@ -1,7 +1,6 @@
 package com.MANUL.Bomes.presentation.friends
 
 import androidx.fragment.app.FragmentActivity
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 
 class FriendsRequestHandler(
@@ -9,7 +8,7 @@ class FriendsRequestHandler(
     val viewModel: FriendsViewModel
 ) : BaseRequestHandler(activity) {
 
-    override fun responseReturnFriends(obj: UniversalJSONObject) {
+    override fun responseReturnFriends(obj: Map<String, Any?>) {
         super.responseReturnFriends(obj)
         viewModel.binding.friendsList.adapter?.notifyDataSetChanged()
     }

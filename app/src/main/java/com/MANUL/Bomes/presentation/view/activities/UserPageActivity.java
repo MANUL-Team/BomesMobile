@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.MANUL.Bomes.R;
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.data.model.UniversalJSONObject;
 import com.MANUL.Bomes.domain.SimpleObjects.User;
 import com.MANUL.Bomes.domain.SimpleObjects.UserData;
 import com.MANUL.Bomes.domain.Utils.RequestCreationFactory;

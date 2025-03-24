@@ -1,5 +1,9 @@
 package com.MANUL.Bomes.domain.Utils
 
+import com.MANUL.Bomes.data.model.UniversalJSONObject
+import com.MANUL.Bomes.domain.model.FriendsList
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.Request
 
 private val BomesRequest = Request.Builder().url("wss://bomes.ru:8000").build()
@@ -8,7 +12,7 @@ private val TestServerRequest = Request.Builder().url("ws://192.168.31.55:8000")
 @JvmField
 val NowRequest = BomesRequest
 
-object RequestEvent{
+object RequestEvent {
     const val ConnectUser = "ConnectUser"
     const val GetUser = "GetUser"
     const val GetFriends = "GetFriends"
@@ -66,4 +70,16 @@ object RequestEvent{
     const val ReturnCurrentAndroidVersion = "ReturnCurrentAndroidVersion"
     const val EmailAlreadyUsed = "EmailAlreadyUsed"
     const val GreatEmail = "GreatEmail"
+}
+
+fun jsonStringToMapGson(jsonString: String): Map<String, Any?> {
+    val gson = Gson()
+    val type = object : TypeToken<Map<String, Any?>>() {}.type
+    return gson.fromJson(jsonString, type)
+}
+
+fun <T> mapToObjectGson(map: Map<String, Any?>, classOfT: Class<T>): T {
+    val gson = Gson()
+    val json = gson.toJson(map)
+    return gson.fromJson(json, classOfT)
 }

@@ -1,8 +1,8 @@
 package com.MANUL.Bomes.data.webSocket
 
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
 import com.MANUL.Bomes.domain.Utils.RequestCreationFactory
 import com.MANUL.Bomes.domain.Utils.RequestEvent
+import com.MANUL.Bomes.domain.Utils.jsonStringToMapGson
 import com.MANUL.Bomes.presentation.BaseRequestHandler
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.Response
@@ -25,10 +25,7 @@ class BoMesWebSocketListener : WebSocketListener() {
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
-        val obj = objectMapper.readValue(
-            text,
-            UniversalJSONObject::class.java
-        )
+        val obj = jsonStringToMapGson(text)
 
         requestHandler?.start(obj)
     }

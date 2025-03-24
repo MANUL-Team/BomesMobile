@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.MANUL.Bomes.domain.SimpleObjects.CreatingChatUser
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.data.model.UniversalJSONObject
 import com.MANUL.Bomes.domain.SimpleObjects.UserDataKt
 import com.MANUL.Bomes.databinding.ItemAddUserBinding
 import com.MANUL.Bomes.databinding.ItemAddedUserBinding

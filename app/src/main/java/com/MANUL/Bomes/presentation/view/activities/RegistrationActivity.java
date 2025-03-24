@@ -19,7 +19,7 @@ import androidx.cardview.widget.CardView;
 
 import com.MANUL.Bomes.R;
 import com.MANUL.Bomes.domain.SimpleObjects.ConfirmationUser;
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject;
+import com.MANUL.Bomes.data.model.UniversalJSONObject;
 import com.MANUL.Bomes.domain.Utils.RequestCreationFactory;
 import com.MANUL.Bomes.domain.Utils.RequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;

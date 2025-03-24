@@ -4,7 +4,7 @@ import android.util.Log
 import com.MANUL.Bomes.presentation.view.activities.UserPageActivity
 import com.MANUL.Bomes.domain.SimpleObjects.ConfirmationUser
 import com.MANUL.Bomes.domain.SimpleObjects.Message
-import com.MANUL.Bomes.domain.SimpleObjects.UniversalJSONObject
+import com.MANUL.Bomes.data.model.UniversalJSONObject
 import com.MANUL.Bomes.domain.SimpleObjects.UserData
 import com.fasterxml.jackson.databind.ObjectMapper
 
